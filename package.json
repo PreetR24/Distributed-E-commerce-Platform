@@ -1,0 +1,35 @@
+{
+  "name": "distributed-commerce-platform",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "services/*",
+    "api-gateway",
+    "graphql-gateway",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "npm run infra:up && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=api-gateway\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=analytics-service\"",
+    "dev:clean": "npm run infra:down && npm run infra:up && npm run dev",
+    "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infrastructure/docker-compose.yml down",
+    "infra:logs": "docker compose -f infrastructure/docker-compose.yml logs -f",
+    "infra:restart": "docker compose -f infrastructure/docker-compose.yml restart",
+    "build": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "eslint": "^9.0.0",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.3.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.3",
+    "typescript": "5.5"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0"
+  }
+}

@@ -1,0 +1,80 @@
+services:
+
+    redis:
+        image: redis:7
+        container_name: distributed-commerce-redis
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+        restart: unless-stopped
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: distributed-commerce-rabbitmq
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        restart: unless-stopped
+
+    postgres-user:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-user
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_user_db
+        ports:
+            - '5433:5432'
+        volumes:
+            - postgres_user_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    postgres-product:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-product
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_product_db
+        ports:
+            - '5434:5432'
+        volumes:
+            - postgres_product_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    postgres-order:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-order
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_order_db
+        ports:
+            - '5435:5432'
+        volumes:
+            - postgres_order_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    postgres-payment:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-payment
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_payment_db
+        ports:
+            - '5436:5432'
+        volumes:
+            - postgres_payment_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+volumes:
+    redis_data:
+    rabbitmq_data:
+    postgres_user_data:
+    postgres_product_data:
+    postgres_order_data:
+    postgres_payment_data:

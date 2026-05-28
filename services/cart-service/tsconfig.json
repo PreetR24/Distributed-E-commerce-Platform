@@ -1,0 +1,20 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "paths": {
+            "@config/*": ["./src/config/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@services/*": ["./src/services/*"],
+            "@routes/*": ["./src/routes/*"],
+            "@middleware/*": ["./src/middleware/*"],
+            "@validators/*": ["./src/validators/*"],
+            "@utils/*": ["./src/utils/*"],
+            "@repositories/*": ["./src/repositories/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@interfaces/*": ["./src/types/*"]
+        }
+    },
+    "include": ["src"]
+}

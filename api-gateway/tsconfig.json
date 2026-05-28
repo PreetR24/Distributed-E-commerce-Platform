@@ -1,0 +1,39 @@
+{
+    "extends": "../tsconfig.base.json",
+
+    "compilerOptions": {
+        "target": "ES2020",
+
+        "module": "NodeNext",
+
+        "moduleResolution": "NodeNext",
+
+        "moduleDetection": "force",
+
+        "strict": true,
+
+        "esModuleInterop": true,
+
+        "allowSyntheticDefaultImports": true,
+
+        "skipLibCheck": true,
+
+        "forceConsistentCasingInFileNames": true,
+        
+        "outDir": "dist",
+
+        "rootDir": "src",
+
+        "paths": {
+            "@config/*": ["./src/config/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@services/*": ["./src/services/*"],
+            "@routes/*": ["./src/routes/*"],
+            "@middleware/*": ["./src/middleware/*"],
+            "@validators/*": ["./src/validators/*"],
+            "@proxy/*": ["./src/proxy/*"]
+        }
+    },
+
+    "include": ["src"]
+}

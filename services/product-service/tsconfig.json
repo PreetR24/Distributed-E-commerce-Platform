@@ -12,7 +12,8 @@
             "@validators/*": ["./src/validators/*"],
             "@utils/*": ["./src/utils/*"],
             "@repositories/*": ["./src/repositories/*"],
-            "@constants/*": ["./src/constants/*"]
+            "@constants/*": ["./src/constants/*"],
+            "@cache/*": ["./src/cache/*"],
         }
     },
     "include": ["src"]

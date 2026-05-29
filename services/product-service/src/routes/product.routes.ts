@@ -2,7 +2,9 @@ import { Router } from 'express';
 
 import {
     createProductController,
-    getProductsController
+    getProductsController,
+    getSingleProductController,
+    updateProductController
 } from '@controllers/product.controller';
 
 import { asyncHandler }
@@ -18,6 +20,16 @@ router.post(
 router.get(
     '/',
     asyncHandler(getProductsController)
+);
+
+router.get(
+    '/:productId',
+    asyncHandler(getSingleProductController)
+);
+
+router.patch(
+    '/:productId',
+    asyncHandler(updateProductController)
 );
 
 export default router;

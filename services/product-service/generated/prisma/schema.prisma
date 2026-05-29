@@ -26,8 +26,6 @@ model Product {
 
   price Float
 
-  stock Int
-
   isActive Boolean @default(true)
 
   categoryId String

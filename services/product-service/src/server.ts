@@ -4,10 +4,26 @@ dotenv.config();
 
 import app from './app';
 
-const PORT = process.env.PORT || 4002;
+import {
+    connectRabbitMQ,
+    connectRedisCache
+} from '@shared/common';
 
-app.listen(PORT, () => {
-    console.log(
-        `Product Service running on port ${PORT}`
-    );
-});
+const PORT =
+    process.env.PORT || 4002;
+
+const bootstrap = async () => {
+
+    await connectRabbitMQ();
+
+    await connectRedisCache();
+
+    app.listen(PORT, () => {
+
+        console.log(
+            `Product Service running on port ${PORT}`
+        );
+    });
+};
+
+bootstrap();

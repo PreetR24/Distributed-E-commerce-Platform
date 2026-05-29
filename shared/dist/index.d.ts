@@ -9,3 +9,4 @@ export * from './errors/app-error';
 export * from './middleware/error.middleware';
 export * from './utils/get-required-param';
 export * from './messaging/rabbitmq';
+export * from './cache/redis-cache';

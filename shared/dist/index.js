@@ -25,3 +25,4 @@ __exportStar(require("./errors/app-error"), exports);
 __exportStar(require("./middleware/error.middleware"), exports);
 __exportStar(require("./utils/get-required-param"), exports);
 __exportStar(require("./messaging/rabbitmq"), exports);
+__exportStar(require("./cache/redis-cache"), exports);

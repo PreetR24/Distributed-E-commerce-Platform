@@ -2,8 +2,14 @@ import { Request, Response } from 'express';
 
 import {
     createProductService,
-    getProductsService
+    getProductsService,
+    getSingleProductService,
+    updateProductService
 } from '@services/product.service';
+
+type ProductParams = {
+    productId: string;
+};
 
 export const createProductController = async (
     req: Request,
@@ -43,5 +49,45 @@ export const getProductsController = async (
     return res.status(200).json({
         success: true,
         data: products
+    });
+};
+
+export const getSingleProductController = async (
+    req: Request<ProductParams>,
+    res: Response
+) => {
+
+    const productId =
+        req.params.productId;
+
+    const product =
+        await getSingleProductService(
+            productId
+        );
+
+    return res.status(200).json({
+        success: true,
+        data: product
+    });
+};
+
+export const updateProductController = async (
+    req: Request<ProductParams>,
+    res: Response
+) => {
+
+    const productId =
+        req.params.productId;
+
+    const updatedProduct =
+        await updateProductService(
+            productId,
+            req.body
+        );
+
+    return res.status(200).json({
+        success: true,
+        message: 'Product updated successfully',
+        data: updatedProduct
     });
 };

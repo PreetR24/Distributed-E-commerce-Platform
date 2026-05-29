@@ -5,7 +5,6 @@ export const createProduct = async (
         name: string;
         description: string;
         price: number;
-        stock: number;
         categoryId: string;
     }
 ) => {
@@ -27,19 +26,58 @@ export const getProducts = async (
     const skip = (page - 1) * limit;
 
     return prisma.product.findMany({
-        skip,
-        take: limit,
-        where: {
-            name: {
-                contains: search,
-                mode: 'insensitive'
+        where: search
+            ? {
+                name: {
+                    contains: search,
+                    mode: 'insensitive'
+                }
             }
+            : undefined,
+
+        skip,
+
+        take: limit,
+
+        include: {
+            category: true
+        }
+    });
+};
+
+export const getProductById = async (
+    productId: string
+) => {
+
+    return prisma.product.findUnique({
+        where: {
+            id: productId
         },
         include: {
             category: true
+        }
+    });
+};
+
+export const updateProduct = async (
+    productId: string,
+    payload: {
+        name?: string;
+        description?: string;
+        price?: number;
+        imageUrl?: string;
+        categoryId?: string;
+        isActive?: boolean;
+    }
+) => {
+
+    return prisma.product.update({
+        where: {
+            id: productId
         },
-        orderBy: {
-            createdAt: 'desc'
+        data: payload,
+        include: {
+            category: true
         }
     });
 };

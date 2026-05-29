@@ -1909,12 +1909,10 @@ export namespace Prisma {
 
   export type ProductAvgAggregateOutputType = {
     price: number | null
-    stock: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: number | null
-    stock: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -1922,7 +1920,6 @@ export namespace Prisma {
     name: string | null
     description: string | null
     price: number | null
-    stock: number | null
     isActive: boolean | null
     categoryId: string | null
     createdAt: Date | null
@@ -1934,7 +1931,6 @@ export namespace Prisma {
     name: string | null
     description: string | null
     price: number | null
-    stock: number | null
     isActive: boolean | null
     categoryId: string | null
     createdAt: Date | null
@@ -1946,7 +1942,6 @@ export namespace Prisma {
     name: number
     description: number
     price: number
-    stock: number
     isActive: number
     categoryId: number
     createdAt: number
@@ -1957,12 +1952,10 @@ export namespace Prisma {
 
   export type ProductAvgAggregateInputType = {
     price?: true
-    stock?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
-    stock?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -1970,7 +1963,6 @@ export namespace Prisma {
     name?: true
     description?: true
     price?: true
-    stock?: true
     isActive?: true
     categoryId?: true
     createdAt?: true
@@ -1982,7 +1974,6 @@ export namespace Prisma {
     name?: true
     description?: true
     price?: true
-    stock?: true
     isActive?: true
     categoryId?: true
     createdAt?: true
@@ -1994,7 +1985,6 @@ export namespace Prisma {
     name?: true
     description?: true
     price?: true
-    stock?: true
     isActive?: true
     categoryId?: true
     createdAt?: true
@@ -2093,7 +2083,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive: boolean
     categoryId: string
     createdAt: Date
@@ -2124,7 +2113,6 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     price?: boolean
-    stock?: boolean
     isActive?: boolean
     categoryId?: boolean
     createdAt?: boolean
@@ -2137,7 +2125,6 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     price?: boolean
-    stock?: boolean
     isActive?: boolean
     categoryId?: boolean
     createdAt?: boolean
@@ -2150,7 +2137,6 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     price?: boolean
-    stock?: boolean
     isActive?: boolean
     categoryId?: boolean
     createdAt?: boolean
@@ -2174,7 +2160,6 @@ export namespace Prisma {
       name: string
       description: string
       price: number
-      stock: number
       isActive: boolean
       categoryId: string
       createdAt: Date
@@ -2577,7 +2562,6 @@ export namespace Prisma {
     readonly name: FieldRef<"Product", 'String'>
     readonly description: FieldRef<"Product", 'String'>
     readonly price: FieldRef<"Product", 'Float'>
-    readonly stock: FieldRef<"Product", 'Int'>
     readonly isActive: FieldRef<"Product", 'Boolean'>
     readonly categoryId: FieldRef<"Product", 'String'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
@@ -2943,7 +2927,6 @@ export namespace Prisma {
     name: 'name',
     description: 'description',
     price: 'price',
-    stock: 'stock',
     isActive: 'isActive',
     categoryId: 'categoryId',
     createdAt: 'createdAt',
@@ -3017,6 +3000,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'Int'
    */
   export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -3027,13 +3017,6 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
   /**
    * Deep Input Types
@@ -3098,7 +3081,6 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     description?: StringFilter<"Product"> | string
     price?: FloatFilter<"Product"> | number
-    stock?: IntFilter<"Product"> | number
     isActive?: BoolFilter<"Product"> | boolean
     categoryId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -3111,7 +3093,6 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
-    stock?: SortOrder
     isActive?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
@@ -3127,7 +3108,6 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     description?: StringFilter<"Product"> | string
     price?: FloatFilter<"Product"> | number
-    stock?: IntFilter<"Product"> | number
     isActive?: BoolFilter<"Product"> | boolean
     categoryId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -3140,7 +3120,6 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
-    stock?: SortOrder
     isActive?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
@@ -3160,7 +3139,6 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Product"> | string
     description?: StringWithAggregatesFilter<"Product"> | string
     price?: FloatWithAggregatesFilter<"Product"> | number
-    stock?: IntWithAggregatesFilter<"Product"> | number
     isActive?: BoolWithAggregatesFilter<"Product"> | boolean
     categoryId?: StringWithAggregatesFilter<"Product"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -3225,7 +3203,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -3237,7 +3214,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     categoryId: string
     createdAt?: Date | string
@@ -3249,7 +3225,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3261,7 +3236,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     categoryId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3273,7 +3247,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     categoryId: string
     createdAt?: Date | string
@@ -3285,7 +3258,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3296,7 +3268,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     categoryId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3403,17 +3374,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -3429,7 +3389,6 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
-    stock?: SortOrder
     isActive?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
@@ -3438,7 +3397,6 @@ export namespace Prisma {
 
   export type ProductAvgOrderByAggregateInput = {
     price?: SortOrder
-    stock?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -3446,7 +3404,6 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
-    stock?: SortOrder
     isActive?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
@@ -3458,7 +3415,6 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     price?: SortOrder
-    stock?: SortOrder
     isActive?: SortOrder
     categoryId?: SortOrder
     createdAt?: SortOrder
@@ -3467,7 +3423,6 @@ export namespace Prisma {
 
   export type ProductSumOrderByAggregateInput = {
     price?: SortOrder
-    stock?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -3484,22 +3439,6 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -3567,14 +3506,6 @@ export namespace Prisma {
   }
 
   export type FloatFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type IntFieldUpdateOperationsInput = {
     set?: number
     increment?: number
     decrement?: number
@@ -3693,22 +3624,6 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -3722,7 +3637,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -3733,7 +3647,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -3773,7 +3686,6 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     description?: StringFilter<"Product"> | string
     price?: FloatFilter<"Product"> | number
-    stock?: IntFilter<"Product"> | number
     isActive?: BoolFilter<"Product"> | boolean
     categoryId?: StringFilter<"Product"> | string
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -3829,7 +3741,6 @@ export namespace Prisma {
     name: string
     description: string
     price: number
-    stock: number
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -3840,7 +3751,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3851,7 +3761,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -3862,7 +3771,6 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
     price?: FloatFieldUpdateOperationsInput | number
-    stock?: IntFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

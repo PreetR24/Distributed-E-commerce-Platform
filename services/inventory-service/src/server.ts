@@ -12,6 +12,10 @@ import {
     startOrderConsumer
 } from './consumers/order.consumer';
 
+import {
+    startPaymentFailureConsumer
+} from './consumers/payment.consumer';
+
 const PORT = process.env.PORT || 4006;
 
 const bootstrap = async () => {
@@ -19,6 +23,8 @@ const bootstrap = async () => {
     await connectRabbitMQ();
 
     await startOrderConsumer();
+
+    await startPaymentFailureConsumer();
 
     app.listen(PORT, () => {
 

@@ -75,3 +75,18 @@ export const updateOrderStatus = async (
         }
     });
 };
+
+export const cancelOrder =
+async (
+    orderId: string
+) => {
+
+    return prisma.order.update({
+        where: {
+            id: orderId
+        },
+        data: {
+            status: 'CANCELLED'
+        }
+    });
+};

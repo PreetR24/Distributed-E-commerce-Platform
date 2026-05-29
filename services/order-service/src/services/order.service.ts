@@ -44,22 +44,17 @@ export const createOrderService = async (
         );
 
     await publishEvent(
-    EXCHANGES.ORDER_EVENTS,
-    '',
-    {
-        event: 'order.created',
-
-        orderId: order.id,
-
-        userId,
-
-        totalAmount,
-
-        items,
-
-        createdAt: new Date()
-    }
-);
+        EXCHANGES.ORDER_EVENTS,
+        QUEUES.ORDER_CREATED,
+        {
+            event:QUEUES.ORDER_CREATED,
+            orderId:order.id,
+            userId,
+            totalAmount,
+            items,
+            createdAt:new Date()
+        }
+    );
 
     return order;
 };

@@ -45,3 +45,32 @@ async (
         }
     });
 };
+
+export const getReservationsByOrderId =
+async (
+    orderId: string
+) => {
+
+    return prisma.stockReservation.findMany({
+        where: {
+            orderId,
+            status: 'RESERVED'
+        }
+    });
+};
+
+export const updateReservationStatus =
+async (
+    reservationId: string,
+    status: 'RELEASED' | 'COMPLETED'
+) => {
+
+    return prisma.stockReservation.update({
+        where: {
+            id: reservationId
+        },
+        data: {
+            status
+        }
+    });
+};

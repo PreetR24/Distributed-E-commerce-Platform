@@ -9,8 +9,9 @@
     "shared"
   ],
   "scripts": {
-    "dev": "npm run infra:up && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=api-gateway\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=analytics-service\"",
-    "dev:clean": "npm run infra:down && npm run infra:up && npm run dev",
+    "build:shared": "npm run build --workspace=shared",
+    "dev": "npm run infra:up && npm run build:shared &&  sleep 5 && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=analytics-service\" \"npm run dev --workspace=api-gateway\"",
+    "dev:clean": "npm run infra:down && sleep 5 && npm run dev",
     "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
     "infra:down": "docker compose -f infrastructure/docker-compose.yml down",
     "infra:logs": "docker compose -f infrastructure/docker-compose.yml logs -f",
@@ -26,7 +27,8 @@
     "prettier": "^3.3.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.3",
-    "typescript": "5.5"
+    "typescript": "5.5",
+    "wait-on": "^9.0.10"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

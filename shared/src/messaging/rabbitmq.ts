@@ -102,9 +102,17 @@ export const consumeEvent = async (
                     message.content.toString()
                 );
 
-            await callback(parsedMessage);
-
-            channel.ack(message);
+            try {
+                await callback(parsedMessage);
+                channel.ack(message);
+            }
+            catch (error) {
+                console.error(
+                    'RabbitMQ Consumer Error:',
+                    error
+                );
+                channel.ack(message);
+            }
 
             console.log(
                 `Message Acknowledged From ${queue}`

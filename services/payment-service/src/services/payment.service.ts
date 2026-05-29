@@ -56,22 +56,61 @@ export const createPaymentService = async (
     const finalStatus = isPaymentSuccessful ? PaymentStatus.SUCCESS : PaymentStatus.FAILED;
 
     const updatedPayment =
-        await updatePaymentStatus(
-            payment.id,
-            finalStatus
-        );
+    await updatePaymentStatus(
+        payment.id,
+        finalStatus
+    );
 
-    if (finalStatus === PaymentStatus.SUCCESS) {
+    if (
+        finalStatus ===
+        PaymentStatus.SUCCESS
+    ) {
+
         await publishEvent(
             EXCHANGES.PAYMENT_EVENTS,
-            '',
+            QUEUES.PAYMENT_SUCCESS,
             {
-                event: QUEUES.PAYMENT_SUCCESS,
-                paymentId: updatedPayment.id,
-                orderId: updatedPayment.orderId,
-                amount: updatedPayment.amount,
+                event:
+                    QUEUES.PAYMENT_SUCCESS,
+
+                paymentId:
+                    updatedPayment.id,
+
+                orderId:
+                    updatedPayment.orderId,
+
+                amount:
+                    updatedPayment.amount,
+
                 userId,
-                createdAt: new Date()
+
+                createdAt:
+                    new Date()
+            }
+        );
+    }
+    else {
+
+        await publishEvent(
+            EXCHANGES.PAYMENT_EVENTS,
+            QUEUES.PAYMENT_FAILED,
+            {
+                event:
+                    QUEUES.PAYMENT_FAILED,
+
+                paymentId:
+                    updatedPayment.id,
+
+                orderId:
+                    updatedPayment.orderId,
+
+                amount:
+                    updatedPayment.amount,
+
+                userId,
+
+                createdAt:
+                    new Date()
             }
         );
     }

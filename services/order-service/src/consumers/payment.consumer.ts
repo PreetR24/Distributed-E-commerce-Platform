@@ -1,7 +1,8 @@
 import {
     consumeEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 import {
@@ -25,16 +26,15 @@ async () => {
                 return;
             }
 
-            console.log(
-                'Cancelling Order:',
-                data.orderId
+            logger.info(
+                `Cancelling Order: ${data.orderId}`,
             );
 
             await cancelOrder(
                 data.orderId
             );
 
-            console.log(
+            logger.info(
                 `Order Cancelled ${data.orderId}`
             );
         }

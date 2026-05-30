@@ -1,6 +1,8 @@
 import { createClient }
 from 'redis';
 
+import {logger} from '../utils/logger';
+
 const redisClient =
     createClient({
         url:
@@ -12,7 +14,7 @@ redisClient.on(
     'error',
     (error) => {
 
-        console.error(
+        logger.error(
             'Redis Cache Error:',
             error
         );
@@ -26,7 +28,7 @@ async () => {
 
         await redisClient.connect();
 
-        console.log(
+        logger.info(
             'Redis Cache Connected'
         );
     }

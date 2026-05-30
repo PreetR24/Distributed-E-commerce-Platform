@@ -1,6 +1,7 @@
 import {
     consumeEvent,
-    EXCHANGES
+    EXCHANGES,
+    logger
 } from '@shared/common';
 
 export const startPaymentConsumer = async () => {
@@ -8,11 +9,13 @@ export const startPaymentConsumer = async () => {
         EXCHANGES.PAYMENT_EVENTS,
         'notification.payment.success',
         async (data) => {
-            console.log(
+            logger.info(
                 'Payment Success Event:',
-                data
+                {
+                   data
+                }
             );
-            console.log(
+            logger.info(
                 `Payment Receipt Sent For Order ${data.orderId}`
             );
         }

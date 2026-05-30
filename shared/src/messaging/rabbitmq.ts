@@ -1,12 +1,9 @@
 import amqp from 'amqplib';
+import {logger} from "../utils/logger"
 
 let channel: amqp.Channel;
 
 export const connectRabbitMQ = async () => {
-
-    console.log(
-        'Connecting To RabbitMQ...'
-    );
 
     const connection =
         await amqp.connect(
@@ -16,8 +13,8 @@ export const connectRabbitMQ = async () => {
     channel =
         await connection.createChannel();
 
-    console.log(
-        'RabbitMQ Connected'
+    logger.info(
+        'Connected To RabbitMQ'
     );
 };
 
@@ -26,10 +23,6 @@ export const publishEvent = async (
     routingKey: string,
     message: unknown
 ) => {
-
-    console.log(
-        `Publishing Event To Exchange: ${exchange}`
-    );
 
     await channel.assertExchange(
         exchange,
@@ -47,8 +40,13 @@ export const publishEvent = async (
         )
     );
 
-    console.log(
-        'Event Published Successfully'
+    logger.info(
+        'Event Published',
+        {
+            exchange,
+            routingKey,
+            payload: message
+        }
     );
 };
 
@@ -80,8 +78,12 @@ export const consumeEvent = async (
         ''
     );
 
-    console.log(
-        `Queue ${queue} bound to ${exchange}`
+    logger.info(
+        'Queue Bound To Exchange',
+        {
+            queue,
+            exchange
+        }
     );
 
     channel.consume(
@@ -93,10 +95,6 @@ export const consumeEvent = async (
                 return;
             }
 
-            console.log(
-                `Message Received From ${queue}`
-            );
-
             const parsedMessage =
                 JSON.parse(
                     message.content.toString()
@@ -107,15 +105,19 @@ export const consumeEvent = async (
                 channel.ack(message);
             }
             catch (error) {
-                console.error(
+                logger.error(
                     'RabbitMQ Consumer Error:',
                     error
                 );
                 channel.ack(message);
             }
 
-            console.log(
-                `Message Acknowledged From ${queue}`
+            logger.info(
+                'Message Acknowledged',
+                {
+                    queue,
+                    exchange
+                }
             );
         }
     );

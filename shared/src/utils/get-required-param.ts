@@ -1,3 +1,4 @@
+import { logger } from '../utils/logger';
 import { AppError } from '../errors/app-error';
 
 export const getRequiredParam = (
@@ -6,6 +7,10 @@ export const getRequiredParam = (
 ): string => {
 
     if (!value) {
+        logger.error(
+            `Missing required route param: ${paramName}`
+        );
+        
         throw new AppError(
             'MISSING_ROUTE_PARAM',
             400,

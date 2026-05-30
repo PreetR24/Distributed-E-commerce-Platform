@@ -3,13 +3,10 @@ import axios from 'axios';
 import {
     rebuildProjection
 } from '@repositories/search.repository';
+import { logger } from '@shared/common';
 
 export const rebuildProductSearchProjection =
 async () => {
-
-    console.log(
-        'Starting Projection Rebuild...'
-    );
 
     const response =
         await axios.get(
@@ -23,7 +20,7 @@ async () => {
         products
     );
 
-    console.log(
+    logger.info(
         `Projection Rebuilt Successfully: ${products.length} Products`
     );
 };

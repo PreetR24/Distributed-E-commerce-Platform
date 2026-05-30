@@ -1,6 +1,7 @@
 import {
     consumeEvent,
-    EXCHANGES
+    EXCHANGES,
+    logger
 } from '@shared/common';
 
 export const startOrderAnalyticsConsumer =
@@ -14,16 +15,18 @@ async () => {
 
         async (data) => {
 
-            console.log(
+            logger.info(
                 'Analytics Event Received:',
-                data
+                {
+                    ...data
+                }
             );
 
-            console.log(
+            logger.info(
                 `Revenue Added: ${data.totalAmount}`
             );
 
-            console.log(
+            logger.info(
                 `Analytics Updated`
             );
         }

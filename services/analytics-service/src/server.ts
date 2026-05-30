@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import {
-    connectRabbitMQ
+    connectRabbitMQ,
+    logger
 } from '@shared/common';
 
 import {
@@ -16,7 +17,7 @@ const bootstrap = async () => {
 
     await startOrderAnalyticsConsumer();
 
-    console.log(
+    logger.info(
         'Analytics Service Running'
     );
 };

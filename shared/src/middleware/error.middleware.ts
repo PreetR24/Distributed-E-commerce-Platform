@@ -7,6 +7,7 @@ from 'express';
 
 import { AppError }
 from '../errors/app-error';
+import { logger } from '../utils/logger';
 
 export const globalErrorHandler = (
     error: any,
@@ -79,6 +80,9 @@ export const globalErrorHandler = (
     }
 
     if (error instanceof AppError) {
+        logger.error(
+            `AppError: ${error.code} - ${error.message}`
+        );
 
         return res.status(error.statusCode).json({
             success: false,
@@ -92,7 +96,7 @@ export const globalErrorHandler = (
         });
     }
 
-    console.error(error);
+    logger.error(error);
 
     return res.status(500).json({
         success: false,

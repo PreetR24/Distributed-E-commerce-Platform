@@ -1,3 +1,4 @@
+import { logger } from '@shared/common';
 import { Request, Response, NextFunction } from 'express';
 
 import jwt from 'jsonwebtoken';
@@ -7,8 +8,6 @@ export const authenticate = (
     res: Response,
     next: NextFunction
 ) => {
-    console.time('auth-middleware');
-
     const authorizationHeader = req.headers.authorization;
 
     if (!authorizationHeader) {
@@ -28,8 +27,6 @@ export const authenticate = (
     }
 
     try {
-        console.time('jwt-verify');
-
         const decoded = jwt.verify(
             token,
             process.env.JWT_ACCESS_SECRET!
@@ -37,7 +34,6 @@ export const authenticate = (
             userId: string;
             role: string;
         };
-        console.timeEnd('jwt-verify');
 
         req.user = {
             userId: decoded.userId,
@@ -45,10 +41,16 @@ export const authenticate = (
         };
 
         next();
-        console.timeEnd('auth-middleware');
 
     }
     catch (error) {
+
+        logger.error(
+            'Authentication Error:',
+            {
+                error
+            }
+        );
 
         return res.status(401).json({
             success: false,

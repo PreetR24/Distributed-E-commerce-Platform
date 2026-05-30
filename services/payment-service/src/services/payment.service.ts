@@ -8,6 +8,7 @@ import {
     publishEvent,
     EXCHANGES,
     QUEUES,
+    logger
 } from '@shared/common';
 
 import {
@@ -88,6 +89,11 @@ export const createPaymentService = async (
                     new Date()
             }
         );
+
+        logger.info(`Payment successful for paymentId: ${updatedPayment.id},
+            orderId: ${updatedPayment.orderId},
+            amount: ${updatedPayment.amount}`
+        );
     }
     else {
 
@@ -112,6 +118,11 @@ export const createPaymentService = async (
                 createdAt:
                     new Date()
             }
+        );
+
+        logger.info(`Payment failed for paymentId: ${updatedPayment.id},
+            orderId: ${updatedPayment.orderId},
+            amount: ${updatedPayment.amount}`
         );
     }
 

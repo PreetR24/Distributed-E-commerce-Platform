@@ -1,6 +1,7 @@
 import {
     getCache,
-    setCache
+    setCache,
+    logger
 } from '@shared/common';
 
 import {
@@ -80,6 +81,10 @@ async (
         300
     );
 
+    logger.info(
+        `SEARCH RESULTS CACHED: ${cacheKey}`
+    );
+
     return result;
 };
 
@@ -103,6 +108,10 @@ async () => {
         SEARCH_CACHE.TRENDING_SEARCHES,
         result,
         300
+    );
+
+    logger.info(
+        'TRENDING SEARCHES CACHED'
     );
 
     return result;

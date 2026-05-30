@@ -1,6 +1,7 @@
 import {
     consumeEvent,
-    EXCHANGES
+    EXCHANGES,
+    logger
 } from '@shared/common';
 
 import {
@@ -37,5 +38,9 @@ async () => {
                 );
             }
         }
+    );
+
+    logger.info(
+        'Product Consumer Started'
     );
 };

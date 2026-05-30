@@ -8,6 +8,8 @@ import {
     getAllProductsService
 } from '@services/product.service';
 
+import { logger } from '@shared/common';
+
 type ProductParams = {
     productId: string;
 };
@@ -46,6 +48,14 @@ export const getProductsController = async (
             limit,
             search
         );
+
+        logger.info(
+    'Request Reached Product Service',
+    {
+        requestId:
+            req.headers['x-request-id']
+    }
+);
 
     return res.status(200).json({
         success: true,
@@ -98,9 +108,6 @@ async (
     _req: Request,
     res: Response
 ) => {
-    console.log(
-        'Fetching All Products for Search Rebuild...'
-    );
 
     const products =
         await getAllProductsService();

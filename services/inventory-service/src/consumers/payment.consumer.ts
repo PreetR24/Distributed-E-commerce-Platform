@@ -1,7 +1,8 @@
 import {
     consumeEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 import {
@@ -25,16 +26,18 @@ async () => {
                 return;
             }
 
-            console.log(
+            logger.info(
                 'Payment Failed Event:',
-                data
+                {
+                    ...data
+                }
             );
 
             await releaseInventoryReservationService(
                 data.orderId
             );
 
-            console.log(
+            logger.info(
                 `Inventory Released For Order ${data.orderId}`
             );
         }

@@ -13,7 +13,8 @@ import {
     AppError,
     publishEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 import {
@@ -62,6 +63,13 @@ export const createProductService = async (
             }
         }
     );
+
+    logger.info(
+        'Product created and event published:',
+        {
+            productId: createdProduct.id
+        }
+    );
 };
 
 export const getProductsService =
@@ -86,9 +94,8 @@ async (
 
     if (cachedProducts) {
 
-        console.log(
-            'CACHE HIT:',
-            cacheKey
+        logger.info(
+            `CACHE HIT: ${cacheKey}`,
         );
 
         return JSON.parse(
@@ -96,9 +103,8 @@ async (
         );
     }
 
-    console.log(
-        'CACHE MISS:',
-        cacheKey
+    logger.info(
+        `CACHE MISS: ${cacheKey}`,
     );
 
     const products =
@@ -135,9 +141,8 @@ async (
 
     if (cachedProduct) {
 
-        console.log(
-            'CACHE HIT:',
-            cacheKey
+        logger.info(
+            `CACHE HIT: ${cacheKey}`
         );
 
         return JSON.parse(
@@ -145,9 +150,8 @@ async (
         );
     }
 
-    console.log(
-        'CACHE MISS:',
-        cacheKey
+    logger.info(
+        `CACHE MISS: ${cacheKey}`
     );
 
     const product =
@@ -156,6 +160,9 @@ async (
         );
 
     if (!product) {
+        logger.error(
+            `Product not found: ${productId}`
+        );
 
         throw new AppError(
             'PRODUCT_NOT_FOUND',
@@ -192,9 +199,11 @@ async (
             )
     );
 
-    console.log(
+    logger.info(
         'CACHE INVALIDATED:',
-        productId
+        {
+            productId
+        }
     );
 
     await publishEvent(
@@ -206,6 +215,14 @@ async (
             product: updatedProduct
         }
     );
+
+    logger.info(
+        'Product updated and event published:',
+        {
+            productId: updatedProduct.id
+        }
+    );
+        
 
     return updatedProduct;
 };

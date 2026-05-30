@@ -6,6 +6,8 @@ import app from './app';
 
 import { connectRedis } from '@config/redis';
 
+import { logger } from '@shared/common';
+
 const PORT = process.env.PORT || 4003;
 
 const bootstrap = async () => {
@@ -13,7 +15,7 @@ const bootstrap = async () => {
     await connectRedis();
 
     app.listen(PORT, () => {
-        console.log(
+        logger.info(
             `Cart Service running on port ${PORT}`
         );
     });

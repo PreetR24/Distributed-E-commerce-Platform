@@ -12,25 +12,22 @@ import {
     productIndexMapping
 }
 from './product.mapping';
+import { logger } from '@shared/common';
 
 export const createProductIndex =
 async () => {
 
-    console.log(
-    'CREATE INDEX STARTED'
-);
+    const exists =
+        await elasticsearchClient.indices.exists({
 
-const exists =
-    await elasticsearchClient.indices.exists({
+            index:
+                ELASTIC_INDICES.PRODUCTS
+        });
 
-        index:
-            ELASTIC_INDICES.PRODUCTS
-    });
-
-console.log(
-    'INDEX EXISTS:',
-    exists
-);
+    logger.info(
+        'INDEX EXISTS:',
+        exists
+    );
 
     if (exists) {
 

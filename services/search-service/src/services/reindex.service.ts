@@ -5,6 +5,7 @@ import {
     indexProduct
 }
 from '../search/product-index.repository';
+import { logger } from '@shared/common';
 
 export const reindexProducts =
 async () => {
@@ -19,6 +20,10 @@ async () => {
 
         await indexProduct(
             product
+        );
+
+        logger.info(
+            `Indexed Product: ${product.id}`
         );
     }
 };

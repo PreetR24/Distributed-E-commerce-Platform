@@ -9,7 +9,8 @@ import {
     AppError,
     publishEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 import { OrderStatus }
@@ -21,6 +22,10 @@ export const createOrderService = async (
 ) => {
 
     if (!items.length) {
+        logger.error(
+            'Attempt to create empty order'
+        );
+
         throw new AppError(
             'EMPTY_ORDER',
             400,
@@ -56,6 +61,10 @@ export const createOrderService = async (
         }
     );
 
+    logger.info(
+        `Order Created: ${order.id}`,
+    );
+
     return order;
 };
 
@@ -74,6 +83,9 @@ export const getSingleOrderService = async (
         await getOrderById(orderId);
 
     if (!order) {
+        logger.error(
+            `Order not found: ${orderId}`
+        );
         throw new AppError(
             'ORDER_NOT_FOUND',
             404,
@@ -89,8 +101,14 @@ export const updateOrderStatusService = async (
     status: OrderStatus
 ) => {
 
-    return updateOrderStatus(
+    await updateOrderStatus(
         orderId,
         status
     );
+
+    logger.info(
+        `Order Status Updated: ${orderId} -> ${status}`,
+    );
+
+    return getOrderById(orderId);
 };

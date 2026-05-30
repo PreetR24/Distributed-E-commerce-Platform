@@ -12,7 +12,8 @@ from '@shared/common';
 import {
     publishEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 export const reserveInventoryService =
@@ -32,6 +33,9 @@ async (
             );
 
         if (!inventory) {
+            logger.error(
+                `Inventory not found for Product ${item.productId}`
+            );
 
             throw new AppError(
                 'INVENTORY_NOT_FOUND',
@@ -69,6 +73,10 @@ async (
                 }
             );
 
+            logger.warn(
+                `Out of stock for Product ${item.productId}: Requested ${item.quantity}, Available ${inventory.availableStock}`
+            );
+
             throw new AppError(
                 'OUT_OF_STOCK',
                 400,
@@ -99,6 +107,10 @@ async (
                 15 * 60 * 1000
             )
         });
+
+        logger.info(
+            `Inventory Reserved: Order ${orderId}, Product ${item.productId}, Quantity ${item.quantity}`
+        );
     }
 };
 
@@ -143,6 +155,10 @@ async (
         await updateReservationStatus(
             reservation.id,
             'RELEASED'
+        );
+
+        logger.info(
+            `Inventory Released: Order ${orderId}, Product ${reservation.productId}, Quantity ${reservation.quantity}`
         );
     }
 };

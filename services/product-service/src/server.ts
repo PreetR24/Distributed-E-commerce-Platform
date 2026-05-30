@@ -6,7 +6,8 @@ import app from './app';
 
 import {
     connectRabbitMQ,
-    connectRedisCache
+    connectRedisCache,
+    logger
 } from '@shared/common';
 
 const PORT =
@@ -20,7 +21,7 @@ const bootstrap = async () => {
 
     app.listen(PORT, () => {
 
-        console.log(
+        logger.info(
             `Product Service running on port ${PORT}`
         );
     });

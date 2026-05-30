@@ -5,7 +5,8 @@ dotenv.config();
 import app from './app';
 
 import {
-    connectRabbitMQ
+    connectRabbitMQ,
+    logger
 } from '@shared/common';
 
 import {
@@ -27,7 +28,7 @@ const bootstrap = async () => {
     await startInventoryFailureConsumer();
 
     app.listen(PORT, () => {
-        console.log(
+        logger.info(
             `Order Service running on port ${PORT}`
         );
     });

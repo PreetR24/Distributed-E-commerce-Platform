@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.globalErrorHandler = void 0;
 const app_error_1 = require("../errors/app-error");
+const logger_1 = require("../utils/logger");
 const globalErrorHandler = (error, req, res, _next) => {
     if (error?.name ===
         'PrismaClientKnownRequestError') {
@@ -50,6 +51,7 @@ const globalErrorHandler = (error, req, res, _next) => {
         }
     }
     if (error instanceof app_error_1.AppError) {
+        logger_1.logger.error(`AppError: ${error.code} - ${error.message}`);
         return res.status(error.statusCode).json({
             success: false,
             statusCode: error.statusCode,
@@ -61,7 +63,7 @@ const globalErrorHandler = (error, req, res, _next) => {
             path: req.originalUrl
         });
     }
-    console.error(error);
+    logger_1.logger.error(error);
     return res.status(500).json({
         success: false,
         statusCode: 500,

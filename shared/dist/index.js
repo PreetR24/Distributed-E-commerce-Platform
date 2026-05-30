@@ -19,7 +19,6 @@ __exportStar(require("./constants/http-status"), exports);
 __exportStar(require("./constants/queues"), exports);
 __exportStar(require("./constants/exchanges"), exports);
 __exportStar(require("./utils/logger"), exports);
-__exportStar(require("./utils/api-response"), exports);
 __exportStar(require("./utils/async-handler"), exports);
 __exportStar(require("./errors/app-error"), exports);
 __exportStar(require("./middleware/error.middleware"), exports);

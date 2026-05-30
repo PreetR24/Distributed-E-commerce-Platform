@@ -1,3 +1,4 @@
+import { logger } from '@shared/common';
 import { Request, Response } from 'express';
 
 export const paymentWebhookController = async (
@@ -5,9 +6,11 @@ export const paymentWebhookController = async (
     res: Response
 ) => {
 
-    console.log(
+    logger.info(
         'Webhook Received:',
-        req.body
+        {
+            body: req.body
+        }
     );
 
     return res.status(200).json({

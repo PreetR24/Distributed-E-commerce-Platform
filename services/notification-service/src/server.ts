@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import {
-    connectRabbitMQ
+    connectRabbitMQ,
+    logger
 } from '@shared/common';
 
 import {
@@ -19,7 +20,7 @@ const bootstrap = async () => {
     await startOrderConsumer();
     await startPaymentConsumer();
 
-    console.log(
+    logger.info(
         'Notification Service Running'
     );
 };

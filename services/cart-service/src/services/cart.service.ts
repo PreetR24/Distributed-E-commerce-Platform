@@ -6,6 +6,8 @@ import {
 
 import { Cart } from '@interfaces/cart.types';
 
+import { logger } from '@shared/common';
+
 export const addToCartService = async (
     userId: string,
     item: {
@@ -47,6 +49,13 @@ export const addToCartService = async (
 
     await saveCart(userId, cart);
 
+    logger.info(
+        `Cart Updated for User: ${userId}`,
+        {
+            cart
+        }
+    );
+
     return cart;
 };
 
@@ -62,4 +71,8 @@ export const clearCartService = async (
 ) => {
 
     await clearCart(userId);
+
+    logger.info(
+        `Cart Cleared for User: ${userId}`
+    );
 };

@@ -1,7 +1,8 @@
 import {
     consumeEvent,
     EXCHANGES,
-    QUEUES
+    QUEUES,
+    logger
 } from '@shared/common';
 
 import {
@@ -26,16 +27,18 @@ async () => {
                 return;
             }
 
-            console.log(
+            logger.info(
                 'Inventory Reservation Failed:',
-                data
+                {
+                    data
+                }
             );
 
             await cancelOrder(
                 data.orderId
             );
 
-            console.log(
+            logger.info(
                 `Order Cancelled Due To Inventory Failure: ${data.orderId}`
             );
         }

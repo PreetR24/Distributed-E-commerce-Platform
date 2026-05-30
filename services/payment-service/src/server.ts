@@ -5,7 +5,8 @@ dotenv.config();
 import app from './app';
 
 import {
-    connectRabbitMQ
+    connectRabbitMQ,
+    logger
 } from '@shared/common';
 
 const PORT = process.env.PORT || 4005;
@@ -16,7 +17,7 @@ const bootstrap = async () => {
 
     app.listen(PORT, () => {
 
-        console.log(
+        logger.info(
             `Payment Service running on port ${PORT}`
         );
     });

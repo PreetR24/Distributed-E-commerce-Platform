@@ -2,17 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCache = exports.setCache = exports.getCache = exports.connectRedisCache = void 0;
 const redis_1 = require("redis");
+const logger_1 = require("../utils/logger");
 const redisClient = (0, redis_1.createClient)({
     url: process.env.REDIS_URL ||
         'redis://localhost:6379'
 });
 redisClient.on('error', (error) => {
-    console.error('Redis Cache Error:', error);
+    logger_1.logger.error('Redis Cache Error:', error);
 });
 const connectRedisCache = async () => {
     if (!redisClient.isOpen) {
         await redisClient.connect();
-        console.log('Redis Cache Connected');
+        logger_1.logger.info('Redis Cache Connected');
     }
 };
 exports.connectRedisCache = connectRedisCache;

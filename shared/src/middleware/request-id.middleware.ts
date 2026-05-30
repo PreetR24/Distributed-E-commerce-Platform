@@ -1,10 +1,16 @@
-import { Request, Response, NextFunction }
-from 'express';
+import {
 
-import { v4 as uuid }
-from 'uuid';
+    Request,
+    Response,
+    NextFunction
 
-export const requestIdMiddleware = (
+} from 'express';
+
+import { randomUUID }
+from 'crypto';
+
+export const requestIdMiddleware =
+(
     req: Request,
     res: Response,
     next: NextFunction
@@ -18,7 +24,7 @@ export const requestIdMiddleware = (
 
         ||
 
-        uuid();
+        randomUUID();
 
     req.headers[
         'x-request-id'

@@ -1,6 +1,7 @@
 import {
     consumeEvent,
-    EXCHANGES
+    EXCHANGES,
+    logger
 } from '@shared/common';
 
 import {
@@ -17,9 +18,11 @@ async () => {
 
         async (data) => {
 
-            console.log(
+            logger.info(
                 'Inventory Event Received:',
-                data
+                {
+                    data
+                }
             );
 
             await reserveInventoryService(
@@ -27,7 +30,7 @@ async () => {
                 data.items
             );
 
-            console.log(
+            logger.info(
                 `Inventory Reserved For Order ${data.orderId}`
             );
         }

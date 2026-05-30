@@ -1,6 +1,7 @@
 import {
     consumeEvent,
-    EXCHANGES
+    EXCHANGES,
+    logger
 } from '@shared/common';
 
 export const startOrderConsumer = async () => {
@@ -9,16 +10,18 @@ export const startOrderConsumer = async () => {
         EXCHANGES.ORDER_EVENTS,
         'notification.order.created',
         async (data) => {
-            console.log(
+            logger.info(
                 'Notification Event Received:',
-                data
+                {
+                    ...data
+                }
             );
 
-            console.log(
+            logger.info(
                 `Order Confirmation Email Sent To ${data.userId}`
             );
 
-            console.log(
+            logger.info(
                 `SMS Notification Sent`
             );
         }

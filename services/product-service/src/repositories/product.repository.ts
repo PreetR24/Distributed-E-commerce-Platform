@@ -81,3 +81,12 @@ export const updateProduct = async (
         }
     });
 };
+
+export const getAllProducts =
+async () => {
+    return prisma.product.findMany({
+        include: {
+            category: true
+        }
+    });
+};

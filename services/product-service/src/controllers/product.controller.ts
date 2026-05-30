@@ -4,7 +4,8 @@ import {
     createProductService,
     getProductsService,
     getSingleProductService,
-    updateProductService
+    updateProductService,
+    getAllProductsService
 } from '@services/product.service';
 
 type ProductParams = {
@@ -89,5 +90,23 @@ export const updateProductController = async (
         success: true,
         message: 'Product updated successfully',
         data: updatedProduct
+    });
+};
+
+export const getAllProductsController =
+async (
+    _req: Request,
+    res: Response
+) => {
+    console.log(
+        'Fetching All Products for Search Rebuild...'
+    );
+
+    const products =
+        await getAllProductsService();
+
+    return res.status(200).json({
+        success: true,
+        data: products
     });
 };

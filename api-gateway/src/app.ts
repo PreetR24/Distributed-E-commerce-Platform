@@ -30,7 +30,8 @@ import {
     cartProxy,
     ordersProxy,
     paymentsProxy,
-    inventoryProxy
+    inventoryProxy,
+    searchProxy
 } from '@proxy/services.proxy';
 
 const app = express();
@@ -88,6 +89,11 @@ app.use(
     '/api/v1/inventory',
     authenticateRequest,
     inventoryProxy
+);
+
+app.use(
+    '/api/v1/search',
+    searchProxy
 );
 
 app.use((_req, res) => {

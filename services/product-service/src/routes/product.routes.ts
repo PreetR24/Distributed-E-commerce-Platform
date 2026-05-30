@@ -4,13 +4,19 @@ import {
     createProductController,
     getProductsController,
     getSingleProductController,
-    updateProductController
+    updateProductController,
+    getAllProductsController
 } from '@controllers/product.controller';
 
 import { asyncHandler }
 from '@shared/common';
 
 const router = Router();
+
+router.get(
+    '/internal/rebuild',
+    asyncHandler(getAllProductsController)
+);
 
 router.post(
     '/',

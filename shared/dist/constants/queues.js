@@ -8,5 +8,7 @@ exports.QUEUES = {
     PAYMENT_FAILED: 'payment.failed',
     INVENTORY_RESERVED: 'inventory.reserved',
     INVENTORY_RELEASED: 'inventory.released',
-    INVENTORY_RESERVATION_FAILED: 'inventory.reservation.failed'
+    INVENTORY_RESERVATION_FAILED: 'inventory.reservation.failed',
+    PRODUCT_CREATED: 'product.created',
+    PRODUCT_UPDATED: 'product.updated'
 };

@@ -1,0 +1,55 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model ProductSearch {
+
+    id              String      @id
+
+    name            String
+
+    description     String
+
+    price           Float
+
+    categoryId      String
+
+    categoryName    String
+
+    isActive        Boolean
+
+    createdAt       DateTime
+
+    updatedAt       DateTime
+
+    @@index([name])
+
+    @@index([categoryName])
+
+    @@index([price])
+
+    @@index([isActive])
+}
+
+model SearchAnalytics {
+
+    id              String      @id @default(uuid())
+
+    searchTerm      String
+
+    totalSearches   Int         @default(1)
+
+    createdAt       DateTime    @default(now())
+
+    updatedAt       DateTime    @updatedAt
+
+    @@unique([searchTerm])
+
+    @@index([totalSearches])
+}

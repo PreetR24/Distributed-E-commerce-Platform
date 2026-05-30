@@ -66,3 +66,9 @@ export const inventoryProxy =
         'http://localhost:4006',
         '/inventory'
     );
+
+export const searchProxy =
+    createProxy(
+        'http://localhost:4007',
+        '/search'
+    );

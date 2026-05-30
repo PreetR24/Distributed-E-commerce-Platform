@@ -6,4 +6,6 @@ export declare const QUEUES: {
     readonly INVENTORY_RESERVED: "inventory.reserved";
     readonly INVENTORY_RELEASED: "inventory.released";
     readonly INVENTORY_RESERVATION_FAILED: "inventory.reservation.failed";
+    readonly PRODUCT_CREATED: "product.created";
+    readonly PRODUCT_UPDATED: "product.updated";
 };

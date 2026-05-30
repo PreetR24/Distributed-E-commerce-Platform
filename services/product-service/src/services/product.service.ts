@@ -2,14 +2,18 @@ import {
     createProduct,
     getProducts,
     updateProduct,
-    getProductById
+    getProductById,
+    getAllProducts
 } from '@repositories/product.repository';
 
 import {
     getCache,
     setCache,
     deleteCache,
-    AppError
+    AppError,
+    publishEvent,
+    EXCHANGES,
+    QUEUES
 } from '@shared/common';
 
 import {
@@ -25,7 +29,39 @@ export const createProductService = async (
     }
 ) => {
 
-    return createProduct(data);
+    const createdProduct = await createProduct(data);
+
+    await publishEvent(
+        EXCHANGES.PRODUCT_EVENTS,
+        '',
+        {
+            event: QUEUES.PRODUCT_CREATED,
+
+            product: {
+
+                id: createdProduct.id,
+
+                name: createdProduct.name,
+
+                description: createdProduct.description,
+
+                price: createdProduct.price,
+
+                isActive: createdProduct.isActive,
+
+                categoryId: createdProduct.categoryId,
+
+                categoryName:
+                    createdProduct.category.name,
+
+                createdAt:
+                    createdProduct.createdAt,
+
+                updatedAt:
+                    createdProduct.updatedAt
+            }
+        }
+    );
 };
 
 export const getProductsService =
@@ -161,5 +197,21 @@ async (
         productId
     );
 
+    await publishEvent(
+        EXCHANGES.PRODUCT_EVENTS,
+        '',
+        {
+            event: QUEUES.PRODUCT_UPDATED,
+
+            product: updatedProduct
+        }
+    );
+
     return updatedProduct;
+};
+
+export const getAllProductsService =
+async () => {
+
+    return getAllProducts();
 };

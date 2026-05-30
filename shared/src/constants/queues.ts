@@ -19,6 +19,12 @@ export const QUEUES = {
         'inventory.released',
 
     INVENTORY_RESERVATION_FAILED:
-        'inventory.reservation.failed'
+        'inventory.reservation.failed',
+
+    PRODUCT_CREATED:
+        'product.created',
+
+    PRODUCT_UPDATED:
+        'product.updated'
 
 } as const;

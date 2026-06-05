@@ -1,0 +1,27 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "target": "ES2020",
+
+        "strict": true,
+
+        "esModuleInterop": true,
+
+        "allowSyntheticDefaultImports": true,
+
+        "skipLibCheck": true,
+
+        "forceConsistentCasingInFileNames": true,
+        
+        "outDir": "dist",
+
+        "rootDir": "src",
+        "paths": {
+            "@config/*": ["./src/config/*"],
+            "@resolvers/*": ["./src/graphql/resolvers/*"],
+            "@schemas/*": ["./src/graphql/schemas/*"],
+            "@services/*": ["./src/services/*"]
+        }
+    },
+    "include": ["src"]
+}

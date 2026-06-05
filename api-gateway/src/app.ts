@@ -23,6 +23,10 @@ import {
 } from '@middleware/auth.middleware';
 
 import {
+    requestLogger
+} from '@middleware/request-logger.middleware';
+
+import {
     authProxy,
     usersProxy,
     productsProxy,
@@ -40,9 +44,17 @@ app.use(cors());
 
 app.use(helmet());
 
+app.use(express.json());
+
+app.use(express.urlencoded({
+    extended: true
+}));
+
 app.use(morgan('dev'));
 
 app.use(requestIdMiddleware);
+
+app.use(requestLogger);
 
 app.use(apiRateLimiter);
 

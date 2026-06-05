@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build:shared": "npm run build --workspace=shared",
-    "dev": "npm run infra:up && npm run build:shared &&  sleep 5 && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=analytics-service\" \"npm run dev --workspace=search-service\" \"npm run dev --workspace=api-gateway\"",
+    "dev": "npm run infra:up && npm run build:shared &&  sleep 5 && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=analytics-service\" \"npm run dev --workspace=search-service\" \"npm run dev --workspace=graphql-gateway\" \"npm run dev --workspace=api-gateway\"",
     "dev:clean": "npm run infra:down && sleep 5 && npm run dev",
     "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
     "infra:down": "docker compose -f infrastructure/docker-compose.yml down",

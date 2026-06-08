@@ -4,14 +4,14 @@ import { authenticate } from '@middleware/auth.middleware';
 
 import { authorize } from '@middleware/authorize.middleware';
 
-import { ROLES } from '@constants/roles';
+import { UserRole } from '@shared/common';
 
 const router = Router();
 
 router.get(
     '/',
     authenticate,
-    authorize(ROLES.ADMIN),
+    authorize(UserRole.ADMIN),
     (_req, res) => {
 
         return res.status(200).json({

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { asyncHandler } from '@shared/common';
+import { asyncHandler, requireRole, UserRole } from '@shared/common';
 
 import {
     createOrderController,
@@ -13,21 +13,35 @@ const router = Router();
 
 router.post(
     '/',
+    requireRole(
+        UserRole.CUSTOMER
+    ),
     asyncHandler(createOrderController)
 );
 
 router.get(
     '/',
+    requireRole(
+        UserRole.CUSTOMER,
+        UserRole.ADMIN
+    ),
     asyncHandler(getOrdersController)
 );
 
 router.get(
     '/:orderId',
+    requireRole(
+        UserRole.CUSTOMER,
+        UserRole.ADMIN
+    ),
     asyncHandler(getSingleOrderController)
 );
 
 router.patch(
     '/:orderId/status',
+    requireRole(
+        UserRole.ADMIN
+    ),
     asyncHandler(updateOrderStatusController)
 );
 

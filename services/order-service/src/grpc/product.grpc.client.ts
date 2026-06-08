@@ -33,6 +33,6 @@ const grpcServer = process.env.PRODUCT_GRPC_URL;
 
 export const productClient =
     new productProto.ProductService(
-        `localhost:${grpcServer}`,
+        grpcServer,
         grpc.credentials.createInsecure()
     );

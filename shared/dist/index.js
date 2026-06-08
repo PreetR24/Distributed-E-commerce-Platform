@@ -22,6 +22,8 @@ __exportStar(require("./utils/logger"), exports);
 __exportStar(require("./utils/async-handler"), exports);
 __exportStar(require("./errors/app-error"), exports);
 __exportStar(require("./middleware/error.middleware"), exports);
+__exportStar(require("./middleware/role.middleware"), exports);
 __exportStar(require("./utils/get-required-param"), exports);
 __exportStar(require("./messaging/rabbitmq"), exports);
 __exportStar(require("./cache/redis-cache"), exports);
+__exportStar(require("./enums/roles"), exports);

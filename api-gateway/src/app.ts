@@ -27,6 +27,11 @@ import {
 } from '@middleware/request-logger.middleware';
 
 import {
+    requireRole
+}
+from '@middleware/role.middleware';
+
+import {
     authProxy,
     usersProxy,
     productsProxy,

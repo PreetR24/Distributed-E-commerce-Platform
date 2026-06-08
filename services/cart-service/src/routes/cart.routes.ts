@@ -6,14 +6,26 @@ import {
     clearCartController
 } from '@controllers/cart.controller';
 
-import { asyncHandler } from '@shared/common';
+import { asyncHandler, requireRole, UserRole } from '@shared/common';
 
 const router = Router();
 
-router.post('/', asyncHandler(addToCartController));
+router.post(
+    '/',
+    requireRole(UserRole.CUSTOMER),
+    asyncHandler(addToCartController)
+);
 
-router.get('/', asyncHandler(getCartController));
+router.get(
+    '/',
+    requireRole(UserRole.CUSTOMER),
+    asyncHandler(getCartController)
+);
 
-router.delete('/', asyncHandler(clearCartController));
+router.delete(
+    '/',
+    requireRole(UserRole.CUSTOMER),
+    asyncHandler(clearCartController)
+);
 
 export default router;

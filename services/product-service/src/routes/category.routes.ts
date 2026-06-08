@@ -6,13 +6,16 @@ import {
 }
 from '@controllers/category.controller';
 
-import { asyncHandler }
+import { asyncHandler, requireRole, UserRole }
 from '@shared/common';
 
 const router = Router();
 
 router.post(
     '/',
+    requireRole(
+        UserRole.ADMIN
+    ),
     asyncHandler(createCategoryController)
 );
 

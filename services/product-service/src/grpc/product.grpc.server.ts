@@ -34,7 +34,8 @@ const productProto: any =
         packageDefinition
     ).product;
 
-const grpcServer = process.env.PRODUCT_GRPC_URL;
+const grpcHost = process.env.PRODUCT_GRPC_HOST;
+const grpcPort = process.env.PRODUCT_GRPC_PORT;
 
 export const startGrpcServer =
     () => {
@@ -51,7 +52,7 @@ export const startGrpcServer =
         );
 
         server.bindAsync(
-            `0.0.0.0:${grpcServer}`,
+            `${grpcHost}:${grpcPort}`,
             grpc.ServerCredentials.createInsecure(),
             (
                 error,

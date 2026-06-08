@@ -1,7 +1,7 @@
 import { Router }
 from 'express';
 
-import { asyncHandler }
+import { asyncHandler, requireRole, UserRole }
 from '@shared/common';
 
 import {
@@ -13,11 +13,19 @@ const router = Router();
 
 router.post(
     '/',
+    requireRole(
+        UserRole.ADMIN,
+        UserRole.SELLER
+    ),
     asyncHandler(createInventoryController)
 );
 
 router.get(
     '/',
+    requireRole(
+        UserRole.ADMIN,
+        UserRole.SELLER
+    ),
     asyncHandler(getInventoryController)
 );
 

@@ -13,8 +13,50 @@ import {
     logger
 } from '@shared/common';
 
+import {
+    productClient
+}
+from '../grpc/product.grpc.client';
+
 import { OrderStatus }
 from '../../generated/prisma';
+
+const getProductById = (
+    productId: string
+): Promise<any> => {
+
+    return new Promise(
+        (
+            resolve,
+            reject
+        ) => {
+
+            productClient.GetProductById(
+                {
+                    id: productId
+                },
+                (
+                    error: any,
+                    response: any
+                ) => {
+
+                    if (error) {
+
+                        logger.error(
+                            `gRPC Product Fetch Failed: ${productId}`
+                        );
+
+                        reject(error);
+
+                        return;
+                    }
+
+                    resolve(response);
+                }
+            );
+        }
+    );
+};
 
 export const createOrderService = async (
     userId: string,
@@ -22,6 +64,7 @@ export const createOrderService = async (
 ) => {
 
     if (!items.length) {
+
         logger.error(
             'Attempt to create empty order'
         );
@@ -33,18 +76,51 @@ export const createOrderService = async (
         );
     }
 
-    const totalAmount =
-        items.reduce(
-            (total, item) =>
-                total +
-                (item.productPrice * item.quantity),
-            0
-        );
+    let totalAmount = 0;
+
+    const enrichedItems = [];
+
+    for (const item of items) {
+
+        const product =
+            await getProductById(
+                item.productId
+            );
+
+        if (!product) {
+
+            throw new AppError(
+                'PRODUCT_NOT_FOUND',
+                404,
+                `Product ${item.productId} not found`
+            );
+        }
+
+        if (!product.isActive) {
+
+            throw new AppError(
+                'PRODUCT_INACTIVE',
+                400,
+                `Product ${item.productId} is inactive`
+            );
+        }
+
+        totalAmount +=
+            product.price *
+            item.quantity;
+
+        enrichedItems.push({
+            productId: product.id,
+            productName: product.name,
+            productPrice: product.price,
+            quantity: item.quantity
+        });
+    }
 
     const order =
         await createOrder(
             userId,
-            items,
+            enrichedItems,
             totalAmount
         );
 
@@ -52,17 +128,17 @@ export const createOrderService = async (
         EXCHANGES.ORDER_EVENTS,
         QUEUES.ORDER_CREATED,
         {
-            event:QUEUES.ORDER_CREATED,
-            orderId:order.id,
+            event: QUEUES.ORDER_CREATED,
+            orderId: order.id,
             userId,
             totalAmount,
-            items,
-            createdAt:new Date()
+            items: enrichedItems,
+            createdAt: new Date()
         }
     );
 
     logger.info(
-        `Order Created: ${order.id}`,
+        `Order Created: ${order.id}`
     );
 
     return order;

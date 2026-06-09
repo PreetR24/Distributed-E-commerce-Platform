@@ -1,8 +1,15 @@
 import {
     consumeEvent,
     EXCHANGES,
+    QUEUES,
     logger
-} from '@shared/common';
+}
+from '@shared/common';
+
+import {
+    incrementRevenue
+}
+from '@repositories/analytics.repository';
 
 export const startOrderAnalyticsConsumer =
 async () => {
@@ -15,19 +22,19 @@ async () => {
 
         async (data) => {
 
-            logger.info(
-                'Analytics Event Received:',
-                {
-                    ...data
-                }
+            if (
+                data.event !==
+                QUEUES.ORDER_CREATED
+            ) {
+                return;
+            }
+
+            await incrementRevenue(
+                data.totalAmount
             );
 
             logger.info(
-                `Revenue Added: ${data.totalAmount}`
-            );
-
-            logger.info(
-                `Analytics Updated`
+                `Analytics Revenue Updated`
             );
         }
     );

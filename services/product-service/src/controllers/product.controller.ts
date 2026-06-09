@@ -18,7 +18,6 @@ export const createProductController = async (
     req: Request,
     res: Response
 ) => {
-
     const product =
         await createProductService(req.body);
 

@@ -10,6 +10,10 @@ export const findUserByEmail = async (
     });
 };
 
+export const getAllUsers = async () => {
+    return prisma.user.findMany();
+}
+
 export const findUserById = async (
     userId: string
 ) => {

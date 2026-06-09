@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AnalyticsMetric {
+  id                 String   @id @default(uuid())
+  totalRevenue       Float    @default(0)
+  totalOrders        Int      @default(0)
+  successfulPayments Int      @default(0)
+  failedPayments     Int      @default(0)
+  totalProducts      Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}

@@ -49,7 +49,7 @@ export const authenticateRequest = (
 
         req.headers['x-user-role'] =
             decoded.role;
-
+            
         next();
 
     }

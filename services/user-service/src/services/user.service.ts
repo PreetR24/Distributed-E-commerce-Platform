@@ -1,4 +1,4 @@
-import { findUserById } from '@repositories/user.repository';
+import { findUserById, getAllUsers } from '@repositories/user.repository';
 
 export const getCurrentUser = async (
     userId: string
@@ -6,3 +6,7 @@ export const getCurrentUser = async (
 
     return findUserById(userId);
 };
+
+export const getAllUsersService = async () => {
+    return getAllUsers();
+}

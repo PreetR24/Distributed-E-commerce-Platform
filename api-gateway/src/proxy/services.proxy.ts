@@ -2,6 +2,34 @@ import {
     createProxyMiddleware
 } from 'http-proxy-middleware';
 
+const fixRequestBody = (
+    proxyReq: any,
+    req: any
+) => {
+
+    if (
+        !req.body ||
+        !Object.keys(req.body).length
+    ) {
+        return;
+    }
+
+    const bodyData =
+        JSON.stringify(req.body);
+
+    proxyReq.setHeader(
+        'Content-Type',
+        'application/json'
+    );
+
+    proxyReq.setHeader(
+        'Content-Length',
+        Buffer.byteLength(bodyData)
+    );
+
+    proxyReq.write(bodyData);
+};
+
 const createProxy = (
     target: string,
     serviceBasePath: string
@@ -16,6 +44,10 @@ const createProxy = (
     ) => {
 
         return `/api/v1${serviceBasePath}${path}`;
+    },
+
+    on: {
+        proxyReq: fixRequestBody
     }
 });
 
@@ -29,6 +61,12 @@ export const usersProxy =
     createProxy(
         'http://localhost:4001',
         '/users'
+    );
+
+export const adminProxy =
+    createProxy(
+        'http://localhost:4001',
+        '/admin'
     );
 
 export const productsProxy =
@@ -71,4 +109,10 @@ export const searchProxy =
     createProxy(
         'http://localhost:4007',
         '/search'
+    );
+
+export const analyticsProxy =
+    createProxy(
+        'http://localhost:4008',
+        '/analytics'
     );

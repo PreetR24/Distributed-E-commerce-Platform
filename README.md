@@ -1,200 +1,106 @@
 # Distributed Commerce Platform
 
-A scalable backend-focused distributed commerce infrastructure built using modern backend engineering concepts including REST APIs, GraphQL, gRPC, WebSockets, RabbitMQ, Redis caching, Docker, observability tooling, and microservice architecture.
+A distributed microservices-based commerce platform built with Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Elasticsearch, GraphQL, and gRPC.
+
+The project is designed to demonstrate modern backend engineering concepts including microservice communication, event-driven architecture, distributed transactions, CQRS, caching, search infrastructure, authentication, authorization, and analytics aggregation.
 
 ---
 
 # Project Overview
 
-This project is designed to simulate a real-world backend commerce ecosystem while focusing heavily on backend engineering principles rather than frontend development.
+This project simulates a production-style commerce ecosystem focused entirely on backend engineering and distributed systems.
 
-The main goal of this project is to demonstrate:
+The goal is to showcase:
 
-* Scalable backend architecture
-* Microservice communication
-* Distributed systems basics
-* Event-driven architecture
-* API design patterns
-* Production-grade backend engineering
-* Observability and monitoring
-* Containerized development workflow
-* Real-time communication
-* Performance optimization
-
-This project intentionally focuses more on:
-
-* backend engineering
-* system design
-* scalability
-* maintainability
-* communication protocols
-* distributed workflows
-
-rather than frontend UI.
-
----
-
-# Main Backend Concepts Covered
-
-## Architecture & Backend Engineering
-
-* Monorepo Architecture
 * Microservices Architecture
 * API Gateway Pattern
-* Service-Oriented Architecture
-* Clean Architecture
-* Middleware Architecture
-* Scalable Folder Structures
-* Shared Package Architecture
-* Environment-Based Configuration
-
----
-
-## API Communication
-
-* REST APIs
-* GraphQL
-* gRPC
-* WebSockets
-* API Versioning
-* API Validation
-* API Standardization
-* Async Communication
-
----
-
-## Authentication & Security
-
+* GraphQL Gateway
+* gRPC Service Communication
+* RabbitMQ Event-Driven Architecture
+* SAGA Pattern
+* CQRS Pattern
+* Redis Caching
+* Elasticsearch Search Infrastructure
 * JWT Authentication
-* Refresh Tokens
-* RBAC
-* Secure Password Hashing
-* Rate Limiting
-* Helmet Security Headers
-* CORS
-* Input Validation
-* Environment Variable Security
+* RBAC Authorization
+* Analytics Aggregation
+* Distributed System Design
+
+Rather than focusing on frontend development, the project emphasizes scalable backend architecture and real-world engineering practices.
 
 ---
 
-## Databases & Storage
-
-* PostgreSQL
-* Redis
-* Elasticsearch
-* Database Normalization
-* Transactions
-* Connection Pooling
-* Caching Strategies
-* Distributed Cache Concepts
-
----
-
-## Event-Driven Architecture
-
-* RabbitMQ
-* Producers & Consumers
-* Background Workers
-* Async Processing
-* Retry Queues
-* Dead Letter Queues
-* Eventual Consistency
-* Idempotent Event Handling
-
----
-
-## Distributed Systems Basics
-
-* Distributed Communication
-* Service Isolation
-* Stateless Services
-* Horizontal Scaling Basics
-* Eventual Consistency
-* Distributed Locks
-* Race Condition Handling
-* Queue-Based Workflows
-
----
-
-## Observability & Monitoring
-
-* Structured Logging
-* Winston Logger
-* Prometheus
-* Grafana
-* Jaeger
-* OpenTelemetry Basics
-* Request Tracing
-* Correlation IDs
-* Health Checks
-
----
-
-## DevOps & Infrastructure
-
-* Docker
-* Docker Compose
-* Kubernetes Basics
-* CI/CD Pipelines
-* GitHub Actions
-* Reverse Proxy Concepts
-* Environment Separation
-
----
-
-## Performance Engineering
-
-* Load Testing
-* Stress Testing
-* REST vs gRPC Benchmarking
-* Throughput Analysis
-* Latency Analysis
-* Async vs Sync Processing
-* Connection Pooling
-
----
-
-# High-Level Architecture
+# Architecture Overview
 
 ```text
 Clients
- ├── Web App
- ├── Mobile App
+ ├── Web Application
+ ├── Mobile Application
  └── Admin Dashboard
           │
           ▼
       API Gateway
- ┌────────┼─────────┐
- │        │         │
-REST   GraphQL   WebSockets
- │        │         │
- └────────┼─────────┘
+          │
           ▼
-     Backend Services
+    GraphQL Gateway
+          │
+          ▼
+ ┌─────────────────────────────┐
+ │      Microservices          │
+ └─────────────────────────────┘
+
  ├── User Service
  ├── Product Service
  ├── Cart Service
  ├── Order Service
  ├── Payment Service
- ├── Notification Service
+ ├── Inventory Service
  ├── Search Service
- └── Analytics Service
+ ├── Analytics Service
+ └── Notification Service
+
           │
           ▼
-      gRPC Communication
+
+     gRPC Communication
+
           │
           ▼
+
       RabbitMQ Events
+
           │
           ▼
-      Async Workers
+
+   Distributed Workflows
+
+          │
+          ▼
+
+ PostgreSQL / Redis / Elasticsearch
 ```
 
 ---
 
-# Why Multiple Communication Protocols?
+# Implemented Backend Concepts
 
-## REST
+## Architecture
+
+* Monorepo Architecture
+* Microservices Architecture
+* API Gateway Pattern
+* GraphQL Gateway Pattern
+* Shared Package Architecture
+* Service Isolation
+* Database Per Service Pattern
+* Middleware Architecture
+* Event-Driven Architecture
+
+---
+
+## API Communication
+
+### REST APIs
 
 Used for:
 
@@ -202,91 +108,355 @@ Used for:
 * CRUD operations
 * External client communication
 
-Why:
-
-* Simple
-* Standardized
-* Browser-friendly
-* Easy integration
-
----
-
-## GraphQL
+### GraphQL
 
 Used for:
 
-* Flexible frontend data fetching
 * Aggregated queries
+* Dashboard data
+* Flexible data retrieval
 
-Why:
+### gRPC
 
-* Prevents overfetching
-* Reduces multiple API calls
-* Client-controlled response structure
+Implemented between:
 
----
-
-## gRPC
-
-Used for:
-
-* Internal microservice communication
-
-Why:
-
-* Faster than REST
-* Uses HTTP/2
-* Binary communication via Protocol Buffers
-* Lower latency
-
----
-
-## WebSockets
+* Order Service
+* Product Service
 
 Used for:
 
-* Real-time updates
-* Live notifications
-* Order tracking
+* Internal service communication
+* Fast product lookup
+* Protocol Buffer contracts
 
-Why:
-
-* Persistent communication
-* Event-driven real-time communication
-
----
-
-## RabbitMQ
+### RabbitMQ
 
 Used for:
 
-* Async background workflows
-* Event-driven processing
-
-Why:
-
-* Decouples services
-* Improves scalability
-* Handles retries and async tasks
+* Async workflows
+* SAGA communication
+* Analytics aggregation
+* Search indexing
 
 ---
 
-# Tech Stack
+# Authentication & Authorization
 
-## Core Backend
+Implemented:
+
+* JWT Authentication
+* Access Tokens
+* Refresh Tokens
+* Role-Based Access Control (RBAC)
+* API Gateway Authentication
+* Secure Password Hashing
+* Helmet Security
+* CORS Protection
+* Rate Limiting
+
+### Supported Roles
+
+#### CUSTOMER
+
+Can:
+
+* Browse products
+* Search products
+* Manage cart
+* Create orders
+* View own orders
+* Make payments
+
+#### SELLER
+
+Can:
+
+* Create products
+* Update products
+* Manage inventory
+* Create categories
+
+#### ADMIN
+
+Can:
+
+* Manage all resources
+* View analytics dashboard
+* Manage inventory
+* Update order statuses
+* Access administrative operations
+
+---
+
+# Databases & Storage
+
+## PostgreSQL
+
+Database-per-service pattern:
+
+* User Database
+* Product Database
+* Order Database
+* Payment Database
+* Search Database
+* Analytics Database
+
+---
+
+## Redis
+
+Used for:
+
+* Product caching
+* Cart storage
+* Fast data retrieval
+* Cache invalidation
+
+---
+
+## Elasticsearch
+
+Used for:
+
+* Product search
+* Full-text search
+* Search suggestions
+* Autocomplete
+* Search optimization
+
+---
+
+# Distributed System Patterns
+
+## SAGA Pattern
+
+Implemented using:
+
+* Order Service
+* Payment Service
+* Inventory Service
+* RabbitMQ
+
+Example Flow:
+
+```text
+Create Order
+      │
+      ▼
+Reserve Inventory
+      │
+      ▼
+Process Payment
+      │
+      ▼
+Success
+```
+
+Failure Flow:
+
+```text
+Create Order
+      │
+      ▼
+Payment Failed
+      │
+      ▼
+Cancel Order
+      │
+      ▼
+Compensation Action
+```
+
+---
+
+## CQRS Pattern
+
+Implemented in Search Service.
+
+### Command Side
+
+RabbitMQ Consumers
+
+* Product Created
+* Product Updated
+
+Events update Elasticsearch indexes.
+
+### Query Side
+
+Elasticsearch Read Models
+
+* Search Products
+* Autocomplete
+* Suggestions
+
+---
+
+# Services
+
+## API Gateway
+
+Responsibilities:
+
+* Authentication
+* Authorization forwarding
+* Rate limiting
+* Request logging
+* Routing
+
+---
+
+## GraphQL Gateway
+
+Responsibilities:
+
+* Unified API layer
+* Aggregated queries
+* Service orchestration
+
+---
+
+## User Service
+
+Responsibilities:
+
+* Registration
+* Login
+* Refresh Tokens
+* RBAC
+* User Management
+
+---
+
+## Product Service
+
+Responsibilities:
+
+* Product Management
+* Category Management
+* Redis Caching
+* gRPC Server
+
+---
+
+## Cart Service
+
+Responsibilities:
+
+* Redis Cart Storage
+* Cart Operations
+
+---
+
+## Order Service
+
+Responsibilities:
+
+* Order Lifecycle
+* SAGA Coordination
+* gRPC Product Lookup
+
+---
+
+## Payment Service
+
+Responsibilities:
+
+* Payment Processing
+* Idempotency Handling
+* Payment Events
+* SAGA Integration
+
+---
+
+## Inventory Service
+
+Responsibilities:
+
+* Inventory Tracking
+* Stock Management
+
+---
+
+## Search Service
+
+Responsibilities:
+
+* Elasticsearch Integration
+* Product Search
+* Autocomplete
+* CQRS Read Model
+
+---
+
+## Analytics Service
+
+Responsibilities:
+
+* Revenue Aggregation
+* Payment Metrics
+* Product Metrics
+* Dashboard APIs
+
+---
+
+## Notification Service
+
+Responsibilities:
+
+* Event-Based Notifications
+* Future Email/SMS Integration
+
+---
+
+# Analytics Dashboard
+
+The Analytics Service aggregates:
+
+* Total Revenue
+* Total Orders
+* Successful Payments
+* Failed Payments
+* Total Products
+
+Metrics are updated asynchronously using RabbitMQ consumers.
+
+---
+
+# Event-Driven Communication
+
+## Exchanges
+
+### ORDER_EVENTS
+
+Events:
+
+* order.created
+* order.cancelled
+
+### PAYMENT_EVENTS
+
+Events:
+
+* payment.success
+* payment.failed
+
+### PRODUCT_EVENTS
+
+Events:
+
+* product.created
+* product.updated
+
+---
+
+# Technology Stack
+
+## Backend
 
 * Node.js
 * TypeScript
 * Express.js
-
----
-
-## APIs
-
-* REST
-* Apollo GraphQL
-* gRPC
-* Socket.IO
 
 ---
 
@@ -304,39 +474,38 @@ Why:
 
 ---
 
-## Authentication & Security
+## APIs
+
+* REST
+* GraphQL
+* gRPC
+
+---
+
+## Authentication
 
 * JWT
-* bcrypt
-* Helmet
-* CORS
+* Refresh Tokens
+* RBAC
+
+---
+
+## Validation
+
 * Zod
 
 ---
 
-## Observability
+## Logging
 
 * Winston
-* Prometheus
-* Grafana
-* Jaeger
 
 ---
 
-## DevOps
+## Infrastructure
 
 * Docker
 * Docker Compose
-* GitHub Actions
-* Kubernetes (later phases)
-
----
-
-## Testing
-
-* Jest
-* Supertest
-* k6
 
 ---
 
@@ -344,216 +513,30 @@ Why:
 
 ```text
 Distributed-Commerce-Platform/
-│
+
 ├── api-gateway/
 ├── graphql-gateway/
+
 ├── services/
 │   ├── user-service/
 │   ├── product-service/
 │   ├── cart-service/
 │   ├── order-service/
 │   ├── payment-service/
-│   ├── notification-service/
+│   ├── inventory-service/
+│   ├── search-service/
 │   ├── analytics-service/
-│   └── search-service/
-│
+│   └── notification-service/
+
 ├── shared/
-├── grpc-protos/
 ├── infrastructure/
-├── docker/
 ├── observability/
-├── docs/
 └── scripts/
 ```
 
 ---
 
-# Service Responsibilities
-
-## API Gateway
-
-Handles:
-
-* centralized routing
-* middleware
-* authentication forwarding
-* rate limiting
-* request orchestration
-
----
-
-## User Service
-
-Handles:
-
-* registration
-* login
-* authentication
-* authorization
-* user management
-
----
-
-## Product Service
-
-Handles:
-
-* products
-* categories
-* filtering
-* product management
-
----
-
-## Cart Service
-
-Handles:
-
-* cart storage
-* guest carts
-* cart expiration
-
----
-
-## Order Service
-
-Handles:
-
-* order lifecycle
-* order creation
-* order tracking
-
----
-
-## Payment Service
-
-Handles:
-
-* payment simulation
-* retries
-* webhook workflows
-
----
-
-## Notification Service
-
-Handles:
-
-* email notifications
-* async messaging
-* event-driven notifications
-
----
-
-## Search Service
-
-Handles:
-
-* product search
-* indexing
-* autocomplete
-* filtering
-
----
-
-## Analytics Service
-
-Handles:
-
-* event tracking
-* reporting
-* metrics aggregation
-
----
-
-# Main Backend Engineering Goals
-
-This project focuses heavily on:
-
-## Scalability
-
-Learning how systems scale horizontally.
-
----
-
-## Maintainability
-
-Creating clean reusable backend architecture.
-
----
-
-## Observability
-
-Understanding production monitoring and tracing.
-
----
-
-## Distributed Systems
-
-Understanding:
-
-* async communication
-* eventual consistency
-* service isolation
-* distributed workflows
-
----
-
-## API Engineering
-
-Understanding:
-
-* protocol selection
-* API design
-* communication patterns
-
----
-
-# Current Development Status
-
-## Completed
-
-* Monorepo setup
-* Shared package setup
-* API Gateway foundation
-* TypeScript configuration
-* Docker setup
-* Logging foundation
-* Environment validation
-* Standardized API utilities
-* Error handling architecture
-
----
-
-## Upcoming Phases
-
-* REST architecture
-* Authentication system
-* Product service
-* Order workflows
-* RabbitMQ integration
-* GraphQL layer
-* gRPC communication
-* WebSockets
-* Redis caching
-* Elasticsearch search
-* Observability stack
-* Docker orchestration
-* CI/CD pipelines
-* Performance benchmarking
-
----
-
-# How to Run the Project
-
-## Clone Repository
-
-```bash
-git clone <repository-url>
-cd Distributed-Commerce-Platform
-```
-
----
+# Running The Project
 
 ## Install Dependencies
 
@@ -563,127 +546,94 @@ npm install
 
 ---
 
-## Run API Gateway
+## Start Infrastructure
+
+```bash
+npm run infra:up
+```
+
+Starts:
+
+* PostgreSQL
+* Redis
+* RabbitMQ
+* Elasticsearch
+
+---
+
+## Start Development Environment
 
 ```bash
 npm run dev
 ```
 
----
+Starts:
 
-## Run Docker Compose
-
-```bash
-docker-compose up --build
-```
-
----
-
-# Health Check Endpoint
-
-```text
-GET /health
-```
-
-Example:
-
-```text
-http://localhost:3000/health
-```
+* API Gateway
+* GraphQL Gateway
+* All Microservices
+* Shared Package Watch Mode
 
 ---
 
-# Development Principles Used
+# Current Status
 
-## Separation of Concerns
+## Completed
 
-Each service has a single responsibility.
-
----
-
-## Shared Utilities
-
-Reusable modules prevent duplication.
-
----
-
-## Environment-Based Configuration
-
-No hardcoded secrets or configuration.
-
----
-
-## Standardized API Responses
-
-Consistent backend contracts.
+* Microservices Architecture
+* API Gateway
+* GraphQL Gateway
+* JWT Authentication
+* Refresh Tokens
+* RBAC
+* PostgreSQL Integration
+* Redis Caching
+* RabbitMQ Messaging
+* SAGA Pattern
+* CQRS Pattern
+* Elasticsearch Search
+* gRPC Communication
+* Product Search APIs
+* Payment Processing
+* Analytics Service
+* Centralized Logging
 
 ---
 
-## Centralized Error Handling
+## Upcoming
 
-Unified scalable error architecture.
-
----
-
-## Structured Logging
-
-Production-ready logging format.
-
----
-
-# Why This Project Is Different
-
-Most beginner projects focus on:
-
-* frontend UI
-* CRUD operations
-* authentication only
-
-This project focuses on:
-
-* backend architecture
-* distributed systems
-* observability
-* scalability
-* async systems
-* performance engineering
-* communication protocols
+* Notification Enhancements
+* Testing Suite
+* Prometheus & Grafana
+* OpenTelemetry
+* Kubernetes Deployment
+* CI/CD Pipelines
+* Swagger Documentation
 
 ---
 
-# Learning Outcomes
+# Resume Highlights
 
-By building this project you will learn:
+This project demonstrates experience with:
 
-* scalable backend engineering
-* microservice communication
-* event-driven systems
-* caching strategies
-* real-time systems
-* API architecture
-* distributed systems basics
-* Docker workflows
-* observability concepts
-* production-grade backend practices
-
----
-
-# Future Improvements
-
-Planned advanced additions:
-
-* Kubernetes deployment
-* CQRS implementation
-* Saga orchestration
-* Distributed tracing enhancements
-* Advanced caching strategies
-* Recommendation engine
-* Advanced search optimization
-* Chaos testing
-* Auto-scaling simulation
+* Distributed Systems
+* Microservices
+* Event-Driven Architecture
+* CQRS
+* SAGA
+* RabbitMQ
+* Redis
+* Elasticsearch
+* GraphQL
+* gRPC
+* JWT Authentication
+* RBAC
+* Docker
+* PostgreSQL
+* TypeScript
 
 ---
 
 # Author
 
-Backend-focused distributed systems learning project built for mastering modern backend engineering concepts and scalable architecture design.
+Distributed Commerce Platform built as a backend engineering and distributed systems learning project focused on scalable architecture, asynchronous communication, and modern backend development practices.

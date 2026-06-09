@@ -27,20 +27,17 @@ import {
 } from '@middleware/request-logger.middleware';
 
 import {
-    requireRole
-}
-from '@middleware/role.middleware';
-
-import {
     authProxy,
     usersProxy,
+    adminProxy,
     productsProxy,
     categoriesProxy,
     cartProxy,
     ordersProxy,
     paymentsProxy,
     inventoryProxy,
-    searchProxy
+    searchProxy,
+    analyticsProxy
 } from '@proxy/services.proxy';
 
 const app = express();
@@ -76,7 +73,13 @@ app.use(
 
 app.use(
     '/api/v1/products',
+    authenticateRequest,
     productsProxy
+);
+
+app.use(
+    '/api/v1/admin',
+    adminProxy
 );
 
 app.use(
@@ -106,6 +109,12 @@ app.use(
     '/api/v1/inventory',
     authenticateRequest,
     inventoryProxy
+);
+
+app.use(
+    '/api/v1/analytics',
+    authenticateRequest,
+    analyticsProxy
 );
 
 app.use(

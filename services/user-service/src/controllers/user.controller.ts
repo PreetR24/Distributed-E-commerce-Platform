@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { getCurrentUser } from '@services/user.service';
+import { getCurrentUser, getAllUsersService } from '@services/user.service';
 
 export const currentUserController = async (
     req: Request,
@@ -16,3 +16,15 @@ export const currentUserController = async (
         data: user
     });
 };
+
+export const getAllUsersController = async (
+    req: Request,
+    res: Response
+) => {
+    const users = await getAllUsersService();
+
+    return res.status(200).json({
+        success: true,
+        data: users
+    });
+}

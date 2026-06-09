@@ -14,49 +14,12 @@ import {
 } from '@shared/common';
 
 import {
-    productClient
+    getProductByIdWithRetry
 }
-from '../grpc/product.grpc.client';
+from '../grpc/product.grpc.service';
 
 import { OrderStatus }
 from '../../generated/prisma';
-
-const getProductById = (
-    productId: string
-): Promise<any> => {
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
-
-            productClient.GetProductById(
-                {
-                    id: productId
-                },
-                (
-                    error: any,
-                    response: any
-                ) => {
-
-                    if (error) {
-
-                        logger.error(
-                            `gRPC Product Fetch Failed: ${productId}`
-                        );
-
-                        reject(error);
-
-                        return;
-                    }
-
-                    resolve(response);
-                }
-            );
-        }
-    );
-};
 
 export const createOrderService = async (
     userId: string,
@@ -83,7 +46,7 @@ export const createOrderService = async (
     for (const item of items) {
 
         const product =
-            await getProductById(
+            await getProductByIdWithRetry(
                 item.productId
             );
 

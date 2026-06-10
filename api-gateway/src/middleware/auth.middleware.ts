@@ -43,6 +43,13 @@ export const authenticateRequest = (
                 userId: string;
                 role: string;
             };
+        console.log(
+            `Decoded token: ${JSON.stringify(decoded)}`
+        );
+
+        console.log(
+            `Authenticated user: ${decoded.userId} with role: ${decoded.role}`
+        );
 
         req.headers['x-user-id'] =
             decoded.userId;

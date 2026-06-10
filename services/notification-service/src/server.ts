@@ -15,13 +15,35 @@ import {
     startPaymentConsumer
 } from './consumers/payment.consumer';
 
+import http from 'http';
+
+import app from './app';
+
+import {
+    initializeSocket
+}
+from './websocket/socket.server';
+
+const PORT = process.env.PORT;
+
 const bootstrap = async () => {
     await connectRabbitMQ();
     await startOrderConsumer();
     await startPaymentConsumer();
 
-    logger.info(
-        'Notification Service Running'
+    const httpServer = http.createServer(app);
+
+    initializeSocket(
+        httpServer
+    );
+
+    httpServer.listen(
+        PORT,
+        () => {
+            logger.info(
+                `Notification Service running on port ${PORT}`
+            );
+        }
     );
 };
 

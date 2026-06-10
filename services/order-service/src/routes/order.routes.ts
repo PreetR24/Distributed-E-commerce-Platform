@@ -40,7 +40,8 @@ router.get(
 router.patch(
     '/:orderId/status',
     requireRole(
-        UserRole.ADMIN
+        UserRole.ADMIN,
+        UserRole.CUSTOMER
     ),
     asyncHandler(updateOrderStatusController)
 );

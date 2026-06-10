@@ -116,3 +116,9 @@ export const analyticsProxy =
         'http://localhost:4008',
         '/analytics'
     );
+
+export const notificationsProxy =
+    createProxy(
+        'http://localhost:4009',
+        '/notifications'
+    );

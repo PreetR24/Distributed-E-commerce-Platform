@@ -8,15 +8,21 @@ import {
     publishEvent,
     EXCHANGES,
     QUEUES,
-    logger
+    logger,
+    AppError
 } from '@shared/common';
 
 import {
     createPayment,
     findPaymentByIdempotencyKey,
     updatePaymentStatus,
-    getPaymentsByUserId
+    getPaymentsByUserId,
+    findSuccessfulPaymentByOrderId
 } from '@repositories/payment.repository';
+
+import {
+    getOrderById
+} from '@grpc/order.grpc.service';
 
 export const createPaymentService = async (
     userId: string,
@@ -38,6 +44,42 @@ export const createPaymentService = async (
         return existingPayment;
     }
 
+    const successfulPayment =
+        await findSuccessfulPaymentByOrderId(
+            data.orderId
+        );
+
+    if (successfulPayment) {
+
+        throw new AppError(
+            'ORDER_ALREADY_PAID',
+            400,
+            'Payment already completed for this order'
+        );
+    }
+
+    const order =
+        await getOrderById(
+            data.orderId
+        );
+
+    if (!order) {
+        throw new AppError(
+            'ORDER_NOT_FOUND',
+            404,
+            'Order not found'
+        );
+    }
+
+    if ( order.status === 'CANCELLED' ) {
+
+        throw new AppError(
+            'ORDER_CANCELLED',
+            400,
+            'Cannot pay for a cancelled order'
+        );
+    }
+    
     const transactionId = uuid();
 
     const payment =

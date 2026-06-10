@@ -97,6 +97,32 @@ services:
             - postgres_analytics_data:/var/lib/postgresql/data
         restart: unless-stopped
 
+    postgres-inventory:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-inventory
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_inventory_db
+        ports:
+            - '5439:5432'
+        volumes:
+            - postgres_inventory_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
+    postgres-notification:
+        image: postgres:16
+        container_name: distributed-commerce-postgres-notification
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: distributed_commerce_notification_db
+        ports:
+            - '5440:5432'
+        volumes:
+            - postgres_notification_data:/var/lib/postgresql/data
+        restart: unless-stopped
+
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
         container_name: distributed-commerce-elasticsearch
@@ -117,4 +143,6 @@ volumes:
     postgres_payment_data:
     postgres_search_data:
     postgres_analytics_data:
+    postgres_inventory_data:
+    postgres_notification_data:
     elasticsearch_data:

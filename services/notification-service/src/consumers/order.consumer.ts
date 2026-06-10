@@ -1,28 +1,48 @@
 import {
     consumeEvent,
     EXCHANGES,
-    logger
-} from '@shared/common';
+    QUEUES
+}
+from '@shared/common';
 
-export const startOrderConsumer = async () => {
+import {
+    createNotification
+}
+from '@repositories/notification.repository';
+
+import {
+    sendNotification
+}
+from '@websocket/socket.server';
+
+export const startOrderConsumer =
+async () => {
 
     await consumeEvent(
         EXCHANGES.ORDER_EVENTS,
         'notification.order.created',
         async (data) => {
-            logger.info(
-                'Notification Event Received:',
-                {
-                    ...data
-                }
-            );
+            if (
+                data.event !==
+                QUEUES.ORDER_CREATED
+            ) {
+                return;
+            }
 
-            logger.info(
-                `Order Confirmation Email Sent To ${data.userId}`
-            );
+            const notification =
+                await createNotification({
+                    userId: data.userId,
+                    title:
+                        'Order Created',
+                    message:
+                        `Order ${data.orderId} created successfully`,
+                    type:
+                        'ORDER'
+                });
 
-            logger.info(
-                `SMS Notification Sent`
+            sendNotification(
+                data.userId,
+                notification
             );
         }
     );

@@ -61,3 +61,19 @@ export const getPaymentsByUserId = async (
         }
     });
 };
+
+export const findSuccessfulPaymentByOrderId =
+async (
+    orderId: string
+) => {
+
+    return prisma.payment.findFirst({
+
+        where: {
+
+            orderId,
+
+            status: PaymentStatus.SUCCESS
+        }
+    });
+};

@@ -37,6 +37,7 @@ import {
     paymentsProxy,
     inventoryProxy,
     searchProxy,
+    notificationsProxy,
     analyticsProxy
 } from '@proxy/services.proxy';
 
@@ -84,6 +85,7 @@ app.use(
 
 app.use(
     '/api/v1/categories',
+    authenticateRequest,
     categoriesProxy
 );
 
@@ -115,6 +117,12 @@ app.use(
     '/api/v1/analytics',
     authenticateRequest,
     analyticsProxy
+);
+
+app.use(
+    '/api/v1/notifications',
+    authenticateRequest,
+    notificationsProxy
 );
 
 app.use(

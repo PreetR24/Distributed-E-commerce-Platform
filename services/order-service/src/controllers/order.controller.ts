@@ -21,9 +21,15 @@ export const createOrderController = async (
         req.headers['x-user-id']
     );
 
+    const requestId =
+        getHeaderValue(
+            req.headers['x-request-id']
+        );
+
     const order =
         await createOrderService(
             userId,
+            requestId,
             req.body.items
         );
 

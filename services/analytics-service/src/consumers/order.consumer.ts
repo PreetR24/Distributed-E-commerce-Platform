@@ -33,9 +33,9 @@ async () => {
                 data.totalAmount
             );
 
-            logger.info(
-                `Analytics Revenue Updated`
-            );
+            logger.info({
+                event: `Analytics Revenue Updated`,
+            });
         }
     );
 };

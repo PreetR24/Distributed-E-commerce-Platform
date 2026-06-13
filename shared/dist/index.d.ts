@@ -11,3 +11,4 @@ export * from './middleware/role.middleware';
 export * from './messaging/rabbitmq';
 export * from './cache/redis-cache';
 export * from './enums/roles';
+export * from './health/health.service';

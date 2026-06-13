@@ -26,6 +26,7 @@ import {
 
 export const createPaymentService = async (
     userId: string,
+    requestId: string,
     data: {
         orderId: string;
         amount: number;
@@ -126,16 +127,19 @@ export const createPaymentService = async (
                     updatedPayment.amount,
 
                 userId,
+                requestId,
 
                 createdAt:
                     new Date()
             }
         );
 
-        logger.info(`Payment successful for paymentId: ${updatedPayment.id},
-            orderId: ${updatedPayment.orderId},
-            amount: ${updatedPayment.amount}`
-        );
+        logger.info({
+            event: 'PAYMENT_SUCCESS',
+            paymentId: updatedPayment.id,
+            orderId: updatedPayment.orderId,
+            amount: updatedPayment.amount
+        });
     }
     else {
 
@@ -156,16 +160,19 @@ export const createPaymentService = async (
                     updatedPayment.amount,
 
                 userId,
+                requestId,
 
                 createdAt:
                     new Date()
             }
         );
 
-        logger.info(`Payment failed for paymentId: ${updatedPayment.id},
-            orderId: ${updatedPayment.orderId},
-            amount: ${updatedPayment.amount}`
-        );
+        logger.info({
+            event: 'PAYMENT_FAILED',
+            paymentId: updatedPayment.id,
+            orderId: updatedPayment.orderId,
+            amount: updatedPayment.amount
+        });
     }
 
     return updatedPayment;

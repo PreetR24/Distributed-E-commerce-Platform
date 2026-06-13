@@ -49,12 +49,11 @@ export const addToCartService = async (
 
     await saveCart(userId, cart);
 
-    logger.info(
-        `Cart Updated for User: ${userId}`,
-        {
-            cart
-        }
-    );
+    logger.info({
+        event: 'Card updated',        
+        userId,
+        totalAmount: cart.totalPrice
+    });
 
     return cart;
 };
@@ -72,7 +71,8 @@ export const clearCartService = async (
 
     await clearCart(userId);
 
-    logger.info(
-        `Cart Cleared for User: ${userId}`
-    );
+    logger.info({
+        event: 'Cart Cleared',
+        userId,
+    });
 };

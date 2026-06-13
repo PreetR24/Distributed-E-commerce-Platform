@@ -34,7 +34,7 @@ export const createProductService = async (
 
     await publishEvent(
         EXCHANGES.PRODUCT_EVENTS,
-        '',
+        QUEUES.PRODUCT_CREATED,
         {
             event: QUEUES.PRODUCT_CREATED,
 
@@ -64,12 +64,13 @@ export const createProductService = async (
         }
     );
 
-    logger.info(
-        'Product created and event published:',
-        {
+    logger.info({
+            event: 'Product created and event published:',
             productId: createdProduct.id
         }
     );
+
+    return createdProduct;
 };
 
 export const getProductsService =
@@ -216,12 +217,10 @@ async (
         }
     );
 
-    logger.info(
-        'Product updated and event published:',
-        {
-            productId: updatedProduct.id
-        }
-    );
+    logger.info({
+        event: 'Product updated',
+        productId: updatedProduct.id
+    });
         
 
     return updatedProduct;

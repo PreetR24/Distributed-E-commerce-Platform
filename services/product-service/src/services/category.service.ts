@@ -9,11 +9,11 @@ export const createCategoryService = async (
     name: string
 ) => {
 
-    await createCategory(name);
+    const category = await createCategory(name);
 
     logger.info(`Category ${name} created successfully.`);
 
-    return { message: `Category ${name} created successfully.` };
+    return category;
 };
 
 export const getCategoriesService = async () => {

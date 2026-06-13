@@ -28,6 +28,26 @@ async (
     });
 };
 
+export const createInventoryStock =
+async (
+    data: {
+        productId: string;
+        availableStock: number;
+    }
+) => {
+    return prisma.inventory.create({
+        data: {
+            productId: data.productId,
+            availableStock: data.availableStock
+        }
+    });
+};
+
+export const getAllInventory =
+async () => {
+    return prisma.inventory.findMany();
+};
+
 export const updateInventoryStock =
 async (
     inventoryId: string,

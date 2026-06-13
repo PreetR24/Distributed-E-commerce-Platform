@@ -1,19 +1,12 @@
-import { Request, Response }
-from 'express';
+import { Request, Response } from 'express';
 
-import { prisma }
-from '@config/prisma';
+import { createInventoryService, getInventoryService } from '@services/inventory.service';
 
-export const createInventoryController =
-async (
+export const createInventoryController = async (
     req: Request,
     res: Response
 ) => {
-
-    const inventory =
-        await prisma.inventory.create({
-            data: req.body
-        });
+    const inventory = await createInventoryService(req.body);
 
     return res.status(201).json({
         success: true,
@@ -21,14 +14,11 @@ async (
     });
 };
 
-export const getInventoryController =
-async (
+export const getInventoryController = async (
     req: Request,
     res: Response
 ) => {
-
-    const inventory =
-        await prisma.inventory.findMany();
+    const inventory = await getInventoryService();
 
     return res.status(200).json({
         success: true,

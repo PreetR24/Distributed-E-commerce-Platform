@@ -27,3 +27,4 @@ __exportStar(require("./middleware/role.middleware"), exports);
 __exportStar(require("./messaging/rabbitmq"), exports);
 __exportStar(require("./cache/redis-cache"), exports);
 __exportStar(require("./enums/roles"), exports);
+__exportStar(require("./health/health.service"), exports);

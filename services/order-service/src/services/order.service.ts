@@ -23,6 +23,7 @@ from '../../generated/prisma';
 
 export const createOrderService = async (
     userId: string,
+    requestId: string,
     items: any[]
 ) => {
 
@@ -94,15 +95,19 @@ export const createOrderService = async (
             event: QUEUES.ORDER_CREATED,
             orderId: order.id,
             userId,
+            requestId,
             totalAmount,
             items: enrichedItems,
             createdAt: new Date()
         }
     );
 
-    logger.info(
-        `Order Created: ${order.id}`
-    );
+    logger.info({
+        event: 'ORDER_CREATED',
+        orderId: order.id,
+        userId,
+        totalAmount
+    });
 
     return order;
 };
@@ -145,9 +150,11 @@ export const updateOrderStatusService = async (
         status
     );
 
-    logger.info(
-        `Order Status Updated: ${orderId} -> ${status}`,
-    );
+    logger.info({
+        event: 'ORDER_UPDATED',
+        orderId,
+        status
+    });
 
     return getOrderById(orderId);
 };

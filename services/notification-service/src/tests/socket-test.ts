@@ -8,6 +8,7 @@ const io =
     );
 
 const PORT = process.env.PORT;
+const sampleUser = process.env.SAMPLE_USER;
 
 interface Notification {
     id: string;
@@ -33,7 +34,7 @@ socket.on(
 );
 
 socket.on(
-    "notification:bc4542e3-7749-4137-a2e4-1dfb0705afed",
+    `notification:${sampleUser}`,
     (
         notification: Notification
     ) => {

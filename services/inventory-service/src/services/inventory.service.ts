@@ -1,4 +1,6 @@
 import {
+    createInventoryStock,
+    getAllInventory,
     getInventoryByProductId,
     createReservation,
     updateInventoryStock,
@@ -6,36 +8,50 @@ import {
     updateReservationStatus
 } from '@repositories/inventory.repository';
 
-import { AppError }
-from '@shared/common';
-
 import {
+    AppError,
     publishEvent,
     EXCHANGES,
     QUEUES,
     logger
 } from '@shared/common';
 
-export const reserveInventoryService =
-async (
+export const createInventoryService = async (
+    body: {
+        productId: string;
+        availableStock: number;
+    }
+) => {
+    if (!body?.productId) {
+        throw new AppError('PRODUCT_ID_REQUIRED', 400, 'productId is required');
+    }
+
+    if (typeof body.availableStock !== 'number') {
+        throw new AppError('AVAILABLE_STOCK_REQUIRED', 400, 'availableStock must be a number');
+    }
+
+    return createInventoryStock({
+        productId: body.productId,
+        availableStock: body.availableStock
+    });
+};
+
+export const getInventoryService = async () => {
+    return getAllInventory();
+};
+
+export const reserveInventoryService = async (
     orderId: string,
     items: {
         productId: string;
         quantity: number;
     }[]
 ) => {
-
     for (const item of items) {
-
-        const inventory =
-            await getInventoryByProductId(
-                item.productId
-            );
+        const inventory = await getInventoryByProductId(item.productId);
 
         if (!inventory) {
-            logger.error(
-                `Inventory not found for Product ${item.productId}`
-            );
+            logger.error(`Inventory not found for Product ${item.productId}`);
 
             throw new AppError(
                 'INVENTORY_NOT_FOUND',
@@ -44,32 +60,17 @@ async (
             );
         }
 
-        if (
-            inventory.availableStock <
-            item.quantity
-        ) {
-
+        if (inventory.availableStock < item.quantity) {
             await publishEvent(
                 EXCHANGES.ORDER_EVENTS,
-                '',
+                QUEUES.INVENTORY_RESERVATION_FAILED,
                 {
-                    event:
-                        QUEUES
-                            .INVENTORY_RESERVATION_FAILED,
-
+                    event: QUEUES.INVENTORY_RESERVATION_FAILED,
                     orderId,
-
-                    productId:
-                        item.productId,
-
-                    quantity:
-                        item.quantity,
-
-                    reason:
-                        'OUT_OF_STOCK',
-
-                    createdAt:
-                        new Date()
+                    productId: item.productId,
+                    quantity: item.quantity,
+                    reason: 'OUT_OF_STOCK',
+                    createdAt: new Date()
                 }
             );
 
@@ -84,13 +85,8 @@ async (
             );
         }
 
-        const updatedAvailableStock =
-            inventory.availableStock -
-            item.quantity;
-
-        const updatedReservedStock =
-            inventory.reservedStock +
-            item.quantity;
+        const updatedAvailableStock = inventory.availableStock - item.quantity;
+        const updatedReservedStock = inventory.reservedStock + item.quantity;
 
         await updateInventoryStock(
             inventory.id,
@@ -102,49 +98,31 @@ async (
             orderId,
             productId: item.productId,
             quantity: item.quantity,
-            expiresAt: new Date(
-                Date.now() +
-                15 * 60 * 1000
-            )
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000)
         });
 
-        logger.info(
-            `Inventory Reserved: Order ${orderId}, Product ${item.productId}, Quantity ${item.quantity}`
-        );
+        logger.info({
+            event: 'Inventory Reserved',
+            orderId,
+            productId: item.productId
+        });
     }
 };
 
-export const releaseInventoryReservationService =
-async (
+export const releaseInventoryReservationService = async (
     orderId: string
 ) => {
+    const reservations = await getReservationsByOrderId(orderId);
 
-    const reservations =
-        await getReservationsByOrderId(
-            orderId
-        );
-
-    for (
-        const reservation
-        of reservations
-    ) {
-
-        const inventory =
-            await getInventoryByProductId(
-                reservation.productId
-            );
+    for (const reservation of reservations) {
+        const inventory = await getInventoryByProductId(reservation.productId);
 
         if (!inventory) {
             continue;
         }
 
-        const updatedAvailableStock =
-            inventory.availableStock +
-            reservation.quantity;
-
-        const updatedReservedStock =
-            inventory.reservedStock -
-            reservation.quantity;
+        const updatedAvailableStock = inventory.availableStock + reservation.quantity;
+        const updatedReservedStock = inventory.reservedStock - reservation.quantity;
 
         await updateInventoryStock(
             inventory.id,
@@ -157,8 +135,10 @@ async (
             'RELEASED'
         );
 
-        logger.info(
-            `Inventory Released: Order ${orderId}, Product ${reservation.productId}, Quantity ${reservation.quantity}`
-        );
+        logger.info({
+            event: 'Inventory Released',
+            orderId,
+            productId: reservation.productId
+        });
     }
 };

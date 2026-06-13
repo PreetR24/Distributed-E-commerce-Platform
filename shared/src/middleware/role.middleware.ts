@@ -20,9 +20,6 @@ export const requireRole =
             req.headers[
                 'x-user-role'
             ] as string;
-        console.log(
-            `Checking role: ${role} against allowed roles: ${roles.join(', ')}`
-        );
 
         if (
             !role ||

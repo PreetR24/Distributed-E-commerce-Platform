@@ -37,9 +37,10 @@ async () => {
                 data.orderId
             );
 
-            logger.info(
-                `Inventory Released For Order ${data.orderId}`
-            );
+            logger.info({
+                event: 'Inventory Released',
+                orderId: data.orderId
+            });
         }
     );
 };

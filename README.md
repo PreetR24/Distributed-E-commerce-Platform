@@ -138,6 +138,32 @@ Used for:
 * Analytics aggregation
 * Search indexing
 
+### WebSockets
+
+Implemented for:
+
+- Real-time notifications
+
+Used for:
+
+- Order notifications
+- Payment notifications
+- Live user updates
+
+---
+
+## Testing & Verification
+
+- Automated System Verification
+- End-to-End Workflow Testing
+- Infrastructure Verification
+- RabbitMQ Verification
+- Redis Verification
+- Elasticsearch Verification
+- PostgreSQL Verification
+- Health Monitoring
+- Operational Visibility
+
 ---
 
 # Authentication & Authorization
@@ -200,6 +226,7 @@ Database-per-service pattern:
 * Payment Database
 * Search Database
 * Analytics Database
+* Notification Database
 
 ---
 
@@ -289,6 +316,30 @@ Elasticsearch Read Models
 * Search Products
 * Autocomplete
 * Suggestions
+
+---
+
+## Event-Driven Notifications
+
+Implemented using:
+
+- RabbitMQ
+- Notification Service
+- WebSockets
+
+Flow:
+
+Order Created
+↓
+RabbitMQ Event
+↓
+Notification Service
+↓
+PostgreSQL
+↓
+WebSocket Push
+↓
+User
 
 ---
 
@@ -404,8 +455,31 @@ Responsibilities:
 
 Responsibilities:
 
-* Event-Based Notifications
-* Future Email/SMS Integration
+- Notification Storage
+- RabbitMQ Event Consumption
+- Real-Time Notifications
+- Read / Unread Tracking
+- Notification APIs
+- WebSocket Delivery
+
+---
+
+# Notification System
+
+The Notification Service consumes events from RabbitMQ and creates user notifications.
+
+Supported Notifications:
+
+- Order Created
+- Payment Success
+- Payment Failed
+
+Features:
+
+- Persistent Notification Storage
+- Read / Unread Tracking
+- Notification APIs
+- Real-Time Delivery via WebSockets
 
 ---
 
@@ -413,13 +487,75 @@ Responsibilities:
 
 The Analytics Service aggregates:
 
-* Total Revenue
-* Total Orders
-* Successful Payments
-* Failed Payments
-* Total Products
+- Total Revenue
+- Total Orders
+- Successful Payments
+- Failed Payments
+- Total Products
 
 Metrics are updated asynchronously using RabbitMQ consumers.
+
+Available APIs:
+
+- GET /analytics/dashboard
+
+Analytics is restricted to ADMIN users via RBAC.
+
+---
+
+# Health Monitoring
+
+Every service exposes:
+
+GET /health
+
+Services:
+
+- User Service
+- Product Service
+- Cart Service
+- Order Service
+- Payment Service
+- Inventory Service
+- Search Service
+- Analytics Service
+- Notification Service
+
+API Gateway aggregates service health through:
+
+GET /api/v1/system-health
+
+---
+
+# Automated Verification Framework
+
+The project includes an automated verification suite that validates:
+
+- Service Availability
+- PostgreSQL Connectivity
+- Redis Connectivity
+- RabbitMQ Connectivity
+- Elasticsearch Connectivity
+
+Business Workflow Verification:
+
+Create Category
+↓
+Create Product
+↓
+Create Inventory
+↓
+Create Order
+↓
+Create Payment
+↓
+Notification Generated
+↓
+Analytics Updated
+
+Run:
+
+npm run verify-system
 
 ---
 
@@ -490,6 +626,12 @@ Events:
 
 ---
 
+## Real-Time Communication
+
+- Socket.IO
+
+---
+
 ## Validation
 
 * Zod
@@ -529,6 +671,13 @@ Distributed-Commerce-Platform/
 │   └── notification-service/
 
 ├── shared/
+
+├── tests/
+│   ├── config/
+│   ├── verification/
+│   ├── workflows/
+│   └── verify-system.ts
+
 ├── infrastructure/
 ├── observability/
 └── scripts/
@@ -573,3 +722,31 @@ Starts:
 * GraphQL Gateway
 * All Microservices
 * Shared Package Watch Mode
+
+---
+
+## Verify Entire Platform
+
+```bash
+npm run verify-system
+```
+
+Expected Output:
+```bash
+
+- All Services Healthy
+- RabbitMQ
+- Redis
+- Elasticsearch
+- PostgreSQL
+
+- Category Created
+- Product Created
+- Inventory Created
+- Order Created
+- Payment Successful
+- Notification Generated
+- Analytics Updated
+
+- SYSTEM VERIFICATION PASSED
+```

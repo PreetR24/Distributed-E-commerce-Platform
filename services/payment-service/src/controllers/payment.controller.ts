@@ -11,10 +11,12 @@ export const createPaymentController = async (
 ) => {
 
     const userId = req.headers['x-user-id'] as string;
+    const requestId = req.headers['x-request-id'] as string;
 
     const payment =
         await createPaymentService(
             userId,
+            requestId,
             req.body
         );
 

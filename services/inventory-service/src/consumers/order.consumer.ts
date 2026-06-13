@@ -30,9 +30,10 @@ async () => {
                 data.items
             );
 
-            logger.info(
-                `Inventory Reserved For Order ${data.orderId}`
-            );
+            logger.info({
+                event: 'Inventory Reserved',
+                orderId: data.orderId
+            });
         }
     );
 };

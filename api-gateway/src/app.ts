@@ -41,6 +41,8 @@ import {
     analyticsProxy
 } from '@proxy/services.proxy';
 
+import v1Routes from './v1';
+
 const app = express();
 
 app.use(cors());
@@ -129,6 +131,8 @@ app.use(
     '/api/v1/search',
     searchProxy
 );
+
+app.use('/api/v1', v1Routes);
 
 app.use((_req, res) => {
 

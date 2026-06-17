@@ -22,8 +22,10 @@ async () => {
             product
         );
 
-        logger.info(
-            `Indexed Product: ${product.id}`
+        logger.info({
+                event: 'Indexed Product',
+                productId:product.id
+            }
         );
     }
 };

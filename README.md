@@ -735,10 +735,10 @@ Expected Output:
 ```bash
 
 - All Services Healthy
-- RabbitMQ
-- Redis
-- Elasticsearch
-- PostgreSQL
+- RabbitMQ Connected
+- Redis Connected
+- Elasticsearch Connected
+- PostgreSQL Connected
 
 - Category Created
 - Product Created

@@ -17,4 +17,4 @@ jobs:
         run: docker compose -f infrastructure/docker-compose.yml config
 
       - name: Build Containers
-        run: docker compose -f infrastructure/docker-compose.yml config
+        run: docker compose -f infrastructure/docker-compose.yml build

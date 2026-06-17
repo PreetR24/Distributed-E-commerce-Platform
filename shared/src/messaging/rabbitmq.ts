@@ -1,6 +1,12 @@
 import amqp from 'amqplib';
 import {logger} from "../utils/logger"
 
+import {
+    publishedEvents,
+    consumedEvents
+}
+from '../metrics/infrastructure.metrics';
+
 let channel: amqp.Channel;
 
 export const connectRabbitMQ = async () => {
@@ -39,6 +45,8 @@ export const publishEvent = async (
             JSON.stringify(message)
         )
     );
+
+    publishedEvents.inc();
 
     logger.info(
         'Event Published',
@@ -102,6 +110,7 @@ export const consumeEvent = async (
 
             try {
                 await callback(parsedMessage);
+                consumedEvents.inc();
                 channel.ack(message);
             }
             catch (error) {

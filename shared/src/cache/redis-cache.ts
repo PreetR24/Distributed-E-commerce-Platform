@@ -3,6 +3,12 @@ from 'redis';
 
 import {logger} from '../utils/logger';
 
+import {
+    cacheHits,
+    cacheMisses
+}
+from '../metrics/infrastructure.metrics';
+
 const redisClient =
     createClient({
         url:
@@ -38,8 +44,15 @@ export const getCache =
 async (
     key: string
 ) => {
+    const value = await redisClient.get(key);
 
-    return redisClient.get(key);
+    if (value) {
+        cacheHits.inc();
+    }
+    else {
+        cacheMisses.inc();
+    }
+    return value;
 };
 
 export const setCache =

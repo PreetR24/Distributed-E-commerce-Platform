@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
     "rebuild-search": "tsx src/jobs/run-rebuild.ts",
-    "build": "tsc"
+    "build": "tsc && tsc-alias"
   },
   "keywords": [],
   "author": "",

@@ -7,10 +7,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import {
-    globalErrorHandler
-} from '@shared/common';
-
-import {
     requestIdMiddleware
 } from '@middleware/request-id.middleware';
 
@@ -43,7 +39,27 @@ import {
 
 import v1Routes from './v1';
 
+import {
+    globalErrorHandler,
+    register,
+    metricsMiddleware
+ }
+from '@shared/common';
+
 const app = express();
+
+app.get(
+    '/metrics',
+    async (_req, res) => {
+        res.set(
+            'Content-Type',
+            register.contentType
+        );
+        res.end(
+            await register.metrics()
+        );
+    }
+);
 
 app.use(cors());
 
@@ -62,6 +78,8 @@ app.use(requestIdMiddleware);
 app.use(requestLogger);
 
 app.use(apiRateLimiter);
+
+app.use(metricsMiddleware);
 
 app.use(
     '/api/v1/auth',

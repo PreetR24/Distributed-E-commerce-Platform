@@ -135,6 +135,22 @@ services:
             - elasticsearch_data:/usr/share/elasticsearch/data
         restart: unless-stopped
 
+    prometheus:
+        image: prom/prometheus
+        container_name: distributed-commerce-prometheus
+        ports:
+            - "9090:9090"
+        volumes:
+            - ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        restart: unless-stopped
+
+    grafana:
+        image: grafana/grafana
+        container_name: distributed-commerce-grafana
+        ports:
+            - "3001:3000"
+        restart: unless-stopped
+
 volumes:
     redis_data:
     rabbitmq_data:

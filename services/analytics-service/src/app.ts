@@ -7,13 +7,30 @@ import healthRoutes
 from './routes/health.routes';
 
 import {
-    globalErrorHandler
-}
+    globalErrorHandler,
+    register,
+    metricsMiddleware
+ }
 from '@shared/common';
 
 const app = express();
 
+app.get(
+    '/metrics',
+    async (_req, res) => {
+        res.set(
+            'Content-Type',
+            register.contentType
+        );
+        res.end(
+            await register.metrics()
+        );
+    }
+);
+
 app.use(express.json());
+
+app.use(metricsMiddleware);
 
 app.use(
     '/api/v1/analytics',

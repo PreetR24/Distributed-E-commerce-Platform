@@ -18,6 +18,11 @@ import {
 }
 from '../grpc/product.grpc.service';
 
+import {
+    ordersCreatedCounter
+}
+from '@shared/common';
+
 import { OrderStatus }
 from '../../generated/prisma';
 
@@ -101,6 +106,8 @@ export const createOrderService = async (
             createdAt: new Date()
         }
     );
+
+    ordersCreatedCounter.inc();
 
     logger.info({
         event: 'ORDER_CREATED',

@@ -21,6 +21,12 @@ import {
 } from '@repositories/payment.repository';
 
 import {
+    paymentsSuccessCounter,
+    paymentsFailedCounter
+}
+from '@shared/common';
+
+import {
     getOrderById
 } from '@grpc/order.grpc.service';
 
@@ -134,6 +140,8 @@ export const createPaymentService = async (
             }
         );
 
+        paymentsSuccessCounter.inc();
+
         logger.info({
             event: 'PAYMENT_SUCCESS',
             paymentId: updatedPayment.id,
@@ -166,6 +174,8 @@ export const createPaymentService = async (
                     new Date()
             }
         );
+
+        paymentsFailedCounter.inc();
 
         logger.info({
             event: 'PAYMENT_FAILED',

@@ -1,4 +1,8 @@
 node_modules
 .env
-**/dist
+
+services/*/dist
+api-gateway/dist
+graphql-gateway/dist
+
 coverage

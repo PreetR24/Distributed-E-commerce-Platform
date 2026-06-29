@@ -1,3 +1,7 @@
+![Build](https://github.com/PreetR24/Distributed-E-commerce-Platform/actions/workflows/build.yml/badge.svg)
+
+![Docker](https://github.com/PreetR24/Distributed-E-commerce-Platform/actions/workflows/docker.yml/badge.svg)
+
 # Distributed Commerce Platform
 
 A distributed microservices-based commerce platform built with Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Elasticsearch, GraphQL, and gRPC.
@@ -27,6 +31,24 @@ The goal is to showcase:
 * Distributed System Design
 
 Rather than focusing on frontend development, the project emphasizes scalable backend architecture and real-world engineering practices.
+
+---
+
+# Key Features
+
+- Distributed Microservices Architecture
+- API Gateway & GraphQL Gateway
+- Event-Driven Communication with RabbitMQ
+- gRPC Service-to-Service Communication
+- CQRS-based Search Service
+- SAGA-based Order & Payment Workflow
+- Redis Caching
+- Elasticsearch Full-Text Search & Autocomplete
+- JWT Authentication & RBAC Authorization
+- Real-Time Notifications with WebSockets
+- Prometheus & Grafana Observability
+- Dockerized Development Environment
+- GitHub Actions CI Pipeline
 
 ---
 
@@ -113,6 +135,56 @@ Used for:
 * Aggregated queries
 * Dashboard data
 * Flexible data retrieval
+
+### Sample Queries
+
+#### Products
+
+```graphql
+query {
+    products {
+        products {
+            id
+            name
+            price
+        }
+    }
+}
+```
+
+#### Dashboard
+
+```graphql
+query {
+
+    dashboard(
+        search: "iphone"
+    ) {
+
+        analytics {
+            totalRevenue
+            totalOrders
+        }
+
+        products {
+            products {
+                name
+            }
+        }
+
+        searchResults {
+            products {
+                name
+            }
+        }
+
+        trendingSearches {
+            searchTerm
+            totalSearches
+        }
+    }
+}
+```
 
 ### gRPC
 
@@ -333,6 +405,18 @@ User
 
 # Services
 
+## Service Communication
+
+| Source | Destination | Protocol |
+|---------|-------------|----------|
+| API Gateway | All Services | REST |
+| GraphQL Gateway | API Gateway | REST |
+| Order Service | Product Service | gRPC |
+| Product Service | Search Service | RabbitMQ |
+| Payment Service | Analytics Service | RabbitMQ |
+| Order Service | Notification Service | RabbitMQ |
+| Payment Service | Notification Service | RabbitMQ |
+
 ## API Gateway
 
 Responsibilities:
@@ -347,9 +431,12 @@ Responsibilities:
 
 Responsibilities:
 
-* Unified API layer
-* Aggregated queries
-* Service orchestration
+* Unified API Layer
+* Aggregated Queries Across Microservices
+* Product Search Aggregation
+* Dashboard Aggregation
+* Authentication Header Forwarding
+* Request Orchestration
 
 ## User Service
 
@@ -861,6 +948,26 @@ Distributed-Commerce-Platform/
 
 # Running The Project
 
+## Environment Variables
+
+Each service provides a `.env.example` file.
+
+Before running the project, create the corresponding `.env` file.
+
+Linux/macOS
+
+```bash
+cp services/product-service/.env.example services/product-service/.env
+```
+
+Windows PowerShell
+
+```powershell
+Copy-Item services/product-service/.env.example services/product-service/.env
+```
+
+Repeat this for every service before starting the platform.
+
 ## Install Dependencies
 
 ```bash
@@ -879,6 +986,32 @@ Starts:
 * Redis
 * RabbitMQ
 * Elasticsearch
+
+## Docker Commands
+
+Build Containers
+
+```bash
+docker compose build
+```
+
+Start Platform
+
+```bash
+docker compose up
+```
+
+Stop Platform
+
+```bash
+docker compose down
+```
+
+Rebuild
+
+```bash
+docker compose up --build
+```
 
 ## Start Development Environment
 

@@ -3,8 +3,8 @@ name: Docker
 on:
   push:
     paths:
-      - 'docker-compose.yml'
-      - '**/Dockerfile'
+      - docker-compose.yml
+      - "**/Dockerfile"
 
 jobs:
   docker:
@@ -15,9 +15,25 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: docker/setup-buildx-action@v3
+      - name: Create .env files
+        
+        run: |
+          cp api-gateway/.env.example api-gateway/.env
+          cp services/user-service/.env.example services/user-service/.env
+          cp services/product-service/.env.example services/product-service/.env
+          cp services/cart-service/.env.example services/cart-service/.env
+          cp services/order-service/.env.example services/order-service/.env
+          cp services/payment-service/.env.example services/payment-service/.env
+          cp services/inventory-service/.env.example services/inventory-service/.env
+          cp services/search-service/.env.example services/search-service/.env
+          cp services/analytics-service/.env.example services/analytics-service/.env
+          cp services/notification-service/.env.example services/notification-service/.env
+          cp graphql-gateway/.env.example graphql-gateway/.env
 
       - name: Validate Compose
+
         run: docker compose config
 
       - name: Build Containers
+
         run: docker compose build

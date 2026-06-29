@@ -21,7 +21,7 @@ async (
             price: product.price,
             isActive: product.isActive,
             categoryId: product.categoryId,
-            categoryName: product.category.name,
+            categoryName: product.categoryName,
             createdAt: new Date(product.createdAt),
             updatedAt: new Date(product.updatedAt)
         },
@@ -32,7 +32,7 @@ async (
             price: product.price,
             isActive: product.isActive,
             categoryId: product.categoryId,
-            categoryName: product.category.name,
+            categoryName: product.categoryName,
             updatedAt: new Date(product.updatedAt)
         }
     });
@@ -166,7 +166,7 @@ async (
                     product.categoryId,
 
                 categoryName:
-                    product.category.name,
+                    product.categoryName,
 
                 createdAt:
                     product.createdAt,

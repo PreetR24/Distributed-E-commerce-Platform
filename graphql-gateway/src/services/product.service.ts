@@ -1,23 +1,28 @@
 import axios from 'axios';
+import {GraphQLContext} from '../server';
 
-import { env }
-from '@config/env';
+const API_GATEWAY_URL =
+    process.env.API_GATEWAY_URL;
 
 export const getProducts =
 async (
     page = 1,
-    limit = 10
+    limit = 10,
+    context: GraphQLContext
 ) => {
 
     const response =
         await axios.get(
 
-            `${env.apiGatewayUrl}/products`,
+            `${API_GATEWAY_URL}/products`,
 
             {
                 params: {
                     page,
                     limit
+                },
+                headers: {
+                    Authorization: context.token
                 }
             }
         );
@@ -44,4 +49,28 @@ async (
                 )
         }
     };
+};
+
+export const getProductById =
+async (
+    id: string,
+    context: GraphQLContext
+) => {
+
+    const response =
+        await axios.get(
+
+            `${API_GATEWAY_URL}/products/${id}`,
+
+            {
+
+                headers: {
+
+                    Authorization:
+                        context.token
+                }
+            }
+        );
+
+    return response.data.data;
 };

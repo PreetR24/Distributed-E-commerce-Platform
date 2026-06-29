@@ -1,31 +1,57 @@
 import {
-    searchProducts
+    searchProducts,
+    autocompleteProducts,
+    getTrendingSearches
 }
 from '@services/search.service';
+
+import {
+    GraphQLContext
+}
+from '../../server';
 
 export const searchResolvers = {
 
     searchProducts:
-    async (
-        _: unknown,
+        async (
+            _: unknown,
+            args: {
+                search: string;
+                page?: number;
+                limit?: number;
+            },
+            context: GraphQLContext
+        ) => {
+            return searchProducts(
+                args.search,
+                args.page,
+                args.limit,
+                context
+            );
+        },
 
-        args: {
+    autocomplete:
+        async (
+            _: unknown,
+            args: {
+                query: string;
+            },
+            context: GraphQLContext
+        ) => {
+            return autocompleteProducts(
+                args.query,
+                context
+            );
+        },
 
-            search: string;
-
-            page?: number;
-
-            limit?: number;
+    trendingSearches:
+        async (
+            _: unknown,
+            __: unknown,
+            context: GraphQLContext
+        ) => {
+            return getTrendingSearches(
+                context
+            );
         }
-    ) => {
-
-        return searchProducts(
-
-            args.search,
-
-            args.page,
-
-            args.limit
-        );
-    }
 };

@@ -4,9 +4,20 @@ import {
 from '@services/product.service';
 
 import {
-    searchProducts
+    searchProducts,
+    getTrendingSearches
 }
 from '@services/search.service';
+
+import {
+    getDashboardAnalytics
+}
+from '@services/analytics.service';
+
+import {
+    GraphQLContext
+}
+from '../../server';
 
 export const dashboardResolvers = {
 
@@ -18,7 +29,9 @@ export const dashboardResolvers = {
         args: {
 
             search: string;
-        }
+        },
+
+        context: GraphQLContext
 
     ) => {
 
@@ -26,14 +39,33 @@ export const dashboardResolvers = {
 
             products,
 
-            searchResults
+            searchResults,
+
+            analytics,
+
+            trendingSearches
 
         ] = await Promise.all([
 
-            getProducts(),
+            getProducts(
+                1,
+                10,
+                context
+            ),
 
             searchProducts(
-                args.search
+                args.search,
+                1,
+                10,
+                context
+            ),
+
+            getDashboardAnalytics(
+                context
+            ),
+
+            getTrendingSearches(
+                context
             )
         ]);
 
@@ -41,7 +73,11 @@ export const dashboardResolvers = {
 
             products,
 
-            searchResults
+            searchResults,
+
+            analytics,
+
+            trendingSearches
         };
     }
 };

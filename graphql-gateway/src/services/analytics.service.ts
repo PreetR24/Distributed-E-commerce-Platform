@@ -4,14 +4,14 @@ import { GraphQLContext } from '../server';
 const API_GATEWAY_URL =
     process.env.API_GATEWAY_URL;
 
-export const getMyOrders =
+export const getDashboardAnalytics =
 async (
     context: GraphQLContext
 ) => {
 
     const response =
         await axios.get(
-            `${API_GATEWAY_URL}/orders`,
+            `${API_GATEWAY_URL}/analytics/dashboard`,
             {
                 headers: {
                     Authorization: context.token

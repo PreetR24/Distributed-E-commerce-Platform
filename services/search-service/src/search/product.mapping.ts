@@ -1,38 +1,23 @@
 export const productIndexMapping = {
-
     settings: {
-
         analysis: {
-
             filter: {
-
                 ecommerce_synonyms: {
-
                     type: 'synonym',
-
                     synonyms: [
-
                         'mobile, phone, smartphone',
-
                         'tv, television',
-
                         'laptop, notebook',
-
                         'earbuds, earphones'
                     ]
                 }
             },
 
             analyzer: {
-
                 ecommerce_analyzer: {
-
                     tokenizer: 'standard',
-
                     filter: [
-
                         'lowercase',
-
                         'ecommerce_synonyms'
                     ]
                 }
@@ -41,7 +26,6 @@ export const productIndexMapping = {
     },
 
     mappings: {
-
         properties: {
 
             id: {

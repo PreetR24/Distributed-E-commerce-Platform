@@ -15,12 +15,16 @@ import {
 } from './consumers/product.consumer';
 
 import {
-    createProductIndex,
-} from './search/create-index';
+    waitForElasticsearch,
+} from './search/waitForElasticsearch';
 
 import {
     reindexProducts
 } from './services/reindex.service';
+
+import {
+    synchronizeProducts
+} from './services/product-sync.service';
 
 const PORT =
     process.env.PORT || 4007;
@@ -29,7 +33,9 @@ const bootstrap = async () => {
 
     await connectRabbitMQ();
 
-    await createProductIndex();
+    await waitForElasticsearch();
+
+    await synchronizeProducts();
 
     await reindexProducts();
 

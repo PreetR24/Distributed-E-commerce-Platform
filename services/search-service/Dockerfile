@@ -1,0 +1,30 @@
+FROM node:22 AS builder
+WORKDIR /app
+COPY package*.json ./
+COPY shared/package*.json ./shared/
+COPY services/search-service/package*.json ./services/search-service/
+RUN npm ci
+COPY . .
+RUN npm run build --workspace=shared
+RUN npx prisma generate \
+    --schema=services/search-service/prisma/schema.prisma
+RUN npm run build --workspace=search-service
+
+
+FROM node:22-bookworm-slim AS runtime
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y openssl ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
+COPY shared/package*.json ./shared/
+COPY services/search-service/package*.json ./services/search-service/
+RUN npm ci --omit=dev
+COPY --from=builder /app/shared/dist ./shared/dist
+COPY --from=builder /app/shared/grpc-protos ./shared/grpc-protos
+COPY --from=builder /app/services/search-service/dist ./dist
+COPY --from=builder /app/services/search-service/generated ./generated
+COPY --from=builder /app/services/search-service/prisma ./prisma
+EXPOSE 4007
+
+CMD ["node", "dist/server.js"]

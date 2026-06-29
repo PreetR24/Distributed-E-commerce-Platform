@@ -15,7 +15,8 @@
             "@constants/*": ["./src/constants/*"],
             "@cache/*": ["./src/cache/*"],
             "@interfaces/*": ["./src/interfaces/*"],
-            "@search/*": ["./src/search/*"]
+            "@search/*": ["./src/search/*"],
+            "@grpc/*": ["./src/grpc/*"]
         }
     },
     "include": ["src"]

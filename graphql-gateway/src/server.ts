@@ -18,7 +18,6 @@ import { env } from '@config/env';
 
 export interface GraphQLContext {
     token: string | null;
-    requestId: string | string[] | null;
 }
 
 const bootstrap = async () => {
@@ -47,26 +46,11 @@ const bootstrap = async () => {
             server,
 
             {
-                context:
-                async ({
+                context: async ({
                     req
-                }) => {
-
-                    return {
-
-                        token:
-                            req.headers.authorization ||
-
-                            null,
-
-                        requestId:
-                            req.headers[
-                                'x-request-id'
-                            ] ||
-
-                            null
-                    };
-                }
+                }) => ({
+                    token: req.headers.authorization || null,
+                })
             }
         )
     );

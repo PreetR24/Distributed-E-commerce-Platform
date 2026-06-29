@@ -1,7 +1,8 @@
 import {
     consumeEvent,
     EXCHANGES,
-    logger
+    logger,
+    QUEUES
 } from '@shared/common';
 
 import {
@@ -24,9 +25,9 @@ async () => {
         async (data) => {
 
             if (
-                data.event === 'product.created'
+                data.event === QUEUES.PRODUCT_CREATED
                 ||
-                data.event === 'product.updated'
+                data.event === QUEUES.PRODUCT_UPDATED
             ) {
 
                 await upsertSearchProduct(

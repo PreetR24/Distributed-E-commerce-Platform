@@ -10,7 +10,7 @@ async () => {
 
     const response =
         await axios.get(
-            'http://localhost:4002/api/v1/products/internal/rebuild'
+            `${process.env.PRODUCT_SERVICE_URL}/products/internal/rebuild`
         );
 
     const products =

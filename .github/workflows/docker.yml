@@ -5,6 +5,7 @@ on:
     paths:
       - docker-compose.yml
       - "**/Dockerfile"
+      - '.github/workflows/docker.yml'
 
 jobs:
   docker:

@@ -20,7 +20,7 @@ interface Notification {
 
 const socket =
     io(
-        `http://localhost:${PORT}`
+        process.env.SOCKET_URL
     );
 
 socket.on(

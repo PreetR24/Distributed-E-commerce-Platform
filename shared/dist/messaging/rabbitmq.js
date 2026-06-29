@@ -9,7 +9,7 @@ const logger_1 = require("../utils/logger");
 const infrastructure_metrics_1 = require("../metrics/infrastructure.metrics");
 let channel;
 const connectRabbitMQ = async () => {
-    const connection = await amqplib_1.default.connect('amqp://localhost:5672');
+    const connection = await amqplib_1.default.connect('amqp://rabbitmq:5672');
     channel =
         await connection.createChannel();
     logger_1.logger.info('Connected To RabbitMQ');

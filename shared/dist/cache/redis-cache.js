@@ -6,7 +6,7 @@ const logger_1 = require("../utils/logger");
 const infrastructure_metrics_1 = require("../metrics/infrastructure.metrics");
 const redisClient = (0, redis_1.createClient)({
     url: process.env.REDIS_URL ||
-        'redis://localhost:6379'
+        'redis://redis:6379'
 });
 redisClient.on('error', (error) => {
     logger_1.logger.error('Redis Cache Error:', error);

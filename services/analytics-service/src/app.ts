@@ -1,4 +1,7 @@
 import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
 
 import analyticsRoutes
 from './routes/analytics.routes';
@@ -10,10 +13,20 @@ import {
     globalErrorHandler,
     register,
     metricsMiddleware
- }
+}
 from '@shared/common';
 
 const app = express();
+
+app.use(helmet());
+
+app.use(cors());
+
+app.use(morgan('combined'));
+
+app.use(express.json());
+
+app.use(metricsMiddleware);
 
 app.get(
     '/metrics',
@@ -22,15 +35,12 @@ app.get(
             'Content-Type',
             register.contentType
         );
+
         res.end(
             await register.metrics()
         );
     }
 );
-
-app.use(express.json());
-
-app.use(metricsMiddleware);
 
 app.use(
     '/api/v1/analytics',

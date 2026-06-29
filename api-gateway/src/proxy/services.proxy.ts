@@ -2,6 +2,10 @@ import {
     createProxyMiddleware
 } from 'http-proxy-middleware';
 
+import {
+    SERVICES
+} from '@shared/common'
+
 const fixRequestBody = (
     proxyReq: any,
     req: any
@@ -53,72 +57,72 @@ const createProxy = (
 
 export const authProxy =
     createProxy(
-        'http://localhost:4001',
+        SERVICES.USER,
         '/auth'
     );
 
 export const usersProxy =
     createProxy(
-        'http://localhost:4001',
+        SERVICES.USER,
         '/users'
     );
 
 export const adminProxy =
     createProxy(
-        'http://localhost:4001',
+        SERVICES.USER,
         '/admin'
     );
 
 export const productsProxy =
     createProxy(
-        'http://localhost:4002',
+        SERVICES.PRODUCT,
         '/products'
     );
 
 export const categoriesProxy =
     createProxy(
-        'http://localhost:4002',
+        SERVICES.PRODUCT,
         '/categories'
     );
 
 export const cartProxy =
     createProxy(
-        'http://localhost:4003',
+        SERVICES.CART,
         '/cart'
     );
 
 export const ordersProxy =
     createProxy(
-        'http://localhost:4004',
+        SERVICES.ORDER,
         '/orders'
     );
 
 export const paymentsProxy =
     createProxy(
-        'http://localhost:4005',
+        SERVICES.PAYMENT,
         '/payments'
     );
 
 export const inventoryProxy =
     createProxy(
-        'http://localhost:4006',
+        SERVICES.INVENTORY,
         '/inventory'
     );
 
 export const searchProxy =
     createProxy(
-        'http://localhost:4007',
+        SERVICES.SEARCH,
         '/search'
     );
 
 export const analyticsProxy =
     createProxy(
-        'http://localhost:4008',
+        SERVICES.ANALYTICS,
         '/analytics'
     );
 
 export const notificationsProxy =
     createProxy(
-        'http://localhost:4009',
+        SERVICES.NOTIFICATION,
         '/notifications'
     );

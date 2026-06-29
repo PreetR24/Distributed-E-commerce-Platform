@@ -10,6 +10,7 @@ import {
 import {
     generateAccessToken
 } from '@utils/jwt';
+import { UserRole } from '../../generated/prisma';
 
 export const registerController = async (
     req: Request,
@@ -19,13 +20,15 @@ export const registerController = async (
     const {
         name,
         email,
-        password
+        password,
+        role
     } = req.body;
 
     const user = await registerUser(
         name,
         email,
-        password
+        password,
+        role as UserRole
     );
 
     return res.status(201).json({

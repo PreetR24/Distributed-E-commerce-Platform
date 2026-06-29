@@ -1,15 +1,13 @@
 import { v4 as uuid } from 'uuid';
 
 import {
-    PaymentStatus
-} from '../../generated/prisma';
-
-import {
     publishEvent,
     EXCHANGES,
     QUEUES,
     logger,
-    AppError
+    AppError,
+    OrderStatus,
+    PaymentStatus
 } from '@shared/common';
 
 import {
@@ -78,7 +76,7 @@ export const createPaymentService = async (
         );
     }
 
-    if ( order.status === 'CANCELLED' ) {
+    if ( order.status === OrderStatus.CANCELLED ) {
 
         throw new AppError(
             'ORDER_CANCELLED',

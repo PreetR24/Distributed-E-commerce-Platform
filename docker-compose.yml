@@ -1,0 +1,283 @@
+services:
+
+    redis:
+        image: redis:7
+        container_name: distributed-commerce-redis
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+        restart: unless-stopped
+        networks:
+            - commerce-network
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: distributed-commerce-rabbitmq
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        restart: unless-stopped
+        networks:
+            - commerce-network  
+
+    api-gateway:
+        build:
+            context: .
+            dockerfile: api-gateway/Dockerfile
+        container_name:
+            distributed-commerce-api-gateway
+        ports:
+            - "3000:3000"
+        env_file:
+            - ./api-gateway/.env
+            - ./shared/.env
+        depends_on:
+            - product-service
+            - rabbitmq
+            - redis
+            - postgres
+        restart: unless-stopped
+        networks:
+            - commerce-network
+
+    user-service:
+        build:
+            context: .
+            dockerfile: services/user-service/Dockerfile
+        container_name:
+            distributed-commerce-user-service
+        env_file:
+            - ./shared/.env
+            - ./services/user-service/.env
+        ports:
+            - "4001:4001"
+        depends_on:
+            - postgres
+            - rabbitmq
+        networks:
+            - commerce-network      
+
+    product-service:
+        build:
+            context: .
+            dockerfile: services/product-service/Dockerfile
+        container_name:
+            distributed-commerce-product-service
+        env_file:
+            - ./shared/.env
+            - ./services/product-service/.env
+        ports:
+            - "4002:4002"
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+        networks:
+            - commerce-network  
+
+    cart-service:
+        build:
+            context: .
+            dockerfile: services/cart-service/Dockerfile
+        container_name:
+            distributed-commerce-cart-service
+        ports:
+            - "4003:4003"
+        env_file:
+            - ./shared/.env
+            - ./services/cart-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+        networks:
+            - commerce-network    
+
+    order-service:
+        build:
+            context: .
+            dockerfile: services/order-service/Dockerfile
+        container_name:
+            distributed-commerce-order-service
+        ports:
+            - "4004:4004"
+        env_file:
+            - ./shared/.env
+            - ./services/order-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+            - product-service
+            - inventory-service
+        networks:
+            - commerce-network
+
+    payment-service:
+        build:
+            context: .
+            dockerfile: services/payment-service/Dockerfile
+        container_name: distributed-commerce-payment-service
+        ports:
+            - "4005:4005"
+        env_file:
+            - ./shared/.env
+            - ./services/payment-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+            - order-service
+        networks:
+            - commerce-network
+
+    inventory-service:
+        build:
+            context: .
+            dockerfile: services/inventory-service/Dockerfile
+        container_name: distributed-commerce-inventory-service
+        ports:
+            - "4006:4006"
+        env_file:
+            - ./shared/.env
+            - ./services/inventory-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+        networks:
+            - commerce-network
+
+    search-service:
+        build:
+            context: .
+            dockerfile: services/search-service/Dockerfile
+        container_name: distributed-commerce-search-service
+        ports:
+            - "4007:4007"
+        env_file:
+            - ./shared/.env
+            - ./services/search-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+            - elasticsearch
+        networks:
+            - commerce-network
+
+    analytics-service:
+        build:
+            context: .
+            dockerfile: services/analytics-service/Dockerfile
+        container_name: distributed-commerce-analytics-service
+        ports:
+            - "4008:4008"
+        env_file:
+            - ./shared/.env
+            - ./services/analytics-service/.env
+        depends_on:
+            - postgres
+            - rabbitmq
+            - redis
+        networks:
+            - commerce-network
+
+    notification-service:
+        build:
+            context: .
+            dockerfile: services/notification-service/Dockerfile
+        container_name: distributed-commerce-notification-service
+        ports:
+            - "4009:4009"
+        env_file:
+            - ./shared/.env
+            - ./services/notification-service/.env
+        depends_on:
+            - rabbitmq
+            - redis
+        networks:
+            - commerce-network
+
+    graphql-gateway:
+        build:
+            context: .
+            dockerfile: graphql-gateway/Dockerfile
+        container_name: distributed-commerce-graphql-gateway
+        ports:
+            - "4010:4010"
+        env_file:
+            - ./shared/.env
+            - ./graphql-gateway/.env
+        depends_on:
+            - user-service
+            - product-service
+            - order-service
+            - cart-service
+            - inventory-service
+            - payment-service
+            - analytics-service
+        networks:
+            - commerce-network
+
+    postgres:
+        image: postgres:16
+        container_name: distributed-commerce-postgres
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+            - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+        restart: unless-stopped
+        networks:
+            - commerce-network
+
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+        container_name: distributed-commerce-elasticsearch
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
+        volumes:
+            - elasticsearch_data:/usr/share/elasticsearch/data
+        restart: unless-stopped
+        networks:
+            - commerce-network
+
+    prometheus:
+        image: prom/prometheus
+        container_name: distributed-commerce-prometheus
+        ports:
+            - "9090:9090"
+        volumes:
+            - ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        restart: unless-stopped
+        networks:
+            - commerce-network
+
+    grafana:
+        image: grafana/grafana
+        container_name: distributed-commerce-grafana
+        ports:
+            - "3001:3000"
+        restart: unless-stopped
+        networks:
+            - commerce-network
+            
+volumes:
+    redis_data:
+    rabbitmq_data:
+    postgres_data:
+    elasticsearch_data:
+
+networks:
+    commerce-network:

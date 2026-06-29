@@ -7,14 +7,15 @@ import * as protoLoader
 from '@grpc/proto-loader';
 
 import {
-    getProductByIdHandler
+    getProductByIdHandler,
+    getAllProductsHandler
 }
 from './product.grpc.handler';
 
 const PROTO_PATH =
     path.resolve(
-        __dirname,
-        '../../../../shared/grpc-protos/product.proto'
+        process.cwd(),
+        'shared/grpc-protos/product.proto'
     );
 
 const packageDefinition =
@@ -47,7 +48,9 @@ export const startGrpcServer =
             productProto.ProductService.service,
             {
                 GetProductById:
-                    getProductByIdHandler
+                    getProductByIdHandler,
+                GetAllProducts:
+                    getAllProductsHandler
             }
         );
 

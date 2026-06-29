@@ -1,5 +1,6 @@
 import {
-    getSingleProductService
+    getSingleProductService,
+    getAllProductsService
 } from '../services/product.service';
 
 import * as grpc from '@grpc/grpc-js';
@@ -28,7 +29,10 @@ export const getProductByIdHandler =
                     isActive:
                         product.isActive,
                     categoryId:
-                        product.categoryId
+                        product.categoryId,
+                    categoryName: product.category.name,
+                    createdAt: product.createdAt.toISOString(),
+                    updatedAt: product.updatedAt.toISOString()
                 }
             );
 
@@ -40,3 +44,37 @@ export const getProductByIdHandler =
             });
         }
     };
+
+export const getAllProductsHandler =
+async (
+    _call: any,
+    callback: any
+) => {
+
+    try {
+
+        const products =
+            await getAllProductsService();
+
+        callback(
+            null,
+            {
+                products: products.map(product => ({
+                    id: product.id,
+                    name: product.name,
+                    description: product.description,
+                    price: product.price,
+                    isActive: product.isActive,
+                    categoryId: product.categoryId,
+                    categoryName: product.category.name,
+                    createdAt: product.createdAt.toISOString(),
+                    updatedAt: product.updatedAt.toISOString()
+                }))
+            }
+        );
+
+    } catch (error) {
+
+        callback(error);
+    }
+};

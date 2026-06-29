@@ -13,8 +13,8 @@ from './order.grpc.handler';
 
 const PROTO_PATH =
     path.resolve(
-        __dirname,
-        '../../../../shared/grpc-protos/order.proto'
+        process.cwd(),
+        'shared/grpc-protos/order.proto'
     );
 
 const packageDefinition =

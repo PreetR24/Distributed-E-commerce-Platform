@@ -19,6 +19,10 @@ import {
 from '../grpc/product.grpc.service';
 
 import {
+    checkInventory
+} from '../grpc/inventory.grpc.service'
+
+import {
     ordersCreatedCounter
 }
 from '@shared/common';
@@ -71,6 +75,21 @@ export const createOrderService = async (
                 'PRODUCT_INACTIVE',
                 400,
                 `Product ${item.productId} is inactive`
+            );
+        }
+
+        const inventory =
+            await checkInventory(
+                item.productId,
+                item.quantity
+            );
+
+        if (!inventory.available) {
+
+            throw new AppError(
+                'OUT_OF_STOCK',
+                400,
+                `Available stock: ${inventory.availableStock}`
             );
         }
 

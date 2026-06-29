@@ -96,8 +96,6 @@ Clients
 * Middleware Architecture
 * Event-Driven Architecture
 
----
-
 ## API Communication
 
 ### REST APIs
@@ -149,8 +147,6 @@ Used for:
 - Order notifications
 - Payment notifications
 - Live user updates
-
----
 
 ## Testing & Verification
 
@@ -228,8 +224,6 @@ Database-per-service pattern:
 * Analytics Database
 * Notification Database
 
----
-
 ## Redis
 
 Used for:
@@ -238,8 +232,6 @@ Used for:
 * Cart storage
 * Fast data retrieval
 * Cache invalidation
-
----
 
 ## Elasticsearch
 
@@ -294,8 +286,6 @@ Cancel Order
 Compensation Action
 ```
 
----
-
 ## CQRS Pattern
 
 Implemented in Search Service.
@@ -316,8 +306,6 @@ Elasticsearch Read Models
 * Search Products
 * Autocomplete
 * Suggestions
-
----
 
 ## Event-Driven Notifications
 
@@ -355,8 +343,6 @@ Responsibilities:
 * Request logging
 * Routing
 
----
-
 ## GraphQL Gateway
 
 Responsibilities:
@@ -364,8 +350,6 @@ Responsibilities:
 * Unified API layer
 * Aggregated queries
 * Service orchestration
-
----
 
 ## User Service
 
@@ -377,8 +361,6 @@ Responsibilities:
 * RBAC
 * User Management
 
----
-
 ## Product Service
 
 Responsibilities:
@@ -388,16 +370,12 @@ Responsibilities:
 * Redis Caching
 * gRPC Server
 
----
-
 ## Cart Service
 
 Responsibilities:
 
 * Redis Cart Storage
 * Cart Operations
-
----
 
 ## Order Service
 
@@ -406,8 +384,6 @@ Responsibilities:
 * Order Lifecycle
 * SAGA Coordination
 * gRPC Product Lookup
-
----
 
 ## Payment Service
 
@@ -418,16 +394,12 @@ Responsibilities:
 * Payment Events
 * SAGA Integration
 
----
-
 ## Inventory Service
 
 Responsibilities:
 
 * Inventory Tracking
 * Stock Management
-
----
 
 ## Search Service
 
@@ -438,8 +410,6 @@ Responsibilities:
 * Autocomplete
 * CQRS Read Model
 
----
-
 ## Analytics Service
 
 Responsibilities:
@@ -448,8 +418,6 @@ Responsibilities:
 * Payment Metrics
 * Product Metrics
 * Dashboard APIs
-
----
 
 ## Notification Service
 
@@ -500,6 +468,228 @@ Available APIs:
 - GET /analytics/dashboard
 
 Analytics is restricted to ADMIN users via RBAC.
+
+---
+
+# Observability & Monitoring
+
+## Observability Stack
+
+Implemented production-style observability using:
+
+* Prometheus
+* Grafana
+* PromQL
+* Custom Metrics
+* Business KPI Monitoring
+* Infrastructure Monitoring
+
+## Metrics Collection
+
+### API Metrics
+
+Collected automatically across all services:
+
+* HTTP Request Count
+* Request Duration
+* Response Status Codes
+* Route-Level Metrics
+
+### Business Metrics
+
+Implemented custom commerce metrics:
+
+* Orders Created
+* Successful Payments
+* Failed Payments
+
+### Infrastructure Metrics
+
+Implemented infrastructure visibility for:
+
+* Redis Cache Hits
+* Redis Cache Misses
+* RabbitMQ Events Published
+* RabbitMQ Events Consumed
+
+## Metrics Endpoints
+
+Every service exposes:
+
+```http
+GET /metrics
+```
+
+Services monitored:
+
+* API Gateway
+* User Service
+* Product Service
+* Cart Service
+* Order Service
+* Payment Service
+* Inventory Service
+* Search Service
+* Analytics Service
+* Notification Service
+
+## Prometheus
+
+Configured centralized metrics collection from all platform services.
+
+Provides:
+
+* Service Monitoring
+* Infrastructure Monitoring
+* Business Monitoring
+
+## Grafana
+
+Created centralized dashboards for:
+
+### API Monitoring
+
+* Request Volume
+* Request Rate
+* Top Routes
+
+### Business Monitoring
+
+* Orders Created
+* Successful Payments
+* Failed Payments
+
+### Infrastructure Monitoring
+
+* Redis Cache Performance
+* RabbitMQ Throughput
+
+### Service Monitoring
+
+* Service Availability
+* Health Status
+
+## Production Monitoring Concepts
+
+Implemented:
+
+* Metrics Instrumentation
+* Request Monitoring
+* Business KPI Tracking
+* Infrastructure Visibility
+* Service Health Monitoring
+* Dashboarding
+* PromQL Querying
+
+---
+
+# CI/CD & Automation
+
+## Continuous Integration
+
+Implemented GitHub Actions based CI pipelines for automated project validation.
+
+Workflows automatically execute on:
+
+* Push Events
+* Pull Requests
+
+## Build Pipeline
+
+Implemented automated validation for:
+
+* Dependency Installation
+* Shared Package Build
+* Microservice Compilation
+* TypeScript Validation
+
+Services validated automatically:
+
+* API Gateway
+* GraphQL Gateway
+* User Service
+* Product Service
+* Cart Service
+* Order Service
+* Payment Service
+* Inventory Service
+* Search Service
+* Analytics Service
+* Notification Service
+
+## Monorepo Build Automation
+
+Created centralized build orchestration:
+
+```bash
+npm run build-all
+```
+
+This builds the complete distributed platform from a single command.
+
+## Production Build Support
+
+Implemented:
+
+* tsc-alias
+
+to support TypeScript path alias resolution after compilation.
+
+Examples:
+
+```text
+@controllers/*
+@services/*
+@repositories/*
+@routes/*
+```
+
+## Docker Validation Pipeline
+
+Implemented automated Docker validation workflows.
+
+Checks:
+
+* Docker Compose Configuration
+* Container Build Validation
+* Infrastructure Verification
+* Network Configuration
+* Volume Configuration
+
+Infrastructure validated:
+
+* PostgreSQL
+* Redis
+* RabbitMQ
+* Elasticsearch
+
+## GitHub Actions
+
+Implemented:
+
+```text
+.github/workflows/
+├── build.yml
+└── docker.yml
+```
+
+Capabilities:
+
+* Automated Builds
+* Docker Validation
+* Infrastructure Verification
+* Pull Request Validation
+
+## CI/CD Concepts Covered
+
+* Continuous Integration
+* Build Automation
+* Monorepo Pipelines
+* GitHub Actions
+* Workflow Automation
+* Infrastructure Validation
+* Docker Validation
+* Production Build Verification
 
 ---
 
@@ -594,21 +784,15 @@ Events:
 * TypeScript
 * Express.js
 
----
-
 ## Databases
 
 * PostgreSQL
 * Redis
 * Elasticsearch
 
----
-
 ## Messaging
 
 * RabbitMQ
-
----
 
 ## APIs
 
@@ -616,33 +800,23 @@ Events:
 * GraphQL
 * gRPC
 
----
-
 ## Authentication
 
 * JWT
 * Refresh Tokens
 * RBAC
 
----
-
 ## Real-Time Communication
 
 - Socket.IO
-
----
 
 ## Validation
 
 * Zod
 
----
-
 ## Logging
 
 * Winston
-
----
 
 ## Infrastructure
 
@@ -693,8 +867,6 @@ Distributed-Commerce-Platform/
 npm install
 ```
 
----
-
 ## Start Infrastructure
 
 ```bash
@@ -708,8 +880,6 @@ Starts:
 * RabbitMQ
 * Elasticsearch
 
----
-
 ## Start Development Environment
 
 ```bash
@@ -722,8 +892,6 @@ Starts:
 * GraphQL Gateway
 * All Microservices
 * Shared Package Watch Mode
-
----
 
 ## Verify Entire Platform
 

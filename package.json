@@ -12,11 +12,14 @@
     "build:shared": "npm run build --workspace=shared",
     "dev": "npm run infra:up && npm run build:shared &&  sleep 5 && concurrently \"npm run dev --workspace=shared\" \"npm run dev --workspace=notification-service\" \"npm run dev --workspace=user-service\" \"npm run dev --workspace=product-service\" \"npm run dev --workspace=inventory-service\" \"npm run dev --workspace=cart-service\" \"npm run dev --workspace=order-service\" \"npm run dev --workspace=payment-service\" \"npm run dev --workspace=analytics-service\" \"npm run dev --workspace=search-service\" \"npm run dev --workspace=graphql-gateway\" \"npm run dev --workspace=api-gateway\"",
     "dev:clean": "npm run infra:down && sleep 5 && npm run dev",
-    "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
-    "infra:down": "docker compose -f infrastructure/docker-compose.yml down",
-    "infra:logs": "docker compose -f infrastructure/docker-compose.yml logs -f",
-    "infra:restart": "docker compose -f infrastructure/docker-compose.yml restart",
-    "build": "tsc",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "infra:restart": "docker compose restart",
+    "docker:start": "docker compose up --build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
     "lint": "eslint .",
     "format": "prettier --write .",
     "verify-system": "tsx tests/verify-system.ts",
@@ -25,6 +28,7 @@
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
     "concurrently": "^9.2.1",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.4",
     "nodemon": "^3.1.0",
     "prettier": "^3.3.0",
@@ -35,12 +39,13 @@
     "wait-on": "^9.0.10"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^9.4.2",
+    "@elastic/elasticsearch": "^8.19.1",
     "@prisma/client": "^5.22.0",
     "amqplib": "^2.0.1",
     "axios": "^1.17.0",
     "chalk": "^5.6.2",
     "prisma": "^5.22.0",
-    "redis": "^6.0.0"
+    "redis": "^6.0.0",
+    "winston": "^3.19.0"
   }
 }

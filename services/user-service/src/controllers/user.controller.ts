@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { getCurrentUser, getAllUsersService } from '@services/user.service';
+import { getCurrentUser, getAllUsersService, updateUser, deleteUser } from '@services/user.service';
 
 export const currentUserController = async (
     req: Request,
@@ -28,3 +28,35 @@ export const getAllUsersController = async (
         data: users
     });
 }
+
+export const updateUserController = async (
+    req: Request,
+    res: Response
+) => {
+    const userId = req.params.id as string;
+
+    const user = await updateUser(
+        userId,
+        req.body
+    );
+
+    return res.status(200).json({
+        success: true,
+        data: user
+    });
+};
+
+export const deleteUserController = async (
+    req: Request,
+    res: Response
+) => {
+    const userId = req.params.id as string;
+    await deleteUser(
+        userId
+    );
+
+    return res.status(200).json({
+        success: true,
+        message: 'User deleted successfully'
+    });
+};

@@ -8,8 +8,8 @@ from '@grpc/proto-loader';
 
 const PROTO_PATH =
     path.resolve(
-        __dirname,
-        '../../../../shared/grpc-protos/product.proto'
+        process.cwd(),
+        'shared/grpc-protos/product.proto'
     );
 
 const packageDefinition =

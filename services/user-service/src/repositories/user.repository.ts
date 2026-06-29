@@ -1,14 +1,5 @@
 import { prisma } from '@config/prisma';
-
-export const findUserByEmail = async (
-    email: string
-) => {
-    return prisma.user.findUnique({
-        where: {
-            email
-        }
-    });
-};
+import { UserRole, AppError, logger } from '@shared/common';
 
 export const getAllUsers = async () => {
     return prisma.user.findMany();
@@ -33,5 +24,43 @@ export const createUser = async (
 ) => {
     return prisma.user.create({
         data
+    });
+};
+
+export const findUserByEmail = (
+    email: string
+) => {
+    return prisma.user.findUnique({
+        where: { email }
+    });
+};
+
+export const updateUserById = (
+    userId: string,
+    data: {
+        name?: string;
+        email?: string;
+        role?: UserRole;
+    }
+) => {
+    return prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: {
+            name: data.name,
+            email: data.email,
+            role: data.role as any
+        }
+    });
+};
+
+export const deleteUserById = (
+    userId: string
+) => {
+    return prisma.user.delete({
+        where: {
+            id: userId
+        }
     });
 };

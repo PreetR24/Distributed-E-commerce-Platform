@@ -1,6 +1,8 @@
 import { prisma }
 from '@config/prisma';
 
+import { StockReservationStatus } from '@shared/common';
+
 export const getInventoryByProductId =
 async (
     productId: string
@@ -74,7 +76,7 @@ async (
     return prisma.stockReservation.findMany({
         where: {
             orderId,
-            status: 'RESERVED'
+            status: StockReservationStatus.RESERVED
         }
     });
 };
@@ -82,7 +84,7 @@ async (
 export const updateReservationStatus =
 async (
     reservationId: string,
-    status: 'RELEASED' | 'COMPLETED'
+    status: StockReservationStatus.RELEASED | StockReservationStatus.COMPLETED
 ) => {
 
     return prisma.stockReservation.update({

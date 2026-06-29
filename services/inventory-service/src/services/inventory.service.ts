@@ -13,7 +13,8 @@ import {
     publishEvent,
     EXCHANGES,
     QUEUES,
-    logger
+    logger,
+    StockReservationStatus
 } from '@shared/common';
 
 export const createInventoryService = async (
@@ -132,7 +133,7 @@ export const releaseInventoryReservationService = async (
 
         await updateReservationStatus(
             reservation.id,
-            'RELEASED'
+            StockReservationStatus.RELEASED
         );
 
         logger.info({

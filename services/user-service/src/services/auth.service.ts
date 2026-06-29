@@ -4,12 +4,15 @@ import { hashPassword, comparePassword } from '../utils/password';
 import { AppError, logger }
 from '@shared/common';
 
+import { UserRole } from '../../generated/prisma';
+
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 
 export const registerUser = async (
     name: string,
     email: string,
-    password: string
+    password: string,
+    role?: UserRole
 ) => {
 
     const existingUser = await prisma.user.findUnique({
@@ -36,7 +39,8 @@ export const registerUser = async (
         data: {
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role: role ?? UserRole.CUSTOMER
         }
     });
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
     SERVICES
 }
-from './services-domains';
+from '@shared/common';
 
 const services = [
 

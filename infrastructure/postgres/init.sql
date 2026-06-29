@@ -1,0 +1,8 @@
+CREATE DATABASE distributed_commerce_user_db;
+CREATE DATABASE distributed_commerce_product_db;
+CREATE DATABASE distributed_commerce_order_db;
+CREATE DATABASE distributed_commerce_payment_db;
+CREATE DATABASE distributed_commerce_inventory_db;
+CREATE DATABASE distributed_commerce_search_db;
+CREATE DATABASE distributed_commerce_analytics_db;
+CREATE DATABASE distributed_commerce_notification_db;

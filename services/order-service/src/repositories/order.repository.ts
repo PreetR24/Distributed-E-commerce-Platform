@@ -86,7 +86,7 @@ async (
             id: orderId
         },
         data: {
-            status: 'CANCELLED'
+            status: OrderStatus.CONFIRMED
         }
     });
 };

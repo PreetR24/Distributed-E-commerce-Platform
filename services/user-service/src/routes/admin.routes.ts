@@ -6,7 +6,7 @@ import { authorize } from '@middleware/authorize.middleware';
 
 import { UserRole, asyncHandler } from '@shared/common';
 
-import { getAllUsersController } from '@controllers/user.controller';
+import { getAllUsersController, updateUserController, deleteUserController } from '@controllers/user.controller';
 
 const router = Router();
 
@@ -28,6 +28,20 @@ router.get(
     authenticate,
     authorize(UserRole.ADMIN),
     asyncHandler(getAllUsersController)
+);
+
+router.put(
+    '/:id',
+    authenticate,
+    authorize(UserRole.ADMIN),
+    asyncHandler(updateUserController)
+);
+
+router.delete(
+    '/:id',
+    authenticate,
+    authorize(UserRole.ADMIN),
+    asyncHandler(deleteUserController)
 );
 
 export default router;

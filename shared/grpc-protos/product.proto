@@ -5,7 +5,12 @@ package product;
 service ProductService {
     rpc GetProductById(ProductRequest)
         returns (ProductResponse);
+
+    rpc GetAllProducts(Empty)
+        returns (ProductListResponse);
 }
+
+message Empty {}
 
 message ProductRequest {
     string id = 1;
@@ -18,4 +23,11 @@ message ProductResponse {
     double price = 4;
     bool isActive = 5;
     string categoryId = 6;
+    string categoryName = 7;
+    string createdAt = 8;
+    string updatedAt = 9;
+}
+
+message ProductListResponse {
+    repeated ProductResponse products = 1;
 }

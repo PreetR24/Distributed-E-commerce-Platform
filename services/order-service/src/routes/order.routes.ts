@@ -14,6 +14,7 @@ const router = Router();
 router.post(
     '/',
     requireRole(
+        UserRole.ADMIN,
         UserRole.CUSTOMER
     ),
     asyncHandler(createOrderController)

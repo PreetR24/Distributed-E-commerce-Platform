@@ -17,6 +17,10 @@ import {
     startPaymentFailureConsumer
 } from './consumers/payment.consumer';
 
+import {
+    startGrpcServer
+} from './grpc/inventory.grpc.server';
+
 const PORT = process.env.PORT || 4006;
 
 const bootstrap = async () => {
@@ -26,6 +30,8 @@ const bootstrap = async () => {
     await startOrderConsumer();
 
     await startPaymentFailureConsumer();
+
+    await startGrpcServer();
 
     app.listen(PORT, () => {
 

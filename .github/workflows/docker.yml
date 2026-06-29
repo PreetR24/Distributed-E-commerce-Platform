@@ -30,6 +30,7 @@ jobs:
           cp services/analytics-service/.env.example services/analytics-service/.env
           cp services/notification-service/.env.example services/notification-service/.env
           cp graphql-gateway/.env.example graphql-gateway/.env
+          cp shared/.env.example shared/.env
 
       - name: Validate Compose
 

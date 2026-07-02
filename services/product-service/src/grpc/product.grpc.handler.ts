@@ -1,3 +1,4 @@
+import { grpcRequestCounter, grpcRequestDuration } from '@shared/common/metrics';
 import {
     getSingleProductService,
     getAllProductsService
@@ -11,12 +12,24 @@ export const getProductByIdHandler =
         callback: any
     ) => {
 
+        const endTimer = grpcRequestDuration.startTimer({
+            service: "product-service",
+            method: "GetProductById"
+        });
+
         try {
 
             const product =
                 await getSingleProductService(
                     call.request.id
                 );
+
+            grpcRequestCounter.inc({
+                caller: "grpc",
+                service: "product-service",
+                method: "GetProductById",
+                status: "SUCCESS"
+            });
 
             callback(
                 null,
@@ -37,11 +50,20 @@ export const getProductByIdHandler =
             );
 
         } catch (error) {
+            grpcRequestCounter.inc({
+                caller: "grpc",
+                service: "product-service",
+                method: "GetProductById",
+                status: "FAILED"
+            });
 
             callback({
                 code: grpc.status.NOT_FOUND,
                 message: 'Product not found'
             });
+
+        } finally {
+            endTimer();
         }
     };
 
@@ -51,10 +73,22 @@ async (
     callback: any
 ) => {
 
+    const endTimer = grpcRequestDuration.startTimer({
+        service: "product-service",
+        method: "GetAllProducts"
+    });
+
     try {
 
         const products =
             await getAllProductsService();
+
+        grpcRequestCounter.inc({
+            caller: "grpc",
+            service: "product-service",
+            method: "GetAllProducts",
+            status: "SUCCESS"
+        });
 
         callback(
             null,
@@ -75,6 +109,18 @@ async (
 
     } catch (error) {
 
-        callback(error);
+        grpcRequestCounter.inc({
+            caller: "grpc",
+            service: "product-service",
+            method: "GetAllProducts",
+            status: "FAILED"
+        });
+
+        callback({
+            code: grpc.status.INTERNAL,
+            message: "Failed to fetch order"
+        });
+    } finally{
+        endTimer();
     }
 };

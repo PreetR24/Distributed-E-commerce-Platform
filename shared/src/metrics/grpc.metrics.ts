@@ -1,25 +1,55 @@
-import client from 'prom-client';
+import {
+    Counter,
+    Histogram
+} from "prom-client";
 
-export const ordersCreatedCounter =
-    new client.Counter({
+export const grpcRequestCounter =
+    new Counter({
+
         name:
-            'orders_created_total',
+            "grpc_requests_total",
+
         help:
-            'Total Orders Created'
+            "Total gRPC requests",
+
+        labelNames: [
+            "caller",
+
+            "service",
+
+            "method",
+
+            "status"
+
+        ]
+
     });
 
-export const paymentsSuccessCounter =
-    new client.Counter({
-        name:
-            'payments_success_total',
-        help:
-            'Successful Payments'
-    });
+export const grpcRequestDuration =
+    new Histogram({
 
-export const paymentsFailedCounter =
-    new client.Counter({
         name:
-            'payments_failed_total',
+            "grpc_request_duration_seconds",
+
         help:
-            'Failed Payments'
+            "gRPC request duration",
+
+        labelNames: [
+
+            "service",
+
+            "method"
+
+        ],
+
+        buckets: [
+            0.01,
+            0.05,
+            0.1,
+            0.25,
+            0.5,
+            1,
+            2
+        ]
+
     });

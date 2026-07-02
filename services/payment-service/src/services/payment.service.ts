@@ -19,10 +19,10 @@ import {
 } from '@repositories/payment.repository';
 
 import {
-    paymentsSuccessCounter,
-    paymentsFailedCounter
+    paymentStatusCounter,
+    paymentProcessingDuration
 }
-from '@shared/common';
+from '@shared/common/metrics';
 
 import {
     getOrderById
@@ -39,151 +39,158 @@ export const createPaymentService = async (
         idempotencyKey: string;
     }
 ) => {
+    const endTimer = paymentProcessingDuration.startTimer();
 
-    const existingPayment =
-        await findPaymentByIdempotencyKey(
-            data.idempotencyKey
-        );
+    try{
 
-    if (existingPayment) {
-        return existingPayment;
-    }
+        const existingPayment =
+            await findPaymentByIdempotencyKey(
+                data.idempotencyKey
+            );
 
-    const successfulPayment =
-        await findSuccessfulPaymentByOrderId(
-            data.orderId
-        );
+        if (existingPayment) {
+            return existingPayment;
+        }
 
-    if (successfulPayment) {
+        const successfulPayment =
+            await findSuccessfulPaymentByOrderId(
+                data.orderId
+            );
 
-        throw new AppError(
-            'ORDER_ALREADY_PAID',
-            400,
-            'Payment already completed for this order'
-        );
-    }
+        if (successfulPayment) {
 
-    const order =
-        await getOrderById(
-            data.orderId
-        );
+            throw new AppError(
+                'ORDER_ALREADY_PAID',
+                400,
+                'Payment already completed for this order'
+            );
+        }
 
-    if (!order) {
-        throw new AppError(
-            'ORDER_NOT_FOUND',
-            404,
-            'Order not found'
-        );
-    }
+        const order =
+            await getOrderById(
+                data.orderId
+            );
 
-    if ( order.status === OrderStatus.CANCELLED ) {
+        if (!order) {
+            throw new AppError(
+                'ORDER_NOT_FOUND',
+                404,
+                'Order not found'
+            );
+        }
 
-        throw new AppError(
-            'ORDER_CANCELLED',
-            400,
-            'Cannot pay for a cancelled order'
-        );
-    }
-    
-    const transactionId = uuid();
+        if ( order.status === OrderStatus.CANCELLED ) {
 
-    const payment =
-        await createPayment({
-            orderId: data.orderId,
-            userId,
-            amount: data.amount,
-            currency: data.currency,
-            paymentProvider: data.paymentProvider,
-            transactionId,
-            idempotencyKey: data.idempotencyKey,
-            status: PaymentStatus.PROCESSING
-        });
+            throw new AppError(
+                'ORDER_CANCELLED',
+                400,
+                'Cannot pay for a cancelled order'
+            );
+        }
+        
+        const transactionId = uuid();
 
-    const isPaymentSuccessful = Math.random() > 0.2;
-
-    const finalStatus = isPaymentSuccessful ? PaymentStatus.SUCCESS : PaymentStatus.FAILED;
-
-    const updatedPayment =
-    await updatePaymentStatus(
-        payment.id,
-        finalStatus
-    );
-
-    if (
-        finalStatus ===
-        PaymentStatus.SUCCESS
-    ) {
-
-        await publishEvent(
-            EXCHANGES.PAYMENT_EVENTS,
-            QUEUES.PAYMENT_SUCCESS,
-            {
-                event:
-                    QUEUES.PAYMENT_SUCCESS,
-
-                paymentId:
-                    updatedPayment.id,
-
-                orderId:
-                    updatedPayment.orderId,
-
-                amount:
-                    updatedPayment.amount,
-
+        const payment =
+            await createPayment({
+                orderId: data.orderId,
                 userId,
-                requestId,
+                amount: data.amount,
+                currency: data.currency,
+                paymentProvider: data.paymentProvider,
+                transactionId,
+                idempotencyKey: data.idempotencyKey,
+                status: PaymentStatus.PROCESSING
+            });
 
-                createdAt:
-                    new Date()
-            }
+        const isPaymentSuccessful = Math.random() > 0.2;
+
+        const finalStatus = isPaymentSuccessful ? PaymentStatus.SUCCESS : PaymentStatus.FAILED;
+
+        const updatedPayment =
+        await updatePaymentStatus(
+            payment.id,
+            finalStatus
         );
 
-        paymentsSuccessCounter.inc();
+        if (
+            finalStatus ===
+            PaymentStatus.SUCCESS
+        ) {
 
-        logger.info({
-            event: 'PAYMENT_SUCCESS',
-            paymentId: updatedPayment.id,
-            orderId: updatedPayment.orderId,
-            amount: updatedPayment.amount
-        });
+            await publishEvent(
+                EXCHANGES.PAYMENT_EVENTS,
+                QUEUES.PAYMENT_SUCCESS,
+                {
+                    event:
+                        QUEUES.PAYMENT_SUCCESS,
+
+                    paymentId:
+                        updatedPayment.id,
+
+                    orderId:
+                        updatedPayment.orderId,
+
+                    amount:
+                        updatedPayment.amount,
+
+                    userId,
+                    requestId,
+
+                    createdAt:
+                        new Date()
+                }
+            );
+
+            paymentStatusCounter.inc({status: PaymentStatus.SUCCESS});
+
+            logger.info({
+                event: 'PAYMENT_SUCCESS',
+                paymentId: updatedPayment.id,
+                orderId: updatedPayment.orderId,
+                amount: updatedPayment.amount
+            });
+        }
+        else {
+
+            await publishEvent(
+                EXCHANGES.PAYMENT_EVENTS,
+                QUEUES.PAYMENT_FAILED,
+                {
+                    event:
+                        QUEUES.PAYMENT_FAILED,
+
+                    paymentId:
+                        updatedPayment.id,
+
+                    orderId:
+                        updatedPayment.orderId,
+
+                    amount:
+                        updatedPayment.amount,
+
+                    userId,
+                    requestId,
+
+                    createdAt:
+                        new Date()
+                }
+            );
+
+            paymentStatusCounter.inc({status: PaymentStatus.FAILED});
+
+            logger.info({
+                event: 'PAYMENT_FAILED',
+                paymentId: updatedPayment.id,
+                orderId: updatedPayment.orderId,
+                amount: updatedPayment.amount
+            });
+        }
+
+        return updatedPayment;
+    } finally {
+
+        endTimer();
     }
-    else {
-
-        await publishEvent(
-            EXCHANGES.PAYMENT_EVENTS,
-            QUEUES.PAYMENT_FAILED,
-            {
-                event:
-                    QUEUES.PAYMENT_FAILED,
-
-                paymentId:
-                    updatedPayment.id,
-
-                orderId:
-                    updatedPayment.orderId,
-
-                amount:
-                    updatedPayment.amount,
-
-                userId,
-                requestId,
-
-                createdAt:
-                    new Date()
-            }
-        );
-
-        paymentsFailedCounter.inc();
-
-        logger.info({
-            event: 'PAYMENT_FAILED',
-            paymentId: updatedPayment.id,
-            orderId: updatedPayment.orderId,
-            amount: updatedPayment.amount
-        });
-    }
-
-    return updatedPayment;
 };
 
 export const getUserPaymentsService = async (

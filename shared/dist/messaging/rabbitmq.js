@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.consumeEvent = exports.publishEvent = exports.disconnectRabbitMQ = exports.connectRabbitMQ = void 0;
 const amqplib_1 = __importDefault(require("amqplib"));
 const logger_1 = require("../utils/logger");
-const infrastructure_metrics_1 = require("../metrics/infrastructure.metrics");
+const rabbitmq_metrics_1 = require("../metrics/rabbitmq.metrics");
 let connection = null;
 let channel = null;
 const getChannel = () => {
@@ -48,7 +48,7 @@ const publishEvent = async (exchange, routingKey, message) => {
         durable: true
     });
     rabbitChannel.publish(exchange, routingKey, Buffer.from(JSON.stringify(message)));
-    infrastructure_metrics_1.publishedEvents.inc();
+    rabbitmq_metrics_1.publishedEventsCounter.inc();
     logger_1.logger.info('Event Published', {
         exchange,
         routingKey,
@@ -76,7 +76,7 @@ const consumeEvent = async (exchange, queue, callback) => {
         const parsedMessage = JSON.parse(message.content.toString());
         try {
             await callback(parsedMessage);
-            infrastructure_metrics_1.consumedEvents.inc();
+            rabbitmq_metrics_1.consumedEventsCounter.inc();
             rabbitChannel.ack(message);
             logger_1.logger.info('Message Processed', {
                 queue,

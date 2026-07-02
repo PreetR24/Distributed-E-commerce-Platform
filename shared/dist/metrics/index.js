@@ -15,5 +15,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./prometheus"), exports);
-__exportStar(require("./business.metrics"), exports);
 __exportStar(require("./infrastructure.metrics"), exports);
+__exportStar(require("./rabbitmq.metrics"), exports);
+__exportStar(require("./order.metrics"), exports);
+__exportStar(require("./payment.metrics"), exports);
+__exportStar(require("./grpc.metrics"), exports);
+__exportStar(require("./inventory.metrics"), exports);
+__exportStar(require("./search.metrics"), exports);

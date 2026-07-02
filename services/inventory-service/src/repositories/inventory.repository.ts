@@ -15,6 +15,32 @@ async (
     });
 };
 
+export const addInventoryStock =
+async (
+    productId: string,
+    quantity: number
+) => {
+
+    return prisma.inventory.update({
+
+        where: {
+            productId
+        },
+
+        data: {
+
+            availableStock: {
+
+                increment: quantity
+
+            }
+
+        }
+
+    });
+
+};
+
 export const createReservation =
 async (
     data: {

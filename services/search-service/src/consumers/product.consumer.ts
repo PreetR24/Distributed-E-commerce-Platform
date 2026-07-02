@@ -14,6 +14,11 @@ import {
 }
 from '@search/product-index.repository';
 
+import {
+    searchOperationCounter
+}
+from "@shared/common/metrics";
+
 export const startProductConsumer =
 async () => {
 
@@ -33,6 +38,13 @@ async () => {
                 await upsertSearchProduct(
                     data.product
                 );
+
+                searchOperationCounter.inc({
+                    operation:
+                        data.event === QUEUES.PRODUCT_CREATED
+                            ? "INDEX"
+                            : "UPDATE"
+                });
 
                 await indexProduct(
                     data.product

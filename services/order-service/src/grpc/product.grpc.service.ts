@@ -7,67 +7,146 @@ import {
     logger
 } from '@shared/common';
 
+import {
+    grpcRequestCounter,
+    grpcRequestDuration
+} from "@shared/common/metrics";
+
 export const getProductById =
-(
+async (
     productId: string
 ): Promise<any> => {
 
-    return Promise.race([
+    const endTimer =
+        grpcRequestDuration.startTimer({
 
-        new Promise(
-            (
-                resolve,
-                reject
-            ) => {
+            service: "product-service",
 
-                productClient
-                    .GetProductById(
-                        {
-                            id: productId
-                        },
-                        (
-                            error: any,
-                            response: any
-                        ) => {
+            method: "GetProductById"
 
-                            if (error) {
+        });
 
-                                logger.error(
-                                    `gRPC Product Fetch Failed: ${productId}`
-                                );
+    try {
 
-                                reject(error);
+        const response =
+            await Promise.race([
 
-                                return;
+                new Promise(
+
+                    (
+                        resolve,
+                        reject
+                    ) => {
+
+                        productClient.GetProductById(
+
+                            {
+                                id: productId
+                            },
+
+                            (
+                                error: any,
+                                response: any
+                            ) => {
+
+                                if (error) {
+
+                                    grpcRequestCounter.inc({
+                                        caller: "order-service",
+
+                                        service: "product-service",
+
+                                        method: "GetProductById",
+
+                                        status: "FAILED"
+
+                                    });
+
+                                    logger.error(
+
+                                        `gRPC Product Fetch Failed: ${productId}`
+
+                                    );
+
+                                    return reject(error);
+
+                                }
+
+                                grpcRequestCounter.inc({
+                                    caller: "order-service",
+
+                                    service: "product-service",
+
+                                    method: "GetProductById",
+
+                                    status: "SUCCESS"
+
+                                });
+
+                                resolve(response);
+
                             }
 
-                            resolve(response);
-                        }
-                    );
-            }
-        ),
-
-        new Promise(
-            (
-                _,
-                reject
-            ) => {
-
-                setTimeout(
-                    () => {
-
-                        reject(
-                            new Error(
-                                'Product Service Timeout'
-                            )
                         );
 
-                    },
-                    3000
-                );
-            }
-        )
-    ]);
+                    }
+
+                ),
+
+                new Promise(
+
+                    (
+                        _,
+                        reject
+                    ) => {
+
+                        setTimeout(
+
+                            () => {
+
+                                grpcRequestCounter.inc({
+                                    caller: "order-service",
+
+                                    service: "product-service",
+
+                                    method: "GetProductById",
+
+                                    status: "FAILED"
+
+                                });
+
+                                reject(
+
+                                    new Error(
+
+                                        "Product Service Timeout"
+
+                                    )
+
+                                );
+
+                            },
+
+                            3000
+
+                        );
+
+                    }
+
+                )
+
+            ]);
+
+        return response;
+
+    }
+
+    finally {
+
+        endTimer();
+
+    }
+
 };
 
 export const getProductByIdWithRetry =

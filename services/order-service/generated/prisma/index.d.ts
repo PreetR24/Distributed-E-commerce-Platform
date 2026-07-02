@@ -29,12 +29,14 @@ export type OrderItem = $Result.DefaultSelection<Prisma.$OrderItemPayload>
  */
 export namespace $Enums {
   export const OrderStatus: {
+  CREATED: 'CREATED',
   PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
   PROCESSING: 'PROCESSING',
   SHIPPED: 'SHIPPED',
   DELIVERED: 'DELIVERED',
-  CANCELLED: 'CANCELLED'
+  CANCELLED: 'CANCELLED',
+  FAILED: 'FAILED'
 };
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]

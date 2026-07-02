@@ -23,9 +23,10 @@ import {
 } from '../grpc/inventory.grpc.service'
 
 import {
-    ordersCreatedCounter
+    orderStatusCounter,
+    orderProcessingDuration
 }
-from '@shared/common';
+from '@shared/common/metrics';
 
 import { OrderStatus }
 from '../../generated/prisma';
@@ -35,107 +36,123 @@ export const createOrderService = async (
     requestId: string,
     items: any[]
 ) => {
+    const endTimer = orderProcessingDuration.startTimer();
 
-    if (!items.length) {
+    try{
 
-        logger.error(
-            'Attempt to create empty order'
-        );
+        if (!items.length) {
 
-        throw new AppError(
-            'EMPTY_ORDER',
-            400,
-            'Order must contain items'
-        );
-    }
-
-    let totalAmount = 0;
-
-    const enrichedItems = [];
-
-    for (const item of items) {
-
-        const product =
-            await getProductByIdWithRetry(
-                item.productId
+            logger.error(
+                'Attempt to create empty order'
             );
 
-        if (!product) {
-
             throw new AppError(
-                'PRODUCT_NOT_FOUND',
-                404,
-                `Product ${item.productId} not found`
-            );
-        }
-
-        if (!product.isActive) {
-
-            throw new AppError(
-                'PRODUCT_INACTIVE',
+                'EMPTY_ORDER',
                 400,
-                `Product ${item.productId} is inactive`
+                'Order must contain items'
             );
         }
 
-        const inventory =
-            await checkInventory(
-                item.productId,
-                item.quantity
-            );
+        let totalAmount = 0;
 
-        if (!inventory.available) {
+        const enrichedItems = [];
 
-            throw new AppError(
-                'OUT_OF_STOCK',
-                400,
-                `Available stock: ${inventory.availableStock}`
-            );
+        for (const item of items) {
+
+            const product =
+                await getProductByIdWithRetry(
+                    item.productId
+                );
+
+            if (!product) {
+
+                throw new AppError(
+                    'PRODUCT_NOT_FOUND',
+                    404,
+                    `Product ${item.productId} not found`
+                );
+            }
+
+            if (!product.isActive) {
+
+                throw new AppError(
+                    'PRODUCT_INACTIVE',
+                    400,
+                    `Product ${item.productId} is inactive`
+                );
+            }
+
+            const inventory =
+                await checkInventory(
+                    item.productId,
+                    item.quantity
+                );
+
+            if (!inventory.available) {
+
+                throw new AppError(
+                    'OUT_OF_STOCK',
+                    400,
+                    `Available stock: ${inventory.availableStock}`
+                );
+            }
+
+            totalAmount +=
+                product.price *
+                item.quantity;
+
+            enrichedItems.push({
+                productId: product.id,
+                productName: product.name,
+                productPrice: product.price,
+                quantity: item.quantity
+            });
         }
 
-        totalAmount +=
-            product.price *
-            item.quantity;
+        const order =
+            await createOrder(
+                userId,
+                enrichedItems,
+                totalAmount
+            );
 
-        enrichedItems.push({
-            productId: product.id,
-            productName: product.name,
-            productPrice: product.price,
-            quantity: item.quantity
-        });
-    }
-
-    const order =
-        await createOrder(
-            userId,
-            enrichedItems,
-            totalAmount
+        await publishEvent(
+            EXCHANGES.ORDER_EVENTS,
+            QUEUES.ORDER_CREATED,
+            {
+                event: QUEUES.ORDER_CREATED,
+                orderId: order.id,
+                userId,
+                requestId,
+                totalAmount,
+                items: enrichedItems,
+                createdAt: new Date()
+            }
         );
 
-    await publishEvent(
-        EXCHANGES.ORDER_EVENTS,
-        QUEUES.ORDER_CREATED,
-        {
-            event: QUEUES.ORDER_CREATED,
+        orderStatusCounter.inc({status: OrderStatus.CREATED});
+
+        logger.info({
+            event: 'ORDER_CREATED',
             orderId: order.id,
             userId,
-            requestId,
-            totalAmount,
-            items: enrichedItems,
-            createdAt: new Date()
-        }
-    );
+            totalAmount
+        });
 
-    ordersCreatedCounter.inc();
+        return order;
 
-    logger.info({
-        event: 'ORDER_CREATED',
-        orderId: order.id,
-        userId,
-        totalAmount
-    });
+    } catch (error) {
 
-    return order;
+        orderStatusCounter.inc({status: OrderStatus.FAILED});
+
+        throw error;
+
+    }
+    finally {
+
+        endTimer();
+
+    }
 };
 
 export const getOrdersService = async (
@@ -176,11 +193,24 @@ export const updateOrderStatusService = async (
         status
     );
 
-    logger.info({
-        event: 'ORDER_UPDATED',
-        orderId,
+    orderStatusCounter.inc({
+
         status
+
     });
 
-    return getOrderById(orderId);
+    logger.info({
+
+        event: "ORDER_UPDATED",
+
+        orderId,
+
+        status
+
+    });
+
+    return getOrderById(
+        orderId
+    );
+
 };

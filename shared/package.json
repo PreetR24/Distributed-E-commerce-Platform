@@ -5,7 +5,8 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./grpc": "./dist/grpc/index.js"
+    "./grpc": "./dist/grpc/index.js",
+    "./metrics": "./dist/metrics/index.js"
   },
   "scripts": {
     "build": "tsc",

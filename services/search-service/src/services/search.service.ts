@@ -27,65 +27,81 @@ import {
 } from '@search/autocomplete.repository';
 import { elasticSearchProducts } from '@search/product-search.repository';
 
+import {
+    searchOperationCounter,
+    searchOperationDuration
+}
+from "@shared/common/metrics";
+
 export const searchProductsService =
 async (
     query: SearchQuery
 ) => {
 
-    const cacheKey =
-        SEARCH_CACHE.SEARCH_RESULTS(
-            JSON.stringify(query)
-        );
+    const endTimer = searchOperationDuration.startTimer();
 
-    const cachedData =
-        await getCache(
-            cacheKey
-        );
-
-    if (cachedData) {
-
-        return JSON.parse(
-            cachedData
-        );
-    }
-
-    let result;
-
-    try {
-        result =
-            await elasticSearchProducts(
-                query
+    try{
+        const cacheKey =
+            SEARCH_CACHE.SEARCH_RESULTS(
+                JSON.stringify(query)
             );
 
-    } catch (error) {
-
-        result =
-            await searchProducts(
-                query
+        const cachedData =
+            await getCache(
+                cacheKey
             );
-    }
 
-    if (
-        query.search &&
-        query.search.trim()
-    ) {
+        if (cachedData) {
 
-        await incrementSearchTerm(
+            return JSON.parse(
+                cachedData
+            );
+        }
+
+        let result;
+
+        try {
+            result =
+                await elasticSearchProducts(
+                    query
+                );
+
+        } catch (error) {
+
+            result =
+                await searchProducts(
+                    query
+                );
+        }
+
+        if (
+            query.search &&
             query.search.trim()
+        ) {
+
+            await incrementSearchTerm(
+                query.search.trim()
+            );
+        }
+
+        await setCache(
+            cacheKey,
+            result,
+            300
         );
+
+        logger.info(
+            `SEARCH RESULTS CACHED: ${cacheKey}`
+        );
+
+        searchOperationCounter.inc({
+            operation: "QUERY"
+        });
+
+        return result;
+    } finally {
+        endTimer();
     }
-
-    await setCache(
-        cacheKey,
-        result,
-        300
-    );
-
-    logger.info(
-        `SEARCH RESULTS CACHED: ${cacheKey}`
-    );
-
-    return result;
 };
 
 export const getTrendingSearchesService =
@@ -110,6 +126,10 @@ async () => {
         300
     );
 
+    searchOperationCounter.inc({
+        operation: "TRENDING SEARCH"
+    });
+
     logger.info(
         'TRENDING SEARCHES CACHED'
     );
@@ -126,6 +146,10 @@ async (
 
         return [];
     }
+
+    searchOperationCounter.inc({
+        operation: "AUTOCOMPLETE"
+    });
 
     return autocompleteProducts(
         query

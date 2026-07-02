@@ -1,29 +1,13 @@
 import { Counter, Histogram } from "prom-client";
 
-export const ordersCreatedTotal =
+export const orderStatusCounter =
     new Counter({
 
-        name: "orders_created_total",
+        name: "orders_total",
 
-        help: "Total orders created"
+        help: "Total orders by status",
 
-    });
-
-export const ordersCancelledTotal =
-    new Counter({
-
-        name: "orders_cancelled_total",
-
-        help: "Total orders cancelled"
-
-    });
-
-export const ordersFailedTotal =
-    new Counter({
-
-        name: "orders_failed_total",
-
-        help: "Total failed orders"
+        labelNames: ["status"]
 
     });
 
@@ -32,7 +16,7 @@ export const orderProcessingDuration =
 
         name: "order_processing_duration_seconds",
 
-        help: "Order processing duration",
+        help: "Time taken to process an order",
 
         buckets: [
             0.05,

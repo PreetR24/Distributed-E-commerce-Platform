@@ -9,12 +9,14 @@ datasource db {
 }
 
 enum OrderStatus {
+    CREATED
     PENDING
     CONFIRMED
     PROCESSING
     SHIPPED
     DELIVERED
     CANCELLED
+    FAILED
 }
 
 model Order {

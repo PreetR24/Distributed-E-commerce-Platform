@@ -10,12 +10,12 @@ from '../utils/logger';
 
 import {
 
-    publishedEvents,
+    publishedEventsCounter,
 
-    consumedEvents
+    consumedEventsCounter
 
 }
-from '../metrics/infrastructure.metrics';
+from '../metrics/rabbitmq.metrics';
 
 let connection:
     amqp.ChannelModel  | null =
@@ -147,7 +147,7 @@ async (
 
     );
 
-    publishedEvents.inc();
+    publishedEventsCounter.inc();
 
     logger.info(
 
@@ -271,7 +271,7 @@ async (
 
                 );
 
-                consumedEvents.inc();
+                consumedEventsCounter.inc();
 
                 rabbitChannel.ack(
 

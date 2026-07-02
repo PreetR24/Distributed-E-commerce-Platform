@@ -3,12 +3,18 @@ import * as grpc from '@grpc/grpc-js';
 import {
     getInventoryByProductId
 } from '../repositories/inventory.repository';
+import { grpcRequestCounter, grpcRequestDuration } from '@shared/common/metrics';
 
 export const checkInventoryHandler =
     async (
         call: any,
         callback: any
     ) => {
+
+        const endTimer = grpcRequestDuration.startTimer({
+            service: "inventory-service",
+            method: "CheckInventory"
+        });
 
         try {
 
@@ -28,6 +34,13 @@ export const checkInventoryHandler =
                 );
             }
 
+            grpcRequestCounter.inc({
+                caller: "grpc",
+                service: "inventory-service",
+                method: "CheckInventory",
+                status: "SUCCESS"
+            });
+
             callback(
                 null,
                 {
@@ -42,11 +55,20 @@ export const checkInventoryHandler =
 
         } catch (error) {
 
+            grpcRequestCounter.inc({
+                caller: "grpc",
+                service: "inventory-service",
+                method: "CheckInventory",
+                status: "FAILED"
+            });
+
             callback({
                 code:
                     grpc.status.INTERNAL,
                 message:
                     'Inventory check failed'
             });
+        } finally {
+            endTimer();
         }
     };

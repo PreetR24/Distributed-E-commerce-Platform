@@ -1,33 +1,23 @@
-import client from 'prom-client';
+import client from "prom-client";
 
 export const cacheHits =
     new client.Counter({
+
         name:
-            'redis_cache_hits_total',
+            "redis_cache_hits_total",
+
         help:
-            'Redis Cache Hits'
+            "Redis Cache Hits"
+
     });
 
 export const cacheMisses =
     new client.Counter({
-        name:
-            'redis_cache_misses_total',
-        help:
-            'Redis Cache Misses'
-    });
 
-export const publishedEvents =
-    new client.Counter({
         name:
-            'rabbitmq_events_published_total',
-        help:
-            'RabbitMQ Events Published'
-    });
+            "redis_cache_misses_total",
 
-export const consumedEvents =
-    new client.Counter({
-        name:
-            'rabbitmq_events_consumed_total',
         help:
-            'RabbitMQ Events Consumed'
+            "Redis Cache Misses"
+
     });

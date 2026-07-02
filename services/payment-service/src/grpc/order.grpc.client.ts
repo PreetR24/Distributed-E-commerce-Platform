@@ -6,6 +6,17 @@ from '@grpc/grpc-js';
 import * as protoLoader
 from '@grpc/proto-loader';
 
+import {
+
+    grpcLoaderOptions,
+
+}
+from '@shared/common/grpc';
+
+import {
+    waitFor
+} from '@shared/common';
+
 const PROTO_PATH =
     path.resolve(
         process.cwd(),
@@ -15,24 +26,66 @@ const PROTO_PATH =
 const packageDefinition =
     protoLoader.loadSync(
         PROTO_PATH,
-        {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-        }
+        grpcLoaderOptions
     );
 
-const orderProto: any =
+const grpcPackage: any =
     grpc.loadPackageDefinition(
         packageDefinition
     ).order;
 
-const grpcServer = process.env.ORDER_GRPC_URL;
+const OrderClient =
+    grpcPackage.OrderService;
 
 export const orderClient =
-    new orderProto.OrderService(
-        grpcServer,
+    new OrderClient(
+
+        process.env.ORDER_GRPC_URL!,
+
         grpc.credentials.createInsecure()
+
     );
+
+export const waitForOrderGrpc =
+async (): Promise<void> => {
+
+    await waitFor({
+
+        name:
+            'Order gRPC',
+
+        task:
+            () =>
+
+                new Promise<void>(
+
+                    (
+                        resolve,
+                        reject
+                    ) => {
+
+                        orderClient.waitForReady(
+
+                            Date.now() + 3000,
+
+                            (error: any) => {
+
+                                if (error) {
+
+                                    return reject(error);
+
+                                }
+
+                                resolve();
+
+                            }
+
+                        );
+
+                    }
+
+                )
+
+    });
+
+};

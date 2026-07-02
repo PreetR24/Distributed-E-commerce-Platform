@@ -6,10 +6,9 @@ import systemRoutes from '../routes/system-health.routes';
 
 const router = Router();
 
+router.use('/system/health', systemRoutes);
+router.use('/health', healthRoutes);
 router.use('/', baseRoutes);
 
-router.use('/health', healthRoutes);
-
-router.use('/system/health', systemRoutes);
 
 export default router;

@@ -1,19 +1,66 @@
-import amqp from 'amqplib';
-import {logger} from "../utils/logger"
+import amqp
+from 'amqplib';
 
 import {
+
+    logger
+
+}
+from '../utils/logger';
+
+import {
+
     publishedEvents,
+
     consumedEvents
+
 }
 from '../metrics/infrastructure.metrics';
 
-let channel: amqp.Channel;
+let connection:
+    amqp.ChannelModel  | null =
+    null;
 
-export const connectRabbitMQ = async () => {
+let channel:
+    amqp.Channel | null =
+    null;
 
-    const connection =
+const getChannel =
+(): amqp.Channel => {
+
+    if (
+        !channel
+    ) {
+
+        throw new Error(
+            'RabbitMQ channel has not been initialized.'
+        );
+
+    }
+
+    return channel;
+
+};
+
+export const connectRabbitMQ =
+async (): Promise<void> => {
+
+    if (
+        connection &&
+        channel
+    ) {
+
+        return;
+
+    }
+
+    connection =
         await amqp.connect(
+
+            process.env.RABBITMQ_URL ||
+
             'amqp://rabbitmq:5672'
+
         );
 
     channel =
@@ -22,112 +69,256 @@ export const connectRabbitMQ = async () => {
     logger.info(
         'Connected To RabbitMQ'
     );
+
 };
 
-export const publishEvent = async (
-    exchange: string,
-    routingKey: string,
-    message: unknown
-) => {
+export const disconnectRabbitMQ =
+async (): Promise<void> => {
 
-    await channel.assertExchange(
-        exchange,
-        'fanout',
-        {
-            durable: true
-        }
+    if (
+        channel
+    ) {
+
+        await channel.close();
+
+        channel =
+            null;
+
+    }
+
+    if (
+        connection
+    ) {
+
+        await connection.close();
+
+        connection =
+            null;
+
+    }
+
+    logger.info(
+        'Disconnected From RabbitMQ'
     );
 
-    channel.publish(
+};
+
+export const publishEvent =
+async (
+
+    exchange: string,
+
+    routingKey: string,
+
+    message: unknown
+
+): Promise<void> => {
+
+    const rabbitChannel =
+        getChannel();
+
+    await rabbitChannel.assertExchange(
+
         exchange,
+
+        'fanout',
+
+        {
+
+            durable: true
+
+        }
+
+    );
+
+    rabbitChannel.publish(
+
+        exchange,
+
         routingKey,
+
         Buffer.from(
-            JSON.stringify(message)
+
+            JSON.stringify(
+                message
+            )
+
         )
+
     );
 
     publishedEvents.inc();
 
     logger.info(
+
         'Event Published',
+
         {
+
             exchange,
+
             routingKey,
-            payload: message
+
+            payload:
+                message
+
         }
+
     );
+
 };
 
-export const consumeEvent = async (
-    exchange: string,
-    queue: string,
-    callback: (data: any) => Promise<void>
-) => {
+export const consumeEvent =
+async (
 
-    await channel.assertExchange(
+    exchange: string,
+
+    queue: string,
+
+    callback:
+        (
+            data: any
+        ) => Promise<void>
+
+): Promise<void> => {
+
+    const rabbitChannel =
+        getChannel();
+
+    await rabbitChannel.assertExchange(
+
         exchange,
+
         'fanout',
+
         {
+
             durable: true
+
         }
+
     );
 
     const assertedQueue =
-        await channel.assertQueue(
+
+        await rabbitChannel.assertQueue(
+
             queue,
+
             {
+
                 durable: true
+
             }
+
         );
 
-    await channel.bindQueue(
+    await rabbitChannel.bindQueue(
+
         assertedQueue.queue,
+
         exchange,
+
         ''
+
     );
 
     logger.info(
+
         'Queue Bound To Exchange',
+
         {
+
             queue,
+
             exchange
+
         }
+
     );
 
-    channel.consume(
+    rabbitChannel.consume(
+
         assertedQueue.queue,
 
-        async (message) => {
+        async (
 
-            if (!message) {
+            message
+
+        ) => {
+
+            if (
+                !message
+            ) {
+
                 return;
+
             }
 
             const parsedMessage =
+
                 JSON.parse(
+
                     message.content.toString()
+
                 );
 
             try {
-                await callback(parsedMessage);
-                consumedEvents.inc();
-                channel.ack(message);
-            }
-            catch (error) {
-                logger.error(
-                    'RabbitMQ Consumer Error:',
-                    error
+
+                await callback(
+
+                    parsedMessage
+
                 );
-                channel.ack(message);
+
+                consumedEvents.inc();
+
+                rabbitChannel.ack(
+
+                    message
+
+                );
+
+                logger.info(
+
+                    'Message Processed',
+
+                    {
+
+                        queue,
+
+                        exchange
+
+                    }
+
+                );
+
             }
 
-            logger.info(
-                'Message Acknowledged',
-                {
-                    queue,
-                    exchange
-                }
-            );
+            catch (
+
+                error
+
+            ) {
+
+                logger.error(
+
+                    'RabbitMQ Consumer Error',
+
+                    error
+
+                );
+
+                rabbitChannel.ack(
+
+                    message
+
+                );
+
+            }
+
         }
+
     );
+
 };

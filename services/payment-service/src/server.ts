@@ -2,25 +2,86 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    logger
-} from '@shared/common';
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+}
+from '@shared/common';
 
-const PORT = process.env.PORT || 4005;
+import {
+    initialize
+}
+from './initialize/initialize';
 
-const bootstrap = async () => {
+const PORT =
+    Number(
+        process.env.PORT
+    );
 
-    await connectRabbitMQ();
+const bootstrapServer =
+async (): Promise<void> => {
 
-    app.listen(PORT, () => {
+    try {
 
-        logger.info(
-            `Payment Service running on port ${PORT}`
+        await initialize();
+
+        const server = app.listen(
+            PORT,
+            () => {
+                logger.info(
+                    `Payment Service running on port ${PORT}`
+                );
+            }
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+    }
+    catch (
+        error
+    ) {
+        logger.error(
+            'Failed to start Payment Service',
+            error
+        );
+        process.exit(1);
+    }
 };
 
-bootstrap();
+bootstrapServer();

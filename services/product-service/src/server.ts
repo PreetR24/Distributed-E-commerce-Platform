@@ -2,36 +2,109 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    connectRedisCache,
-    logger
-} from '@shared/common';
+    initialize
+}
+from './initialize/initialize';
 
 import {
-    startGrpcServer
+    startGrpcServer,
+    stopGrpcServer
 }
 from './grpc/product.grpc.server';
 
+import { 
+    disconnectRabbitMQ,
+    disconnectRedisCache, 
+    registerShutdownSignals, 
+    registerShutdownTask 
+} from '@shared/common';
+
 const PORT =
-    process.env.PORT || 4002;
+    Number(
+        process.env.PORT
+    );
 
-const bootstrap = async () => {
+const bootstrapServer =
+async () => {
 
-    await connectRabbitMQ();
+    try {
 
-    await connectRedisCache();
+        await initialize();
 
-    startGrpcServer();
+        await startGrpcServer();
 
-    app.listen(PORT, () => {
+        const server = app.listen(
 
-        logger.info(
-            `Product Service running on port ${PORT}`
+            PORT,
+
+            () => {
+                console.log(
+                    'Product Service Ready'
+                );
+            }
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "gRPC Server",
+            stopGrpcServer
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        console.error(
+
+            'Failed to start Product Service',
+
+            error
+        );
+
+        process.exit(1);
+
+    }
+
 };
 
-bootstrap();
+bootstrapServer();

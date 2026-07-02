@@ -10,6 +10,11 @@ services:
         restart: unless-stopped
         networks:
             - commerce-network
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
     rabbitmq:
         image: rabbitmq:3-management
@@ -21,7 +26,13 @@ services:
             - rabbitmq_data:/var/lib/rabbitmq
         restart: unless-stopped
         networks:
-            - commerce-network  
+            - commerce-network
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics","-q", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 10
+            start_period: 30s  
 
     api-gateway:
         build:
@@ -35,13 +46,40 @@ services:
             - ./api-gateway/.env
             - ./shared/.env
         depends_on:
-            - product-service
-            - rabbitmq
-            - redis
-            - postgres
-        restart: unless-stopped
+            product-service:
+                condition: service_started
+            user-service:
+                condition: service_started
+            cart-service:
+                condition: service_started
+            order-service:
+                condition: service_started
+            payment-service:
+                condition: service_started
+            inventory-service:
+                condition: service_started
+            search-service:
+                condition: service_started
+            analytics-service:
+                condition: service_started
+            notification-service:
+                condition: service_started
+            graphql-gateway:
+                condition: service_started
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:3000/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     user-service:
         build:
@@ -55,10 +93,24 @@ services:
         ports:
             - "4001:4001"
         depends_on:
-            - postgres
-            - rabbitmq
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
         networks:
-            - commerce-network      
+            - commerce-network    
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4001/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s  
 
     product-service:
         build:
@@ -72,11 +124,26 @@ services:
         ports:
             - "4002:4002"
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         networks:
             - commerce-network  
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4002/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     cart-service:
         build:
@@ -90,11 +157,26 @@ services:
             - ./shared/.env
             - ./services/cart-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         networks:
-            - commerce-network    
+            - commerce-network   
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4003/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s 
 
     order-service:
         build:
@@ -108,13 +190,30 @@ services:
             - ./shared/.env
             - ./services/order-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
-            - product-service
-            - inventory-service
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            product-service:
+                condition: service_started
+            inventory-service:
+                condition: service_started
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4004/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     payment-service:
         build:
@@ -127,12 +226,28 @@ services:
             - ./shared/.env
             - ./services/payment-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
-            - order-service
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            order-service:
+                condition: service_started
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4005/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     inventory-service:
         build:
@@ -145,11 +260,26 @@ services:
             - ./shared/.env
             - ./services/inventory-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4006/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     search-service:
         build:
@@ -162,12 +292,30 @@ services:
             - ./shared/.env
             - ./services/search-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
-            - elasticsearch
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
+            product-service:
+                condition: service_started
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4007/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     analytics-service:
         build:
@@ -180,11 +328,26 @@ services:
             - ./shared/.env
             - ./services/analytics-service/.env
         depends_on:
-            - postgres
-            - rabbitmq
-            - redis
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4008/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     notification-service:
         build:
@@ -197,10 +360,24 @@ services:
             - ./shared/.env
             - ./services/notification-service/.env
         depends_on:
-            - rabbitmq
-            - redis
+            rabbitmq:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4009/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     graphql-gateway:
         build:
@@ -213,15 +390,34 @@ services:
             - ./shared/.env
             - ./graphql-gateway/.env
         depends_on:
-            - user-service
-            - product-service
-            - order-service
-            - cart-service
-            - inventory-service
-            - payment-service
-            - analytics-service
+            user-service:
+                condition: service_started
+            product-service:
+                condition: service_started
+            order-service:
+                condition: service_started
+            cart-service:
+                condition: service_started
+            inventory-service:
+                condition: service_started
+            payment-service:
+                condition: service_started
+            analytics-service:
+                condition: service_started
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "node",
+                    "-e",
+                    "fetch('http://localhost:4010/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     postgres:
         image: postgres:16
@@ -238,6 +434,12 @@ services:
         restart: unless-stopped
         networks:
             - commerce-network
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
@@ -252,6 +454,16 @@ services:
         restart: unless-stopped
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "curl -fs http://localhost:9200/_cluster/health || exit 1"
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 10
+            start_period: 30s
 
     prometheus:
         image: prom/prometheus
@@ -259,25 +471,54 @@ services:
         ports:
             - "9090:9090"
         volumes:
-            - ../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
         restart: unless-stopped
         networks:
             - commerce-network
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "wget",
+                    "--spider",
+                    "-q",
+                    "http://localhost:9090/-/healthy"
+                ]
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 15s
 
-    grafana:
-        image: grafana/grafana
-        container_name: distributed-commerce-grafana
-        ports:
-            - "3001:3000"
-        restart: unless-stopped
-        networks:
-            - commerce-network
+    # grafana:
+    #     image: grafana/grafana
+    #     container_name: distributed-commerce-grafana
+    #     ports:
+    #         - "3001:3000"
+    #     restart: unless-stopped
+    #     networks:
+    #         - commerce-network
+    #     volumes:
+    #         - grafana_data:/var/lib/grafana
+    #     healthcheck:
+    #         test:
+    #             [
+    #                 "CMD",
+    #                 "wget",
+    #                 "--spider",
+    #                 "-q",
+    #                 "http://localhost:3000/api/health"
+    #             ]
+    #         interval: 30s
+    #         timeout: 5s
+    #         retries: 5
+    #         start_period: 20s
             
 volumes:
     redis_data:
     rabbitmq_data:
     postgres_data:
     elasticsearch_data:
+    grafana_data:
 
 networks:
     commerce-network:

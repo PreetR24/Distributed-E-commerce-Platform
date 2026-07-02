@@ -1,17 +1,61 @@
-import { Request, Response } from 'express';
+import {
 
-import { getHealthStatus } from '../services/health.service';
+    Request,
+    Response
 
-export const healthCheckController = (
+}
+from 'express';
+
+import {
+
+    getHealthStatus,
+    getLivenessStatus,
+    getReadinessStatus
+
+}
+from '@shared/common';
+
+const SERVICE_NAME =
+    'api-gateway-service';
+
+export const healthController =
+(
     _req: Request,
     res: Response
 ) => {
-    const data = getHealthStatus();
 
-    return res.status(200).json(
-        {
-            success: true,
-            data
-        }
+    return res.json(
+        getHealthStatus(
+            SERVICE_NAME
+        )
     );
+
+};
+
+export const livenessController =
+(
+    _req: Request,
+    res: Response
+) => {
+
+    return res.json(
+        getLivenessStatus(
+            SERVICE_NAME
+        )
+    );
+
+};
+
+export const readinessController =
+(
+    _req: Request,
+    res: Response
+) => {
+
+    return res.json(
+        getReadinessStatus(
+            SERVICE_NAME
+        )
+    );
+
 };

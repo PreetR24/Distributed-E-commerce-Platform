@@ -20,7 +20,9 @@
             "@config/*": ["./src/config/*"],
             "@resolvers/*": ["./src/graphql/resolvers/*"],
             "@schemas/*": ["./src/graphql/schemas/*"],
-            "@services/*": ["./src/services/*"]
+            "@services/*": ["./src/services/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@routes/*": ["./src/routes/*"],
         }
     },
     "include": ["src"]

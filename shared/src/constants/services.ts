@@ -25,5 +25,8 @@ export const SERVICES = {
         process.env.ANALYTICS_SERVICE_URL!,
 
     NOTIFICATION:
-        process.env.NOTIFICATION_SERVICE_URL!
+        process.env.NOTIFICATION_SERVICE_URL!,
+
+    GRAPHQL:
+        process.env.GRAPHQL_GATEWAY_URL!
 };

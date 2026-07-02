@@ -6,6 +6,15 @@ from '@grpc/grpc-js';
 import * as protoLoader
 from '@grpc/proto-loader';
 
+import {
+    grpcLoaderOptions,
+}
+from '@shared/common/grpc';
+
+import {
+    waitFor
+} from '@shared/common';
+
 const PROTO_PATH =
     path.resolve(
         process.cwd(),
@@ -15,25 +24,66 @@ const PROTO_PATH =
 const packageDefinition =
     protoLoader.loadSync(
         PROTO_PATH,
-        {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-        }
+        grpcLoaderOptions
     );
 
-const inventoryProto: any =
+const grpcPackage: any =
     grpc.loadPackageDefinition(
         packageDefinition
     ).inventory;
 
-const grpcServer =
-    process.env.INVENTORY_GRPC_URL;
+const InventoryClient =
+    grpcPackage.InventoryService;
 
 export const inventoryClient =
-    new inventoryProto.InventoryService(
-        grpcServer,
+    new InventoryClient(
+
+        process.env.INVENTORY_GRPC_URL!,
+
         grpc.credentials.createInsecure()
+
     );
+
+export const waitForInventoryGrpc =
+async (): Promise<void> => {
+
+    await waitFor({
+
+        name:
+            'Inventory gRPC',
+
+        task:
+            () =>
+
+                new Promise<void>(
+
+                    (
+                        resolve,
+                        reject
+                    ) => {
+
+                        inventoryClient.waitForReady(
+
+                            Date.now() + 3000,
+
+                            (error:any) => {
+
+                                if (error) {
+
+                                    return reject(error);
+
+                                }
+
+                                resolve();
+
+                            }
+
+                        );
+
+                    }
+
+                )
+
+    });
+
+};

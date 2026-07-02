@@ -78,3 +78,18 @@ async (
 
     await redisClient.del(key);
 };
+
+export const disconnectRedisCache =
+async (): Promise<void> => {
+
+    if (
+
+        redisClient.isOpen
+
+    ) {
+
+        await redisClient.quit();
+
+    }
+
+};

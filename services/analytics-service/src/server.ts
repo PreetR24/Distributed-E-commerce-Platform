@@ -1,60 +1,108 @@
-import dotenv from 'dotenv';
+import dotenv
+from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    logger
+
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+
 }
 from '@shared/common';
 
 import {
-    initializeMetrics
-}
-from '@repositories/analytics.repository';
 
-import {
-    startOrderAnalyticsConsumer
-}
-from './consumers/order.consumer';
+    initialize
 
-import {
-    startPaymentAnalyticsConsumer
 }
-from './consumers/payment.consumer';
-
-import {
-    startProductAnalyticsConsumer
-}
-from './consumers/product.consumer';
+from './initialize/initialize';
 
 const PORT =
-    process.env.PORT || 4008;
-
-const bootstrap =
-async () => {
-
-    await connectRabbitMQ();
-
-    await initializeMetrics();
-
-    await startOrderAnalyticsConsumer();
-
-    await startPaymentAnalyticsConsumer();
-
-    await startProductAnalyticsConsumer();
-
-    app.listen(
-        PORT,
-        () => {
-
-            logger.info(
-                `Analytics Service Running on ${PORT}`
-            );
-        }
+    Number(
+        process.env.PORT
     );
+
+const bootstrapServer =
+async (): Promise<void> => {
+
+    try {
+
+        await initialize();
+
+        const server = app.listen(
+
+            PORT,
+
+            () => {
+
+                logger.info(
+                    `Analytics Service running on port ${PORT}`
+                );
+
+            }
+
+        );
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        logger.error(
+
+            'Failed to start Analytics Service',
+
+            error
+
+        );
+
+        process.exit(1);
+
+    }
+
 };
 
-bootstrap();
+bootstrapServer();

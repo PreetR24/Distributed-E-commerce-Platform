@@ -9,7 +9,7 @@ async () => {
 
     const connection =
         await amqp.connect(
-            'amqp://localhost:5672'
+            'amqp://rabbitmq:5672'
         );
 
     const channel =

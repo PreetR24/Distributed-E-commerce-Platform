@@ -2,23 +2,84 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
-import { connectRedis } from '@config/redis';
+import {
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+}
+from '@shared/common';
 
-import { logger } from '@shared/common';
+import {
+    initialize
+}
+from './initialize/initialize';
 
-const PORT = process.env.PORT || 4003;
+const PORT = Number( process.env.PORT );
 
-const bootstrap = async () => {
+const bootstrapServer =
+async (): Promise<void> => {
 
-    await connectRedis();
+    try {
 
-    app.listen(PORT, () => {
-        logger.info(
-            `Cart Service running on port ${PORT}`
+        await initialize();
+        
+        const server = app.listen(
+            PORT,
+            () => {
+                logger.info(
+                    `Cart Service running on port ${PORT}`
+                );
+            }
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+    }
+
+    catch (
+        error
+    ) {
+        logger.error(
+            'Failed to start Cart Service',
+            error
+        );
+        process.exit(1);
+    }
 };
 
-bootstrap();
+bootstrapServer();

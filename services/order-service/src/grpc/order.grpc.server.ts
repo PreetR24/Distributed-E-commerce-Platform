@@ -7,7 +7,16 @@ import * as protoLoader
 from '@grpc/proto-loader';
 
 import {
-    getOrderByIdHandler,
+
+    grpcLoaderOptions
+
+}
+from '@shared/common/grpc';
+
+import {
+
+    getOrderByIdHandler
+
 }
 from './order.grpc.handler';
 
@@ -20,52 +29,129 @@ const PROTO_PATH =
 const packageDefinition =
     protoLoader.loadSync(
         PROTO_PATH,
-        {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-        }
+        grpcLoaderOptions
     );
 
-const orderProto: any =
+const grpcPackage: any =
     grpc.loadPackageDefinition(
         packageDefinition
     ).order;
 
-const grpcHost = process.env.ORDER_GRPC_HOST;
-const grpcPort = process.env.ORDER_GRPC_PORT;
+const grpcHost =
+    process.env.ORDER_GRPC_HOST!;
 
-export const startOrderGrpcServer =
-    () => {
+const grpcPort =
+    process.env.ORDER_GRPC_PORT!;
 
-        const server =
-            new grpc.Server();
+let grpcServer:
+    grpc.Server | null =
+    null;
 
-        server.addService(
-            orderProto.OrderService.service,
-            {
-                GetOrderById:
-                    getOrderByIdHandler
-            }
-        );
+export const startGrpcServer =
+async (): Promise<void> => {
 
-        server.bindAsync(
-            `${grpcHost}:${grpcPort}`,
-            grpc.ServerCredentials.createInsecure(),
-            (
-                error,
-                port
-            ) => {
+    if (
+        grpcServer
+    ) {
 
-                if (error) {
-                    throw error;
+        return;
+
+    }
+
+    grpcServer =
+        new grpc.Server();
+
+    grpcServer.addService(
+
+        grpcPackage.OrderService.service,
+
+        {
+
+            GetOrderById:
+                getOrderByIdHandler
+
+        }
+
+    );
+
+    await new Promise<void>(
+
+        (
+            resolve,
+            reject
+        ) => {
+
+            grpcServer!.bindAsync(
+
+                `${grpcHost}:${grpcPort}`,
+
+                grpc.ServerCredentials.createInsecure(),
+
+                (
+                    error,
+                    port
+                ) => {
+
+                    if (
+                        error
+                    ) {
+
+                        return reject(
+                            error
+                        );
+
+                    }
+
+                    console.log(
+                        `gRPC Order Server running on ${port}`
+                    );
+
+                    resolve();
+
                 }
 
-                console.log(
-                    `gRPC Order Server running on ${port}`
-                );
-            }
-        );
-    };
+            );
+
+        }
+
+    );
+
+};
+
+export const stopGrpcServer =
+async (): Promise<void> => {
+
+    if (
+        !grpcServer
+    ) {
+
+        return;
+
+    }
+
+    await new Promise<void>(
+
+        resolve => {
+
+            grpcServer!.tryShutdown(
+
+                () => {
+
+                    console.log(
+                        'gRPC Order Server stopped'
+                    );
+
+                    grpcServer =
+                        null;
+
+                    resolve();
+
+                }
+
+            );
+
+        }
+
+    );
+
+};

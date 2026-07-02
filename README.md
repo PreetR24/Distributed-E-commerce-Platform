@@ -29,6 +29,11 @@ The goal is to showcase:
 * RBAC Authorization
 * Analytics Aggregation
 * Distributed System Design
+* Shared Infrastructure Package
+* Infrastructure Bootstrap Framework
+* Graceful Shutdown Handling
+* Health Monitoring Framework
+* Docker-First Development Workflow
 
 Rather than focusing on frontend development, the project emphasizes scalable backend architecture and real-world engineering practices.
 
@@ -48,6 +53,10 @@ Rather than focusing on frontend development, the project emphasizes scalable ba
 - Real-Time Notifications with WebSockets
 - Prometheus & Grafana Observability
 - Dockerized Development Environment
+- Shared Infrastructure Package
+- Infrastructure Bootstrap Framework
+- Graceful Startup & Shutdown
+- Health Monitoring Endpoints
 - GitHub Actions CI Pipeline
 
 ---
@@ -93,6 +102,18 @@ Clients
 
           │
           ▼
+   Shared Infrastructure Layer
+          │
+          ▼
+      Retry Framework
+          │
+          ▼
+      Bootstrap Framework
+          │
+          ▼
+    Graceful Shutdown
+          │
+          ▼
 
    Distributed Workflows
 
@@ -117,6 +138,10 @@ Clients
 * Database Per Service Pattern
 * Middleware Architecture
 * Event-Driven Architecture
+* Infrastructure Bootstrap Pattern
+* Shared Infrastructure Package
+* Graceful Shutdown Pattern
+* Dependency Initialization Framework
 
 ## API Communication
 
@@ -198,15 +223,17 @@ Used for:
 * Internal service communication
 * Fast product lookup
 * Protocol Buffer contracts
+* Startup Dependency Validation
 
 ### RabbitMQ
 
 Used for:
 
-* Async workflows
-* SAGA communication
-* Analytics aggregation
-* Search indexing
+* Async Workflows
+* SAGA Communication
+* Analytics Aggregation
+* Search Indexing
+* Shared Messaging Infrastructure
 
 ### WebSockets
 
@@ -231,6 +258,9 @@ Used for:
 - PostgreSQL Verification
 - Health Monitoring
 - Operational Visibility
+- Service Health Verification
+- Docker Health Check Verification
+- Graceful Shutdown Verification
 
 ---
 
@@ -456,6 +486,8 @@ Responsibilities:
 * Category Management
 * Redis Caching
 * gRPC Server
+* Health Monitoring
+* Graceful Shutdown
 
 ## Cart Service
 
@@ -471,6 +503,8 @@ Responsibilities:
 * Order Lifecycle
 * SAGA Coordination
 * gRPC Product Lookup
+* Startup Dependency Waiting
+* Graceful Shutdown
 
 ## Payment Service
 
@@ -493,6 +527,7 @@ Responsibilities:
 Responsibilities:
 
 * Elasticsearch Integration
+* Startup Dependency Waiting
 * Product Search
 * Autocomplete
 * CQRS Read Model
@@ -661,6 +696,8 @@ Created centralized dashboards for:
 Implemented:
 
 * Metrics Instrumentation
+* Docker Health Monitoring
+* Service Liveness Monitoring
 * Request Monitoring
 * Business KPI Tracking
 * Infrastructure Visibility
@@ -785,6 +822,8 @@ Capabilities:
 Every service exposes:
 
 GET /health
+GET /health/live
+GET /health/ready
 
 Services:
 
@@ -863,6 +902,27 @@ Events:
 
 ---
 
+# Infrastructure Framework
+
+The platform includes a shared infrastructure package used across all services.
+
+Implemented Components:
+
+* Infrastructure Bootstrap Framework
+* Retry Framework
+* Shared Redis Cache
+* Shared RabbitMQ Messaging
+* Shared Health Framework
+* Shared Metrics Collection
+* Shared Logger
+* Shared Error Handling
+* Shared gRPC Utilities
+* Graceful Shutdown Framework
+
+These components ensure consistent initialization, monitoring, communication, and shutdown behavior across all microservices.
+
+---
+
 # Technology Stack
 
 ## Backend
@@ -909,6 +969,15 @@ Events:
 
 * Docker
 * Docker Compose
+* Prometheus
+* Grafana
+
+## Infrastructure Features:
+
+* Shared RabbitMQ Connection Management
+* Centralized Queue Configuration
+* Shared Event Publishing
+* Shared Event Consumption
 
 ---
 
@@ -932,6 +1001,19 @@ Distributed-Commerce-Platform/
 │   └── notification-service/
 
 ├── shared/
+│   ├── bootstrap/
+│   ├── cache/
+│   ├── config/
+│   ├── constants/
+│   ├── enums/
+│   ├── errors/
+│   ├── grpc/
+│   ├── health/
+│   ├── messaging/
+│   ├── metrics/
+│   ├── middleware/
+│   ├── shutdown/
+|   └── utils/
 
 ├── tests/
 │   ├── config/
@@ -996,6 +1078,12 @@ docker compose build
 ```
 
 Start Platform
+
+```bash
+docker compose up --build
+```
+
+Subsequent runs:
 
 ```bash
 docker compose up

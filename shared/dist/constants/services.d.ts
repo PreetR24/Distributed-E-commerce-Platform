@@ -8,4 +8,5 @@ export declare const SERVICES: {
     SEARCH: string;
     ANALYTICS: string;
     NOTIFICATION: string;
+    GRAPHQL: string;
 };

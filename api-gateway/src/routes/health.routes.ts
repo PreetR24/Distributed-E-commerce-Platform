@@ -1,9 +1,35 @@
-import { Router } from 'express';
+import {
 
-import { healthCheckController } from '../controllers/health.controller';
+    Router
 
-const router = Router();
+}
+from 'express';
 
-router.get('/', healthCheckController);
+import {
+
+    healthController,
+    livenessController,
+    readinessController
+
+}
+from '@controllers/health.controller';
+
+const router =
+    Router();
+
+router.get(
+    '/',
+    healthController
+);
+
+router.get(
+    '/live',
+    livenessController
+);
+
+router.get(
+    '/ready',
+    readinessController
+);
 
 export default router;

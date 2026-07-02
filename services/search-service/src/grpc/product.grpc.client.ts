@@ -6,6 +6,17 @@ from '@grpc/grpc-js';
 import * as protoLoader
 from '@grpc/proto-loader';
 
+import {
+
+    grpcLoaderOptions,
+
+}
+from '@shared/common/grpc';
+
+import {
+    waitFor
+} from '@shared/common';
+
 const PROTO_PATH =
     path.resolve(
         process.cwd(),
@@ -15,24 +26,66 @@ const PROTO_PATH =
 const packageDefinition =
     protoLoader.loadSync(
         PROTO_PATH,
-        {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-        }
+        grpcLoaderOptions
     );
 
-const productProto: any =
+const grpcPackage: any =
     grpc.loadPackageDefinition(
         packageDefinition
     ).product;
 
-const grpcServer = process.env.PRODUCT_GRPC_URL;
+const ProductClient =
+    grpcPackage.ProductService;
 
 export const productClient =
-    new productProto.ProductService(
-        grpcServer,
+    new ProductClient(
+
+        process.env.PRODUCT_GRPC_URL!,
+
         grpc.credentials.createInsecure()
+
     );
+
+export const waitForProductGrpc =
+async (): Promise<void> => {
+
+    await waitFor({
+
+        name:
+            'Product gRPC',
+
+        task:
+            () =>
+
+                new Promise<void>(
+
+                    (
+                        resolve,
+                        reject
+                    ) => {
+
+                        productClient.waitForReady(
+
+                            Date.now() + 3000,
+
+                            (error: any) => {
+
+                                if (error) {
+
+                                    return reject(error);
+
+                                }
+
+                                resolve();
+
+                            }
+
+                        );
+
+                    }
+
+                )
+
+    });
+
+};

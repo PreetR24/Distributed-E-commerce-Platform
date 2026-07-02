@@ -1,70 +1,116 @@
-import express from 'express';
+import dotenv from "dotenv";
 
-import cors from 'cors';
+dotenv.config();
 
-import { ApolloServer }
-from '@apollo/server';
+import express from "express";
+import cors from "cors";
 
-import { expressMiddleware }
-from '@as-integrations/express5';
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@as-integrations/express5";
 
-import { typeDefs }
-from '@schemas/index';
+import { typeDefs } from "@schemas/index";
+import { resolvers } from "@resolvers/index";
 
-import { resolvers }
-from '@resolvers/index';
+import { env } from "@config/env";
+import { logger, registerShutdownSignals, registerShutdownTask } from "@shared/common";
 
-import { env } from '@config/env';
+import { initialize } from "./initialize/initialize";
+
+import v1Routes from "./v1";
 
 export interface GraphQLContext {
     token: string | null;
 }
 
-const bootstrap = async () => {
+const bootstrapServer = async (): Promise<void> => {
+    try {
 
-    const app = express();
-    const PORT = env.port;
+        const app = express();
 
-    const server =
-        new ApolloServer<GraphQLContext>({
-
+        const apolloServer = new ApolloServer<GraphQLContext>({
             typeDefs,
-
             resolvers
         });
 
-    await server.start();
+        await apolloServer.start();
 
-    app.use(
-        '/graphql',
+        app.use(
+            "/api/v1",
+            v1Routes
+        );
 
-        cors(),
-
-        express.json(),
-
-        expressMiddleware(
-            server,
-
-            {
-                context: async ({
-                    req
-                }) => ({
-                    token: req.headers.authorization || null,
+        app.use(
+            "/graphql",
+            cors(),
+            express.json(),
+            expressMiddleware(apolloServer, {
+                context: async ({ req }) => ({
+                    token: req.headers.authorization ?? null
                 })
-            }
-        )
-    );
+            })
+        );
 
-    app.listen(
-        PORT,
+        await initialize();
 
-        () => {
-
-            console.log(
-                `GraphQL Gateway Running On Port ${PORT}`
+        const httpServer = app.listen(env.port, () => {
+            logger.info(
+                `GraphQL Gateway running on port ${env.port}`
             );
-        }
-    );
+        });
+
+        registerShutdownTask(
+            "GraphQL Gateway Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        httpServer.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "Apollo Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        apolloServer.stop().then(() => {
+                            httpServer.close(
+                                error => {
+                                    if (error) {
+                                        reject(error);
+                                    } else {
+                                        resolve();
+                                    }
+                                })
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownSignals();
+    } catch (error) {
+        logger.error(
+            "Failed to start GraphQL Gateway",
+            error
+        );
+
+        process.exit(1);
+    }
 };
 
-bootstrap();
+bootstrapServer();

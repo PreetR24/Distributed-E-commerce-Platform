@@ -1,43 +1,122 @@
-import dotenv from 'dotenv';
+import dotenv
+from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    logger
-} from '@shared/common';
+
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+
+}
+from '@shared/common';
 
 import {
-    startPaymentFailureConsumer
-} from './consumers/payment.consumer';
+
+    initialize
+
+}
+from './initialize/initialize';
 
 import {
-    startInventoryFailureConsumer
-} from './consumers/inventory.consumer';
 
-import {
-    startOrderGrpcServer
-} from './grpc/order.grpc.server';
+    startGrpcServer,
+    stopGrpcServer
 
-const PORT = process.env.PORT || 4004;
+}
+from './grpc/order.grpc.server';
 
-const bootstrap = async () => {
+const PORT =
+    Number(
+        process.env.PORT
+    );
 
-    await connectRabbitMQ();
+const bootstrapServer =
+async (): Promise<void> => {
 
-    await startPaymentFailureConsumer();
+    try {
 
-    await startInventoryFailureConsumer();
+        await initialize();
 
-    startOrderGrpcServer();
+        await startGrpcServer();
 
-    app.listen(PORT, () => {
-        logger.info(
-            `Order Service running on port ${PORT}`
+        const server = app.listen(
+
+            PORT,
+
+            () => {
+
+                logger.info(
+                    `Order Service running on port ${PORT}`
+                );
+            }
+
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "gRPC Server",
+            stopGrpcServer
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        logger.error(
+
+            'Failed to start Order Service',
+
+            error
+
+        );
+
+        process.exit(1);
+
+    }
+
 };
 
-bootstrap();
+bootstrapServer();

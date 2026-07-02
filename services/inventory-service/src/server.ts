@@ -1,44 +1,122 @@
-import dotenv from 'dotenv';
+import dotenv
+from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    logger
-} from '@shared/common';
+
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+
+}
+from '@shared/common';
 
 import {
-    startOrderConsumer
-} from './consumers/order.consumer';
+
+    initialize
+
+}
+from './initialize/initialize';
 
 import {
-    startPaymentFailureConsumer
-} from './consumers/payment.consumer';
 
-import {
-    startGrpcServer
-} from './grpc/inventory.grpc.server';
+    startGrpcServer,
+    stopGrpcServer
 
-const PORT = process.env.PORT || 4006;
+}
+from './grpc/inventory.grpc.server';
 
-const bootstrap = async () => {
+const PORT =
+    Number(
+        process.env.PORT
+    );
 
-    await connectRabbitMQ();
+const bootstrapServer =
+async (): Promise<void> => {
 
-    await startOrderConsumer();
+    try {
 
-    await startPaymentFailureConsumer();
+        await initialize();
 
-    await startGrpcServer();
+        await startGrpcServer();
 
-    app.listen(PORT, () => {
+        const server = app.listen(
 
-        logger.info(
-            `Inventory Service running on port ${PORT}`
+            PORT,
+
+            () => {
+
+                logger.info(
+                    `Inventory Service running on port ${PORT}`
+                );
+            }
+
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "gRPC Server",
+            stopGrpcServer
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        logger.error(
+
+            'Failed to start Inventory Service',
+
+            error
+
+        );
+
+        process.exit(1);
+
+    }
+
 };
 
-bootstrap();
+bootstrapServer();

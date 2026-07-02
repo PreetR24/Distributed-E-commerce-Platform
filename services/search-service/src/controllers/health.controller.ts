@@ -1,13 +1,22 @@
 import {
+
     Request,
     Response
+
 }
 from 'express';
 
 import {
-    getHealthStatus
+
+    getHealthStatus,
+    getLivenessStatus,
+    getReadinessStatus
+
 }
 from '@shared/common';
+
+const SERVICE_NAME =
+    'search-service';
 
 export const healthController =
 (
@@ -15,10 +24,38 @@ export const healthController =
     res: Response
 ) => {
 
-    return res.status(200).json(
-
+    return res.json(
         getHealthStatus(
-            'search-service'
+            SERVICE_NAME
         )
     );
+
+};
+
+export const livenessController =
+(
+    _req: Request,
+    res: Response
+) => {
+
+    return res.json(
+        getLivenessStatus(
+            SERVICE_NAME
+        )
+    );
+
+};
+
+export const readinessController =
+(
+    _req: Request,
+    res: Response
+) => {
+
+    return res.json(
+        getReadinessStatus(
+            SERVICE_NAME
+        )
+    );
+
 };

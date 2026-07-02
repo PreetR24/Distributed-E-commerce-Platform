@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCache = exports.setCache = exports.getCache = exports.connectRedisCache = void 0;
+exports.disconnectRedisCache = exports.deleteCache = exports.setCache = exports.getCache = exports.connectRedisCache = void 0;
 const redis_1 = require("redis");
 const logger_1 = require("../utils/logger");
 const infrastructure_metrics_1 = require("../metrics/infrastructure.metrics");
@@ -39,3 +39,9 @@ const deleteCache = async (key) => {
     await redisClient.del(key);
 };
 exports.deleteCache = deleteCache;
+const disconnectRedisCache = async () => {
+    if (redisClient.isOpen) {
+        await redisClient.quit();
+    }
+};
+exports.disconnectRedisCache = disconnectRedisCache;

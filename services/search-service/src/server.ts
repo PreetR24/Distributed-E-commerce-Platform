@@ -1,54 +1,106 @@
-import dotenv from 'dotenv';
+import dotenv
+from 'dotenv';
 
 dotenv.config();
 
-import app from './app';
+import app
+from './app';
 
 import {
-    connectRabbitMQ,
-    connectRedisCache,
-    logger
-} from '@shared/common';
+    disconnectRabbitMQ,
+    disconnectRedisCache,
+    logger,
+    registerShutdownSignals,
+    registerShutdownTask
+}
+from '@shared/common';
 
 import {
-    startProductConsumer
-} from './consumers/product.consumer';
 
-import {
-    waitForElasticsearch,
-} from './search/waitForElasticsearch';
+    initialize
 
-import {
-    reindexProducts
-} from './services/reindex.service';
-
-import {
-    synchronizeProducts
-} from './services/product-sync.service';
+}
+from './initialize/initialize';
 
 const PORT =
-    process.env.PORT || 4007;
+    Number(
+        process.env.PORT
+    );
 
-const bootstrap = async () => {
+const bootstrapServer =
+async (): Promise<void> => {
 
-    await connectRabbitMQ();
+    try {
 
-    await waitForElasticsearch();
+        await initialize();
 
-    await synchronizeProducts();
+        const server = app.listen(
 
-    await reindexProducts();
+            PORT,
 
-    await startProductConsumer();
+            () => {
 
-    await connectRedisCache();
+                logger.info(
+                    `Search Service running on port ${PORT}`
+                );
 
-    app.listen(PORT, () => {
+            }
 
-        logger.info(
-            `Search Service running on port ${PORT}`
         );
-    });
+
+        registerShutdownTask(
+            "HTTP Server",
+            () =>
+                new Promise<void>(
+                    (
+                        resolve,
+                        reject
+                    ) => {
+                        server.close(
+                            error => {
+                                if (error) {
+                                    reject(error);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        );
+                    }
+                )
+        );
+
+        registerShutdownTask(
+            "RabbitMQ",
+            disconnectRabbitMQ
+        );
+
+        registerShutdownTask(
+            "Redis Cache",
+            disconnectRedisCache
+        );
+
+        registerShutdownSignals();
+
+    }
+
+    catch (
+
+        error
+
+    ) {
+
+        logger.error(
+
+            'Failed to start Search Service',
+
+            error
+
+        );
+
+        process.exit(1);
+
+    }
+
 };
 
-bootstrap();
+bootstrapServer();

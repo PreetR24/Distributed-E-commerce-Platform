@@ -4,7 +4,7 @@
 
 # Distributed Commerce Platform
 
-A distributed microservices-based commerce platform built with Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Elasticsearch, GraphQL, and gRPC.
+A distributed microservices-based commerce platform built with Node.js, TypeScript, PostgreSQL, Redis, RabbitMQ, Elasticsearch, GraphQL, gRPC, Docker, Prometheus, and Grafana..
 
 The project is designed to demonstrate modern backend engineering concepts including microservice communication, event-driven architecture, distributed transactions, CQRS, caching, search infrastructure, authentication, authorization, and analytics aggregation.
 
@@ -52,12 +52,13 @@ Rather than focusing on frontend development, the project emphasizes scalable ba
 - JWT Authentication & RBAC Authorization
 - Real-Time Notifications with WebSockets
 - Prometheus & Grafana Observability
+- Custom Business & Infrastructure Metrics
+- Health Checks & Graceful Startup & Shutdown
 - Dockerized Development Environment
+- Docker Compose Multi-Service Orchestration
+- GitHub Actions CI Pipeline
 - Shared Infrastructure Package
 - Infrastructure Bootstrap Framework
-- Graceful Startup & Shutdown
-- Health Monitoring Endpoints
-- GitHub Actions CI Pipeline
 
 ---
 
@@ -133,11 +134,13 @@ Clients
 * Microservices Architecture
 * API Gateway Pattern
 * GraphQL Gateway Pattern
-* Shared Package Architecture
 * Service Isolation
 * Database Per Service Pattern
 * Middleware Architecture
 * Event-Driven Architecture
+* Health Check Pattern
+* Retry & Wait Strategy
+* Shared Common Library
 * Infrastructure Bootstrap Pattern
 * Shared Infrastructure Package
 * Graceful Shutdown Pattern
@@ -160,6 +163,16 @@ Used for:
 * Aggregated queries
 * Dashboard data
 * Flexible data retrieval
+
+### gRPC
+
+Used for:
+
+* Product Lookup
+* Inventory Validation
+* Order Retrieval
+* Service-to-Service Communication
+* Internal Low-Latency Communication
 
 ### Sample Queries
 
@@ -433,6 +446,209 @@ User
 
 ---
 
+# Observability
+
+The platform includes a production-style observability stack to monitor the health, performance, and business activity of every microservice. Each service exposes Prometheus metrics through a dedicated `/metrics` endpoint, enabling centralized monitoring and visualization using Prometheus and Grafana.
+
+## Monitoring Stack
+
+- Prometheus
+- Grafana
+- PromQL
+- Custom Prometheus Metrics
+- Node.js Process Metrics
+
+## Metrics Endpoint
+
+Every service exposes:
+
+```http
+GET /metrics
+```
+
+Monitored Services:
+
+- API Gateway
+- User Service
+- Product Service
+- Cart Service
+- Order Service
+- Payment Service
+- Inventory Service
+- Search Service
+- Analytics Service
+- Notification Service
+
+## HTTP Metrics
+
+Implemented HTTP request instrumentation for every service.
+
+Collected metrics include:
+
+- Total HTTP Requests
+- Request Rate
+- Request Duration
+- Response Status Codes
+- Route-wise Request Count
+
+## Business Metrics
+
+Implemented custom business metrics to monitor core commerce workflows.
+
+### Order Service
+
+- Orders Created
+- Orders by Status
+- Order Processing Duration
+
+### Payment Service
+
+- Successful Payments
+- Failed Payments
+- Payments by Status
+- Payment Processing Duration
+
+### Inventory Service
+
+- Inventory Operations
+- Inventory Operation Duration
+
+### Search Service
+
+- Search Operations
+- Search Operation Duration
+
+## Infrastructure Metrics
+
+Automatically collected runtime metrics using Prometheus Node.js instrumentation.
+
+Includes:
+
+- CPU Usage
+- Memory Usage
+- Heap Usage
+- Event Loop Lag
+- Garbage Collection Duration
+- Active Handles
+- Active Requests
+- Process Uptime
+
+## Redis Metrics
+
+Custom metrics for cache performance.
+
+Tracked metrics:
+
+- Cache Hits
+- Cache Misses
+- Cache Writes
+
+Used to evaluate cache efficiency and optimize read performance.
+
+## RabbitMQ Metrics
+
+Custom messaging metrics for event-driven communication.
+
+Tracked metrics:
+
+- Published Events
+- Consumed Events
+
+Used across asynchronous workflows such as:
+
+- Order Processing
+- Inventory Reservation
+- Payment Processing
+- Analytics Aggregation
+- Notification Delivery
+
+## gRPC Metrics
+
+Instrumented internal service-to-service communication.
+
+Tracked metrics:
+
+- Total gRPC Requests
+- Failed gRPC Requests
+- gRPC Request Duration
+
+Current gRPC communication includes:
+
+- Order Service → Product Service
+- Order Service → Inventory Service
+- Payment Service → Order Service
+
+## Grafana Dashboards
+
+Built centralized dashboards for platform monitoring.
+
+### API Dashboard
+
+- Request Volume
+- Request Rate
+- Average Response Time
+- Top Active Services
+
+### Business Dashboard
+
+- Orders Created
+- Order Status Distribution
+- Payment Success vs Failure
+- Inventory Operations
+- Search Activity
+
+### Infrastructure Dashboard
+
+- CPU Usage
+- Memory Usage
+- Heap Usage
+- Event Loop Lag
+- Garbage Collection
+
+### Messaging Dashboard
+
+- RabbitMQ Published Events
+- RabbitMQ Consumed Events
+
+### Service Communication Dashboard
+
+- gRPC Request Count
+- gRPC Failures
+- gRPC Latency
+
+### Service Health Dashboard
+
+- Service Availability
+- Health Status
+- HTTP Error Rates
+
+## Reliability Features
+
+Implemented production-ready reliability mechanisms.
+
+- Graceful Shutdown
+- Health Check Endpoints
+- Docker Health Checks
+- Dependency Readiness Checks
+- Retry with Exponential Backoff
+- Centralized Logging
+- Request ID Tracking
+
+## Production Monitoring Capabilities
+
+The observability stack provides visibility into:
+
+- Service Availability
+- API Performance
+- Business KPIs
+- Infrastructure Health
+- Cache Efficiency
+- Event-Driven Messaging
+- Internal gRPC Communication
+- Runtime Performance
+
+---
+
 # Services
 
 ## Service Communication
@@ -590,120 +806,6 @@ Available APIs:
 - GET /analytics/dashboard
 
 Analytics is restricted to ADMIN users via RBAC.
-
----
-
-# Observability & Monitoring
-
-## Observability Stack
-
-Implemented production-style observability using:
-
-* Prometheus
-* Grafana
-* PromQL
-* Custom Metrics
-* Business KPI Monitoring
-* Infrastructure Monitoring
-
-## Metrics Collection
-
-### API Metrics
-
-Collected automatically across all services:
-
-* HTTP Request Count
-* Request Duration
-* Response Status Codes
-* Route-Level Metrics
-
-### Business Metrics
-
-Implemented custom commerce metrics:
-
-* Orders Created
-* Successful Payments
-* Failed Payments
-
-### Infrastructure Metrics
-
-Implemented infrastructure visibility for:
-
-* Redis Cache Hits
-* Redis Cache Misses
-* RabbitMQ Events Published
-* RabbitMQ Events Consumed
-
-## Metrics Endpoints
-
-Every service exposes:
-
-```http
-GET /metrics
-```
-
-Services monitored:
-
-* API Gateway
-* User Service
-* Product Service
-* Cart Service
-* Order Service
-* Payment Service
-* Inventory Service
-* Search Service
-* Analytics Service
-* Notification Service
-
-## Prometheus
-
-Configured centralized metrics collection from all platform services.
-
-Provides:
-
-* Service Monitoring
-* Infrastructure Monitoring
-* Business Monitoring
-
-## Grafana
-
-Created centralized dashboards for:
-
-### API Monitoring
-
-* Request Volume
-* Request Rate
-* Top Routes
-
-### Business Monitoring
-
-* Orders Created
-* Successful Payments
-* Failed Payments
-
-### Infrastructure Monitoring
-
-* Redis Cache Performance
-* RabbitMQ Throughput
-
-### Service Monitoring
-
-* Service Availability
-* Health Status
-
-## Production Monitoring Concepts
-
-Implemented:
-
-* Metrics Instrumentation
-* Docker Health Monitoring
-* Service Liveness Monitoring
-* Request Monitoring
-* Business KPI Tracking
-* Infrastructure Visibility
-* Service Health Monitoring
-* Dashboarding
-* PromQL Querying
 
 ---
 
@@ -930,6 +1032,8 @@ These components ensure consistent initialization, monitoring, communication, an
 * Node.js
 * TypeScript
 * Express.js
+- Prisma ORM
+- PostgreSQL
 
 ## Databases
 
@@ -965,12 +1069,15 @@ These components ensure consistent initialization, monitoring, communication, an
 
 * Winston
 
-## Infrastructure
+## DevOps
 
 * Docker
 * Docker Compose
-* Prometheus
-* Grafana
+
+## Monitoring
+
+- Prometheus
+- Grafana
 
 ## Infrastructure Features:
 

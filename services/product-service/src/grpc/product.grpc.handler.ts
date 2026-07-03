@@ -25,7 +25,7 @@ export const getProductByIdHandler =
                 );
 
             grpcRequestCounter.inc({
-                caller: "grpc",
+                caller: "grpc-server",
                 service: "product-service",
                 method: "GetProductById",
                 status: "SUCCESS"
@@ -51,7 +51,7 @@ export const getProductByIdHandler =
 
         } catch (error) {
             grpcRequestCounter.inc({
-                caller: "grpc",
+                caller: "grpc-server",
                 service: "product-service",
                 method: "GetProductById",
                 status: "FAILED"
@@ -84,7 +84,7 @@ async (
             await getAllProductsService();
 
         grpcRequestCounter.inc({
-            caller: "grpc",
+            caller: "grpc-server",
             service: "product-service",
             method: "GetAllProducts",
             status: "SUCCESS"
@@ -110,7 +110,7 @@ async (
     } catch (error) {
 
         grpcRequestCounter.inc({
-            caller: "grpc",
+            caller: "grpc-server",
             service: "product-service",
             method: "GetAllProducts",
             status: "FAILED"

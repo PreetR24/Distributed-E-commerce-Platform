@@ -489,29 +489,16 @@ services:
             retries: 5
             start_period: 15s
 
-    # grafana:
-    #     image: grafana/grafana
-    #     container_name: distributed-commerce-grafana
-    #     ports:
-    #         - "3001:3000"
-    #     restart: unless-stopped
-    #     networks:
-    #         - commerce-network
-    #     volumes:
-    #         - grafana_data:/var/lib/grafana
-    #     healthcheck:
-    #         test:
-    #             [
-    #                 "CMD",
-    #                 "wget",
-    #                 "--spider",
-    #                 "-q",
-    #                 "http://localhost:3000/api/health"
-    #             ]
-    #         interval: 30s
-    #         timeout: 5s
-    #         retries: 5
-    #         start_period: 20s
+    grafana:
+        image: grafana/grafana
+        container_name: distributed-commerce-grafana
+        ports:
+            - "3001:3000"
+        restart: unless-stopped
+        networks:
+            - commerce-network
+        volumes:
+            - grafana_data:/var/lib/grafana
             
 volumes:
     redis_data:

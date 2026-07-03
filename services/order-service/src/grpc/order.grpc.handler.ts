@@ -35,7 +35,7 @@ async (
         }
         
         grpcRequestCounter.inc({
-            caller: "grpc",
+            caller: "grpc-server",
             service: "order-service",
             method: "GetOrderById",
             status: "SUCCESS"
@@ -53,7 +53,7 @@ async (
 
     } catch (error) {
         grpcRequestCounter.inc({
-            caller: "grpc",
+            caller: "grpc-server",
             service: "order-service",
             method: "GetOrderById",
             status: "FAILED"

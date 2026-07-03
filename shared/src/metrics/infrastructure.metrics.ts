@@ -21,3 +21,9 @@ export const cacheMisses =
             "Redis Cache Misses"
 
     });
+
+export const cacheWrites =
+    new client.Counter({
+        name: "redis_cache_writes_total",
+        help: "Redis Cache Writes"
+    });

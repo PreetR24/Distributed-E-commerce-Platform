@@ -35,7 +35,7 @@ export const checkInventoryHandler =
             }
 
             grpcRequestCounter.inc({
-                caller: "grpc",
+                caller: "grpc-server",
                 service: "inventory-service",
                 method: "CheckInventory",
                 status: "SUCCESS"
@@ -56,7 +56,7 @@ export const checkInventoryHandler =
         } catch (error) {
 
             grpcRequestCounter.inc({
-                caller: "grpc",
+                caller: "grpc-server",
                 service: "inventory-service",
                 method: "CheckInventory",
                 status: "FAILED"

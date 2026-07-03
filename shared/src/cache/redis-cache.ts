@@ -5,7 +5,8 @@ import {logger} from '../utils/logger';
 
 import {
     cacheHits,
-    cacheMisses
+    cacheMisses,
+    cacheWrites
 }
 from '../metrics/infrastructure.metrics';
 
@@ -69,6 +70,8 @@ async (
             EX: ttlInSeconds
         }
     );
+
+    cacheWrites.inc();
 };
 
 export const deleteCache =

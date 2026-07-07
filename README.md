@@ -50,6 +50,9 @@ Rather than focusing on frontend development, the project emphasizes scalable ba
 - Redis Caching
 - Elasticsearch Full-Text Search & Autocomplete
 - JWT Authentication & RBAC Authorization
+- Persistent Refresh Token Management
+- Refresh Token Rotation
+- Multi-Device Session Support
 - Real-Time Notifications with WebSockets
 - Prometheus & Grafana Observability
 - Custom Business & Infrastructure Metrics
@@ -69,14 +72,16 @@ Clients
  ├── Web Application
  ├── Mobile Application
  └── Admin Dashboard
-          │
-          ▼
-      API Gateway
-          │
-          ▼
-    GraphQL Gateway
-          │
-          ▼
+        ┌──────────┴──────────┐
+        ▼                     ▼
+    REST Clients         GraphQL Clients
+        │                     │
+        ▼                     ▼
+    API Gateway        GraphQL Gateway
+      │                     │
+      └──────────┬──────────┘
+                 │
+                 ▼
  ┌─────────────────────────────┐
  │      Microservices          │
  └─────────────────────────────┘
@@ -284,12 +289,94 @@ Implemented:
 * JWT Authentication
 * Access Tokens
 * Refresh Tokens
+* Refresh Token Persistence
+* Refresh Token Rotation
+* Secure Refresh Token Hashing (SHA-256)
+* Device Session Management
+* Logout All Devices
 * Role-Based Access Control (RBAC)
 * API Gateway Authentication
 * Secure Password Hashing
 * Helmet Security
 * CORS Protection
 * Rate Limiting
+
+## Authentication Flow
+
+The platform implements a production-inspired JWT authentication workflow.
+
+### Login
+
+```text
+User Login
+      │
+      ▼
+Generate Access Token
+      │
+      ▼
+Generate Refresh Token
+      │
+      ▼
+Hash Refresh Token (SHA-256)
+      │
+      ▼
+Store in PostgreSQL
+      │
+      ▼
+Return Tokens
+```
+
+### Refresh Token Rotation
+
+```text
+Client
+      │
+      ▼
+Refresh Token
+      │
+      ▼
+Verify JWT Signature
+      │
+      ▼
+Verify Stored Token Hash
+      │
+      ▼
+Delete Previous Refresh Token
+      │
+      ▼
+Generate New Refresh Token
+      │
+      ▼
+Store New Token Hash
+      │
+      ▼
+Return New Tokens
+```
+
+### Logout
+
+```text
+Logout
+      │
+      ▼
+Delete Stored Refresh Token
+      │
+      ▼
+Access Token Expires Naturally
+```
+
+### Logout All Devices
+
+```text
+Logout All Devices
+      │
+      ▼
+Delete All Refresh Tokens
+for the User
+      │
+      ▼
+All Sessions Revoked
+```
 
 ### Supported Roles
 
@@ -325,6 +412,25 @@ Can:
 
 ---
 
+# Security Features
+
+Implemented production-oriented security practices:
+
+- JWT Access & Refresh Token Authentication
+- Refresh Token Persistence
+- Refresh Token Rotation
+- SHA-256 Refresh Token Hashing
+- Role-Based Access Control (RBAC)
+- Helmet Security Headers
+- API Rate Limiting
+- Request ID Tracking
+- Request Logging
+- Secure Password Hashing (bcrypt)
+- Logout & Logout All Devices
+- Multi-Device Session Management
+
+---
+
 # Databases & Storage
 
 ## PostgreSQL
@@ -345,8 +451,9 @@ Used for:
 
 * Product caching
 * Cart storage
-* Fast data retrieval
-* Cache invalidation
+* Versioned Cache Keys
+* Fast Data Retrieval
+* Read Optimization
 
 ## Elasticsearch
 
@@ -421,6 +528,25 @@ Elasticsearch Read Models
 * Search Products
 * Autocomplete
 * Suggestions
+
+## Cache Versioning Strategy
+
+Instead of deleting Redis cache keys after product updates, the platform uses cache versioning.
+
+Workflow:
+
+```text
+Product Updated
+      │
+      ▼
+Increment Cache Version
+      │
+      ▼
+Generate New Cache Keys
+      │
+      ▼
+Old Cache Expires Automatically
+```
 
 ## Event-Driven Notifications
 
@@ -596,6 +722,8 @@ Built centralized dashboards for platform monitoring.
 - Payment Success vs Failure
 - Inventory Operations
 - Search Activity
+- Refresh Token Events
+- Authentication Events
 
 ### Infrastructure Dashboard
 
@@ -656,7 +784,12 @@ The observability stack provides visibility into:
 | Source | Destination | Protocol |
 |---------|-------------|----------|
 | API Gateway | All Services | REST |
-| GraphQL Gateway | API Gateway | REST |
+| GraphQL Gateway | User Service | REST |
+| GraphQL Gateway | Product Service | REST |
+| GraphQL Gateway | Order Service | REST |
+| GraphQL Gateway | Analytics Service | REST |
+| GraphQL Gateway | Search Service | REST |
+| GraphQL Gateway | Notification Service | REST |
 | Order Service | Product Service | gRPC |
 | Product Service | Search Service | RabbitMQ |
 | Payment Service | Analytics Service | RabbitMQ |
@@ -677,22 +810,26 @@ Responsibilities:
 
 Responsibilities:
 
-* Unified API Layer
-* Aggregated Queries Across Microservices
-* Product Search Aggregation
+* Unified GraphQL API
+* Direct Microservice Communication
+* Cross-Service Data Aggregation
 * Dashboard Aggregation
-* Authentication Header Forwarding
+* Authentication Forwarding
 * Request Orchestration
 
 ## User Service
 
 Responsibilities:
 
-* Registration
+* User Registration
 * Login
-* Refresh Tokens
-* RBAC
-* User Management
+* Access Token Generation
+* Refresh Token Persistence
+* Refresh Token Rotation
+* Logout
+* Logout All Devices
+* JWT Authentication
+* Role-Based Access Control
 
 ## Product Service
 
@@ -1020,6 +1157,11 @@ Implemented Components:
 * Shared Error Handling
 * Shared gRPC Utilities
 * Graceful Shutdown Framework
+* Shared Authentication Middleware
+* Shared RBAC Middleware
+* Shared Request ID Middleware
+* Shared Request Logging Middleware
+* Shared Rate Limiting Middleware
 
 These components ensure consistent initialization, monitoring, communication, and shutdown behavior across all microservices.
 
@@ -1055,6 +1197,9 @@ These components ensure consistent initialization, monitoring, communication, an
 
 * JWT
 * Refresh Tokens
+* RBAC
+* Refresh Token Rotation
+* SHA-256 Refresh Token Hashing
 * RBAC
 
 ## Real-Time Communication

@@ -404,6 +404,8 @@ services:
                 condition: service_started
             analytics-service:
                 condition: service_started
+            search-service:
+                condition: service_started
         networks:
             - commerce-network
         healthcheck:

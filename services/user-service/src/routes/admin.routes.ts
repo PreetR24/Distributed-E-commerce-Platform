@@ -1,7 +1,5 @@
 import { Router } from 'express';
 
-import { authenticate } from '@middleware/auth.middleware';
-
 import { UserRole, asyncHandler, requireRole } from '@shared/common';
 
 import { getAllUsersController, updateUserController, deleteUserController } from '@controllers/user.controller';
@@ -10,7 +8,6 @@ const router = Router();
 
 router.get(
     '/',
-    authenticate,
     requireRole(UserRole.ADMIN),
     (_req, res) => {
 
@@ -23,7 +20,6 @@ router.get(
 
 router.get(
     '/all-users',
-    authenticate,
     requireRole(
         UserRole.ADMIN,
     ),
@@ -31,15 +27,13 @@ router.get(
 );
 
 router.put(
-    '/:id',
-    authenticate,
+    '/:id', 
     requireRole(UserRole.ADMIN),
     asyncHandler(updateUserController)
 );
 
 router.delete(
-    '/:id',
-    authenticate,
+    '/:id', 
     requireRole(UserRole.ADMIN),
     asyncHandler(deleteUserController)
 );

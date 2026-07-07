@@ -6,10 +6,15 @@ export const PRODUCT_CACHE_KEYS = {
 
     PRODUCT_LIST:
         (
+            version: number,
             page: number,
             limit: number,
             search?: string
         ) =>
-            `products:page:${page}:limit:${limit}:search:${search || 'all'}`
-
+            [
+                `products:v${version}`,
+                `page:${page}`,
+                `limit:${limit}`,
+                `search:${search || "all"}`
+            ].join(":")
 };

@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { GraphQLContext } from '../server';
 
-const API_GATEWAY_URL =
-    process.env.API_GATEWAY_URL;
+import {
+    SERVICES
+}
+from "@config/services";
+
+const ANALYTICS_SERVICE_URL = SERVICES.ANALYTICS;
 
 export const getDashboardAnalytics =
 async (
@@ -11,7 +15,7 @@ async (
 
     const response =
         await axios.get(
-            `${API_GATEWAY_URL}/analytics/dashboard`,
+            `${ANALYTICS_SERVICE_URL}/analytics/dashboard`,
             {
                 headers: {
                     Authorization: context.token

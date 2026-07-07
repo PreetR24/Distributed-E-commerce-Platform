@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY services/inventory-service/package*.json ./services/inventory-service/
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
 RUN npm run build --workspace=shared
 RUN npx prisma generate \
@@ -18,7 +18,7 @@ RUN apt-get update && \
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY services/inventory-service/package*.json ./services/inventory-service/
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/shared/grpc-protos ./shared/grpc-protos
 COPY --from=builder /app/services/inventory-service/dist ./dist

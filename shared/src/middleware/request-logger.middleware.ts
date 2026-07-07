@@ -8,7 +8,7 @@ from 'express';
 import {
     logger
 }
-from '@shared/common';
+from '../utils/logger';
 
 export const requestLogger =
 (

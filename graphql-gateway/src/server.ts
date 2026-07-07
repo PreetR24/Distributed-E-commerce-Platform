@@ -12,7 +12,15 @@ import { typeDefs } from "@schemas/index";
 import { resolvers } from "@resolvers/index";
 
 import { env } from "@config/env";
-import { logger, registerShutdownSignals, registerShutdownTask } from "@shared/common";
+
+import { 
+    logger,
+    metricsMiddleware,
+    registerShutdownSignals,
+    registerShutdownTask,
+    requestIdMiddleware,
+    requestLogger
+} from "@shared/common";
 
 import { initialize } from "./initialize/initialize";
 
@@ -33,6 +41,20 @@ const bootstrapServer = async (): Promise<void> => {
         });
 
         await apolloServer.start();
+
+        app.use(cors());
+
+        app.use(express.json());
+
+        app.use(express.urlencoded({
+            extended: true
+        }));
+
+        app.use(requestIdMiddleware);
+
+        app.use(requestLogger);
+
+        app.use(metricsMiddleware);
 
         app.use(
             "/api/v1",

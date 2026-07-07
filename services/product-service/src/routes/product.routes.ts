@@ -8,19 +8,21 @@ import {
     getAllProductsController
 } from '@controllers/product.controller';
 
-import { asyncHandler, requireRole, UserRole }
+import { asyncHandler, authenticateRequest, requireRole, UserRole }
 from '@shared/common';
 
 const router = Router();
 
 router.get(
     '/internal/rebuild',
+    authenticateRequest,
     requireRole(UserRole.ADMIN),
     asyncHandler(getAllProductsController)
 );
 
 router.post(
     '/',
+    authenticateRequest,
     requireRole(
         UserRole.ADMIN,
         UserRole.SELLER
@@ -40,6 +42,7 @@ router.get(
 
 router.patch(
     '/:productId',
+    authenticateRequest,
     requireRole(
         UserRole.ADMIN,
         UserRole.SELLER

@@ -1,13 +1,13 @@
 import express from 'express';
 
-import notificationRoutes
-from './routes/notification.routes';
+import notificationRoutes from '@routes/notification.routes';
 import healthRoutes from '@routes/health.routes';
 
 import {
     globalErrorHandler,
     register,
-    metricsMiddleware
+    metricsMiddleware,
+    authenticateRequest
  }
 from '@shared/common';
 
@@ -32,9 +32,12 @@ app.use(metricsMiddleware);
 
 app.use(
     '/api/v1/notifications',
+    authenticateRequest,
     notificationRoutes
 );
 
 app.use('/api/v1/health', healthRoutes);
+
+app.use(globalErrorHandler);
 
 export default app;

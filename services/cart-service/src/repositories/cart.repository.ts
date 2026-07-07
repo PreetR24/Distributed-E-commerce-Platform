@@ -1,8 +1,18 @@
-import { redisClient } from '@config/redis';
+import {
+    getCache,
+    setCache,
+    deleteCache
+}
+from '@shared/common';
 
-import { Cart } from '@interfaces/cart.types';
+import {
+    Cart
+}
+from '@interfaces/cart.types';
 
-import { CART_TTL_IN_SECONDS }
+import {
+    CART_TTL_IN_SECONDS
+}
 from '@constants/cart.constants';
 
 const getCartKey = (
@@ -16,7 +26,7 @@ export const getCart = async (
 ): Promise<Cart | null> => {
 
     const cart =
-        await redisClient.get(
+        await getCache(
             getCartKey(userId)
         );
 
@@ -32,12 +42,10 @@ export const saveCart = async (
     cart: Cart
 ) => {
 
-    await redisClient.set(
+    await setCache(
         getCartKey(userId),
-        JSON.stringify(cart),
-        {
-            EX: CART_TTL_IN_SECONDS
-        }
+        cart,
+        CART_TTL_IN_SECONDS
     );
 };
 
@@ -45,7 +53,7 @@ export const clearCart = async (
     userId: string
 ) => {
 
-    await redisClient.del(
+    await deleteCache(
         getCartKey(userId)
     );
 };

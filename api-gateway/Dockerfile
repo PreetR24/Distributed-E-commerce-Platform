@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY api-gateway/package*.json ./api-gateway/
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm npm ci
 COPY . .
 RUN npm run build --workspace=shared
 RUN npm run build --workspace=api-gateway
@@ -13,7 +13,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY api-gateway/package*.json ./api-gateway/
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/api-gateway/dist ./dist
 EXPOSE 3000

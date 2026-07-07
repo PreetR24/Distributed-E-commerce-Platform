@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireRole = void 0;
 const requireRole = (...roles) => {
     return (req, res, next) => {
-        const role = req.headers['x-user-role'];
-        if (!role ||
+        const role = req.headers["x-user-role"];
+        if (typeof role !== "string" ||
             !roles.includes(role)) {
             return res.status(403).json({
                 success: false,

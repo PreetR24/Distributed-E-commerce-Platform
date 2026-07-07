@@ -22,3 +22,4 @@ __exportStar(require("./services"), exports);
 __exportStar(require("./order-status"), exports);
 __exportStar(require("./payment-status"), exports);
 __exportStar(require("./stock-reservation-status"), exports);
+__exportStar(require("./cache-namespaces"), exports);

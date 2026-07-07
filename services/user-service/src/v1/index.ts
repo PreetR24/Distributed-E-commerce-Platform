@@ -7,14 +7,15 @@ import userRoutes from '@routes/user.routes';
 import adminRoutes from '@routes/admin.routes';
 
 import healthRoutes from '@routes/health.routes';
+import { authenticateRequest } from '@shared/common';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
 
-router.use('/users', userRoutes);
+router.use('/users', authenticateRequest, userRoutes);
 
-router.use('/admin', adminRoutes);
+router.use('/admin', authenticateRequest, adminRoutes);
 
 router.use('/health', healthRoutes);
 

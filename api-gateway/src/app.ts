@@ -7,20 +7,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 
 import {
+    requestLogger,
+    apiRateLimiter,
     requestIdMiddleware
-} from '@middleware/request-id.middleware';
-
-import {
-    apiRateLimiter
-} from '@middleware/rate-limit.middleware';
-
-import {
-    authenticateRequest
-} from '@middleware/auth.middleware';
-
-import {
-    requestLogger
-} from '@middleware/request-logger.middleware';
+} from '@shared/common';
 
 import {
     authProxy,
@@ -88,13 +78,11 @@ app.use(
 
 app.use(
     '/api/v1/users',
-    authenticateRequest,
     usersProxy
 );
 
 app.use(
     '/api/v1/products',
-    authenticateRequest,
     productsProxy
 );
 
@@ -105,43 +93,36 @@ app.use(
 
 app.use(
     '/api/v1/categories',
-    authenticateRequest,
     categoriesProxy
 );
 
 app.use(
     '/api/v1/cart',
-    authenticateRequest,
     cartProxy
 );
 
 app.use(
     '/api/v1/orders',
-    authenticateRequest,
     ordersProxy
 );
 
 app.use(
     '/api/v1/payments',
-    authenticateRequest,
     paymentsProxy
 );
 
 app.use(
     '/api/v1/inventory',
-    authenticateRequest,
     inventoryProxy
 );
 
 app.use(
     '/api/v1/analytics',
-    authenticateRequest,
     analyticsProxy
 );
 
 app.use(
     '/api/v1/notifications',
-    authenticateRequest,
     notificationsProxy
 );
 

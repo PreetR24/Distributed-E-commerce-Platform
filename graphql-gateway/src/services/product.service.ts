@@ -1,8 +1,12 @@
 import axios from 'axios';
 import {GraphQLContext} from '../server';
 
-const API_GATEWAY_URL =
-    process.env.API_GATEWAY_URL;
+import {
+    SERVICES
+}
+from "@config/services";
+
+const PRODUCT_SERVICE_URL = SERVICES.PRODUCT;
 
 export const getProducts =
 async (
@@ -14,7 +18,7 @@ async (
     const response =
         await axios.get(
 
-            `${API_GATEWAY_URL}/products`,
+            `${PRODUCT_SERVICE_URL}/products`,
 
             {
                 params: {
@@ -60,7 +64,7 @@ async (
     const response =
         await axios.get(
 
-            `${API_GATEWAY_URL}/products/${id}`,
+            `${PRODUCT_SERVICE_URL}/products/${id}`,
 
             {
 

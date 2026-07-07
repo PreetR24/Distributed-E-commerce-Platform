@@ -494,7 +494,6 @@ services:
         container_name: distributed-commerce-grafana
         ports:
             - "3001:3000"
-        restart: unless-stopped
         networks:
             - commerce-network
         volumes:

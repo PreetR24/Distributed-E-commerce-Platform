@@ -6,3 +6,4 @@ export * from './services';
 export * from './order-status';
 export * from './payment-status';
 export * from './stock-reservation-status';
+export * from './cache-namespaces';

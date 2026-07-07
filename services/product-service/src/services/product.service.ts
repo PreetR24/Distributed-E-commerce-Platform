@@ -8,13 +8,16 @@ import {
 
 import {
     getCache,
+    getCacheVersion,
+    incrementCacheVersion,
     setCache,
     deleteCache,
     AppError,
     publishEvent,
     EXCHANGES,
     QUEUES,
-    logger
+    logger,
+    CACHE_NAMESPACES
 } from '@shared/common';
 
 import {
@@ -31,6 +34,10 @@ export const createProductService = async (
 ) => {
 
     const createdProduct = await createProduct(data);
+
+    await incrementCacheVersion(
+        CACHE_NAMESPACES.PRODUCTS
+    );
 
     await publishEvent(
         EXCHANGES.PRODUCT_EVENTS,
@@ -80,9 +87,15 @@ async (
     search?: string
 ) => {
 
+    const version =
+        await getCacheVersion(
+            CACHE_NAMESPACES.PRODUCTS
+        );
+
     const cacheKey =
         PRODUCT_CACHE_KEYS
             .PRODUCT_LIST(
+                version,
                 page,
                 limit,
                 search
@@ -193,11 +206,18 @@ async (
             payload
         );
 
+    await incrementCacheVersion(
+        CACHE_NAMESPACES.PRODUCTS
+    );
+
     await deleteCache(
-        PRODUCT_CACHE_KEYS
-            .SINGLE_PRODUCT(
-                productId
-            )
+        PRODUCT_CACHE_KEYS.SINGLE_PRODUCT(
+            updatedProduct.id
+        )
+    );
+
+    await incrementCacheVersion(
+        CACHE_NAMESPACES.PRODUCTS
     );
 
     logger.info(
@@ -209,11 +229,33 @@ async (
 
     await publishEvent(
         EXCHANGES.PRODUCT_EVENTS,
-        '',
+        QUEUES.PRODUCT_UPDATED,
         {
             event: QUEUES.PRODUCT_UPDATED,
 
-            product: updatedProduct
+            product: {
+
+                id: updatedProduct.id,
+
+                name: updatedProduct.name,
+
+                description: updatedProduct.description,
+
+                price: updatedProduct.price,
+
+                isActive: updatedProduct.isActive,
+
+                categoryId: updatedProduct.categoryId,
+
+                categoryName:
+                    updatedProduct.category.name,
+
+                createdAt:
+                    updatedProduct.createdAt,
+
+                updatedAt:
+                    updatedProduct.updatedAt
+            }
         }
     );
 

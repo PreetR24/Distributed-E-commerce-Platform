@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { GraphQLContext } from '../server';
 
-const API_GATEWAY_URL =
-    process.env.API_GATEWAY_URL;
+import {
+    SERVICES
+}
+from "@config/services";
+
+const ORDER_SERVICE_URL = SERVICES.ORDER;
 
 export const getMyOrders =
 async (
@@ -11,7 +15,7 @@ async (
 
     const response =
         await axios.get(
-            `${API_GATEWAY_URL}/orders`,
+            `${ORDER_SERVICE_URL}/orders`,
             {
                 headers: {
                     Authorization: context.token

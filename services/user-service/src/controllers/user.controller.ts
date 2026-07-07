@@ -7,9 +7,9 @@ export const currentUserController = async (
     res: Response
 ) => {
 
-    const user = await getCurrentUser(
-        req.user!.userId
-    );
+    const userId = req.headers["x-user-id"] as string;
+
+    const user = await getCurrentUser(userId);
 
     return res.status(200).json({
         success: true,

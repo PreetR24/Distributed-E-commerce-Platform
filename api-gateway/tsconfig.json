@@ -29,11 +29,9 @@
             "@controllers/*": ["./src/controllers/*"],
             "@services/*": ["./src/services/*"],
             "@routes/*": ["./src/routes/*"],
-            "@middleware/*": ["./src/middleware/*"],
             "@validators/*": ["./src/validators/*"],
             "@proxy/*": ["./src/proxy/*"]
         }
     },
 
-    "include": ["src"]
 }

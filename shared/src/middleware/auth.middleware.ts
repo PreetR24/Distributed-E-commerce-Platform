@@ -5,6 +5,7 @@ import {
 } from 'express';
 
 import jwt from 'jsonwebtoken';
+import { logger } from '../utils/logger';
 
 export const authenticateRequest = (
     req: Request,
@@ -53,7 +54,14 @@ export const authenticateRequest = (
         next();
 
     }
-    catch {
+    catch(error) {
+
+        logger.error(
+            'Authentication Error:',
+            {
+                error
+            }
+        );
 
         return res.status(401).json({
             success: false,

@@ -21,8 +21,7 @@ router.get(
     '/',
     requireRole(
         UserRole.CUSTOMER,
-        UserRole.ADMIN,
-        UserRole.SELLER
+        UserRole.ADMIN
     ),
     asyncHandler(
         getNotificationsController
@@ -31,6 +30,9 @@ router.get(
 
 router.patch(
     '/:id/read',
+    requireRole(
+        UserRole.CUSTOMER
+    ),
     asyncHandler(
         markReadController
     )
@@ -38,6 +40,9 @@ router.patch(
 
 router.patch(
     '/read-all',
+    requireRole(
+        UserRole.CUSTOMER
+    ),
     asyncHandler(
         markAllReadController
     )

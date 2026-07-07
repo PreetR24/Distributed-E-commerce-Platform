@@ -57,56 +57,70 @@ export const createOrderService = async (
 
         const enrichedItems = [];
 
+        let product;
+
         for (const item of items) {
 
-            const product =
-                await getProductByIdWithRetry(
-                    item.productId
-                );
+            try{
 
-            if (!product) {
+                product =
+                    await getProductByIdWithRetry(
+                        item.productId
+                    );
 
+                if (!product) {
+
+                    throw new AppError(
+                        'PRODUCT_NOT_FOUND',
+                        404,
+                        `Product ${item.productId} not found`
+                    );
+                }
+
+                if (!product.isActive) {
+
+                    throw new AppError(
+                        'PRODUCT_INACTIVE',
+                        400,
+                        `Product ${item.productId} is inactive`
+                    );
+                }
+
+                const inventory =
+                    await checkInventory(
+                        item.productId,
+                        item.quantity
+                    );
+
+                if (!inventory.available) {
+
+                    throw new AppError(
+                        'OUT_OF_STOCK',
+                        400,
+                        `Available stock: ${inventory.availableStock}`
+                    );
+                }
+
+                totalAmount +=
+                    product.price *
+                    item.quantity;
+
+                enrichedItems.push({
+                    productId: product.id,
+                    productName: product.name,
+                    productPrice: product.price,
+                    quantity: item.quantity
+                });
+            } 
+            
+            catch (error: any) {
+            
                 throw new AppError(
-                    'PRODUCT_NOT_FOUND',
-                    404,
-                    `Product ${item.productId} not found`
+                    "PRODUCT_SERVICE_ERROR",
+                    500,
+                    "Unable to fetch product details"
                 );
             }
-
-            if (!product.isActive) {
-
-                throw new AppError(
-                    'PRODUCT_INACTIVE',
-                    400,
-                    `Product ${item.productId} is inactive`
-                );
-            }
-
-            const inventory =
-                await checkInventory(
-                    item.productId,
-                    item.quantity
-                );
-
-            if (!inventory.available) {
-
-                throw new AppError(
-                    'OUT_OF_STOCK',
-                    400,
-                    `Available stock: ${inventory.availableStock}`
-                );
-            }
-
-            totalAmount +=
-                product.price *
-                item.quantity;
-
-            enrichedItems.push({
-                productId: product.id,
-                productName: product.name,
-                productPrice: product.price,
-                quantity: item.quantity
-            });
         }
 
         const order =
@@ -130,7 +144,7 @@ export const createOrderService = async (
             }
         );
 
-        orderStatusCounter.inc({status: OrderStatus.CREATED});
+        orderStatusCounter.inc({status: OrderStatus.PENDING});
 
         logger.info({
             event: 'ORDER_CREATED',
@@ -187,6 +201,68 @@ export const updateOrderStatusService = async (
     orderId: string,
     status: OrderStatus
 ) => {
+
+    const order =
+        await getOrderById(orderId);
+
+    if (!order) {
+
+        throw new AppError(
+            "ORDER_NOT_FOUND",
+            404,
+            "Order not found"
+        );
+    }
+
+    if (order.status === status) {
+
+        throw new AppError(
+            "ORDER_ALREADY_IN_STATUS",
+            409,
+            `Order is already ${status}`
+        );
+    }
+
+    const allowedTransitions: Record<
+        OrderStatus,
+        OrderStatus[]
+    > = {
+
+        [OrderStatus.PENDING]: [
+            OrderStatus.CONFIRMED,
+            OrderStatus.CANCELLED,
+            OrderStatus.FAILED
+        ],
+
+        [OrderStatus.CONFIRMED]: [
+            OrderStatus.SHIPPED,
+            OrderStatus.CANCELLED
+        ],
+
+        [OrderStatus.SHIPPED]: [
+            OrderStatus.DELIVERED
+        ],
+
+        [OrderStatus.DELIVERED]: [],
+
+        [OrderStatus.CANCELLED]: [],
+
+        [OrderStatus.FAILED]: []
+    };
+
+    const allowedStatuses =
+        allowedTransitions[order.status];
+
+    if (
+        !allowedStatuses.includes(status)
+    ) {
+
+        throw new AppError(
+            "INVALID_ORDER_STATUS_TRANSITION",
+            400,
+            `Cannot change order status from ${order.status} to ${status}`
+        );
+    }
 
     await updateOrderStatus(
         orderId,

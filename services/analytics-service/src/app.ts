@@ -12,7 +12,8 @@ from './routes/health.routes';
 import {
     globalErrorHandler,
     register,
-    metricsMiddleware
+    metricsMiddleware,
+    authenticateRequest
 }
 from '@shared/common';
 
@@ -44,6 +45,7 @@ app.get(
 
 app.use(
     '/api/v1/analytics',
+    authenticateRequest,
     analyticsRoutes
 );
 

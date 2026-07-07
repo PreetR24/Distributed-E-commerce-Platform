@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { GraphQLContext } from '../server';
 
-const API_GATEWAY_URL =
-    process.env.API_GATEWAY_URL;
+import {
+    SERVICES
+}
+from "@config/services";
+
+const SEARCH_SERVICE_URL = SERVICES.SEARCH;
 
 export const searchProducts =
 async (
@@ -15,7 +19,7 @@ async (
     const response =
         await axios.get(
 
-            `${API_GATEWAY_URL}/search`,
+            `${SEARCH_SERVICE_URL}/search`,
 
             {
                 params: {
@@ -47,7 +51,7 @@ async (
     const response =
         await axios.get(
 
-            `${API_GATEWAY_URL}/search/autocomplete`,
+            `${SEARCH_SERVICE_URL}/search/autocomplete`,
 
             {
 
@@ -75,7 +79,7 @@ async (
     const response =
         await axios.get(
 
-            `${API_GATEWAY_URL}/search/trending`,
+            `${SEARCH_SERVICE_URL}/search/trending`,
 
             {
 

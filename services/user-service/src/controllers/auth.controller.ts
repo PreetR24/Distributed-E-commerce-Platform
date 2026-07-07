@@ -1,16 +1,14 @@
-import { Request, Response } from 'express';
-
-import jwt from 'jsonwebtoken';
+import { Request, Response } from "express";
 
 import {
     registerUser,
-    loginUser
-} from '@services/auth.service';
+    loginUser,
+    refreshAccessToken,
+    logoutUser,
+    logoutAllDevices
+} from "@services/auth.service";
 
-import {
-    generateAccessToken
-} from '@utils/jwt';
-import { UserRole } from '../../generated/prisma';
+import { UserRole } from "../../generated/prisma";
 
 export const registerController = async (
     req: Request,
@@ -41,6 +39,7 @@ export const loginController = async (
     req: Request,
     res: Response
 ) => {
+
     const {
         email,
         password
@@ -62,44 +61,54 @@ export const refreshTokenController = async (
     res: Response
 ) => {
 
-    const { refreshToken } = req.body;
+    const {
+        refreshToken
+    } = req.body;
 
-    if (!refreshToken) {
-        return res.status(401).json({
-            success: false,
-            message: 'Refresh token required'
-        });
-    }
+    const tokens =
+        await refreshAccessToken(
+            refreshToken
+        );
 
-    try {
+    return res.status(200).json({
+        success: true,
+        data: tokens
+    });
+};
 
-        const decoded = jwt.verify(
-            refreshToken,
-            process.env.JWT_REFRESH_SECRET!
-        ) as {
-            userId: string;
-            role: string;
-        };
+export const logoutController = async (
+    req: Request,
+    res: Response
+) => {
 
-        const accessToken =
-            generateAccessToken({
-                userId: decoded.userId,
-                role: decoded.role
-            });
+    const {
+        refreshToken
+    } = req.body;
 
-        return res.status(200).json({
-            success: true,
-            data: {
-                accessToken
-            }
-        });
+    await logoutUser(
+        req.headers["x-user-id"] as string,
+        refreshToken
+    );
 
-    }
-    catch (error) {
+    return res.status(200).json({
+        success: true,
+        message: "Logged out successfully"
+    });
+};
 
-        return res.status(401).json({
-            success: false,
-            message: 'Invalid refresh token'
-        });
-    }
+export const logoutAllDevicesController = async (
+    req: Request,
+    res: Response
+) => {
+
+    await logoutAllDevices(
+        req.headers[
+            "x-user-id"
+        ] as string
+    );
+
+    return res.status(200).json({
+        success: true,
+        message: "Logged out from all devices successfully"
+    });
 };

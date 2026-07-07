@@ -10,6 +10,9 @@ import {
 }
 from '../metrics/infrastructure.metrics';
 
+import { CACHE_NAMESPACES } from '../constants/cache-namespaces';
+const CACHE_VERSION_PREFIX = "cache-version";
+
 const redisClient =
     createClient({
         url:
@@ -27,6 +30,14 @@ redisClient.on(
         );
     }
 );
+
+const getVersionKey =
+(
+    namespace: typeof CACHE_NAMESPACES[keyof typeof CACHE_NAMESPACES]
+) => {
+
+    return `${CACHE_VERSION_PREFIX}:${namespace}`;
+};
 
 export const connectRedisCache =
 async () => {
@@ -54,6 +65,39 @@ async (
         cacheMisses.inc();
     }
     return value;
+};
+
+export const getCacheVersion =
+async (
+    namespace: typeof CACHE_NAMESPACES[keyof typeof CACHE_NAMESPACES]
+): Promise<number> => {
+
+    const version =
+        await redisClient.get(
+            getVersionKey(namespace)
+        );
+
+    if (!version) {
+
+        await redisClient.set(
+            getVersionKey(namespace),
+            "1"
+        );
+
+        return 1;
+    }
+
+    return Number(version);
+};
+
+export const incrementCacheVersion =
+async (
+    namespace: typeof CACHE_NAMESPACES[keyof typeof CACHE_NAMESPACES]
+): Promise<number> => {
+
+    return await redisClient.incr(
+        getVersionKey(namespace)
+    );
 };
 
 export const setCache =

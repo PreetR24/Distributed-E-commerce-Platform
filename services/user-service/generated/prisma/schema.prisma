@@ -11,20 +11,29 @@ datasource db {
 enum UserRole {
   CUSTOMER
   ADMIN
+  SELLER
 }
 
 model User {
-  id String @id @default(uuid())
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  password      String
+  role          UserRole       @default(CUSTOMER)
+  isActive      Boolean        @default(true)
+  refreshTokens RefreshToken[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
 
-  name String
-
-  email String @unique
-
-  password String
-
-  role UserRole @default(CUSTOMER)
-
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  expiresAt DateTime
   createdAt DateTime @default(now())
-
   updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

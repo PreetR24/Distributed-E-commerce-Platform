@@ -170,8 +170,11 @@ export const loginUser = async (
 
         refreshToken,
 
-        expiresAt
+        expiresAt,
 
+        // deviceName,
+
+        // ipAddress
     );
 
     logger.info(

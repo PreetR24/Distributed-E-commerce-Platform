@@ -17,7 +17,9 @@ export const saveRefreshToken =
 async (
     userId: string,
     refreshToken: string,
-    expiresAt: Date
+    expiresAt: Date,
+    // deviceName?: string,
+    // ipAddress?: string
 ) => {
 
     return prisma.refreshToken.create({
@@ -31,7 +33,11 @@ async (
 
             expiresAt,
 
-            userId
+            userId,
+
+            // deviceName,
+
+            // ipAddress
         }
     });
 };

@@ -12,10 +12,24 @@ const getHealthStatus = (serviceName) => {
 };
 exports.getHealthStatus = getHealthStatus;
 const getLivenessStatus = (serviceName) => {
-    return (0, exports.getHealthStatus)(serviceName);
+    return {
+        success: true,
+        service: serviceName,
+        status: 'ALIVE',
+        alive: true,
+        uptime: process.uptime(),
+        timestamp: new Date()
+    };
 };
 exports.getLivenessStatus = getLivenessStatus;
 const getReadinessStatus = (serviceName) => {
-    return (0, exports.getHealthStatus)(serviceName);
+    return {
+        success: true,
+        service: serviceName,
+        status: 'READY',
+        ready: true,
+        uptime: process.uptime(),
+        timestamp: new Date()
+    };
 };
 exports.getReadinessStatus = getReadinessStatus;

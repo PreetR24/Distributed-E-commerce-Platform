@@ -12,6 +12,20 @@ export interface HealthResponse {
 
 }
 
+export interface ReadinessResponse
+    extends HealthResponse {
+
+    ready: boolean;
+
+}
+
+export interface LivenessResponse
+    extends HealthResponse {
+
+    alive: boolean;
+
+}
+
 export const getHealthStatus =
 (
     serviceName: string
@@ -40,21 +54,55 @@ export const getHealthStatus =
 export const getLivenessStatus =
 (
     serviceName: string
-): HealthResponse => {
+): LivenessResponse => {
 
-    return getHealthStatus(
-        serviceName
-    );
+    return {
+
+        success: true,
+
+        service:
+            serviceName,
+
+        status:
+            'ALIVE',
+
+        alive:
+            true,
+
+        uptime:
+            process.uptime(),
+
+        timestamp:
+            new Date()
+
+    };
 
 };
 
 export const getReadinessStatus =
 (
     serviceName: string
-): HealthResponse => {
+): ReadinessResponse => {
 
-    return getHealthStatus(
-        serviceName
-    );
+    return {
+
+        success: true,
+
+        service:
+            serviceName,
+
+        status:
+            'READY',
+
+        ready:
+            true,
+
+        uptime:
+            process.uptime(),
+
+        timestamp:
+            new Date()
+
+    };
 
 };

@@ -6,7 +6,7 @@ import {
 }
 from "@config/services";
 
-const ANALYTICS_SERVICE_URL = SERVICES.ANALYTICS;
+const ANALYTICS_SERVICE_URL = `${SERVICES.ANALYTICS}/api/v1`;
 
 export const getDashboardAnalytics =
 async (

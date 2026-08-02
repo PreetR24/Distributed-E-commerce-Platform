@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: analytics-service
+  namespace: dcp
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: analytics-service
+
+  ports:
+    - port: 4008
+      targetPort: 4008

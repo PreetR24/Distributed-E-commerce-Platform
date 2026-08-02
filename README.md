@@ -16,24 +16,15 @@ This project simulates a production-style commerce ecosystem focused entirely on
 
 The goal is to showcase:
 
-* Microservices Architecture
-* API Gateway Pattern
-* GraphQL Gateway
-* gRPC Service Communication
-* RabbitMQ Event-Driven Architecture
-* SAGA Pattern
-* CQRS Pattern
-* Redis Caching
-* Elasticsearch Search Infrastructure
-* JWT Authentication
-* RBAC Authorization
-* Analytics Aggregation
-* Distributed System Design
-* Shared Infrastructure Package
-* Infrastructure Bootstrap Framework
-* Graceful Shutdown Handling
-* Health Monitoring Framework
-* Docker-First Development Workflow
+| Area           | Technologies / Concepts            |
+| -------------- | ---------------------------------- |
+| Architecture   | Microservices, Distributed Systems |
+| Communication  | REST, GraphQL, gRPC, RabbitMQ      |
+| Patterns       | SAGA, CQRS                         |
+| Data           | PostgreSQL, Redis, Elasticsearch   |
+| Security       | JWT, RBAC                          |
+| Infrastructure | Docker, Kubernetes                 |
+| Observability  | Prometheus, Grafana                |
 
 Rather than focusing on frontend development, the project emphasizes scalable backend architecture and real-world engineering practices.
 
@@ -41,27 +32,15 @@ Rather than focusing on frontend development, the project emphasizes scalable ba
 
 # Key Features
 
-- Distributed Microservices Architecture
-- API Gateway & GraphQL Gateway
-- Event-Driven Communication with RabbitMQ
-- gRPC Service-to-Service Communication
-- CQRS-based Search Service
-- SAGA-based Order & Payment Workflow
-- Redis Caching
-- Elasticsearch Full-Text Search & Autocomplete
-- JWT Authentication & RBAC Authorization
-- Persistent Refresh Token Management
-- Refresh Token Rotation
-- Multi-Device Session Support
-- Real-Time Notifications with WebSockets
-- Prometheus & Grafana Observability
-- Custom Business & Infrastructure Metrics
-- Health Checks & Graceful Startup & Shutdown
-- Dockerized Development Environment
-- Docker Compose Multi-Service Orchestration
-- GitHub Actions CI Pipeline
-- Shared Infrastructure Package
-- Infrastructure Bootstrap Framework
+| Category      | Features                                      |
+| ------------- | --------------------------------------------- |
+| Architecture  | Microservices, API Gateway, GraphQL Gateway   |
+| Communication | REST, gRPC, RabbitMQ                          |
+| Data          | PostgreSQL, Redis, Elasticsearch              |
+| Security      | JWT, RBAC, Refresh Tokens                     |
+| Observability | Prometheus, Grafana, Metrics                  |
+| DevOps        | Docker, Docker Compose, Kubernetes, Kustomize |
+| Reliability   | Health Checks, Graceful Shutdown              |
 
 ---
 
@@ -153,262 +132,13 @@ Clients
 
 ## API Communication
 
-### REST APIs
-
-Used for:
-
-* Public APIs
-* CRUD operations
-* External client communication
-
-### GraphQL
-
-Used for:
-
-* Aggregated queries
-* Dashboard data
-* Flexible data retrieval
-
-### gRPC
-
-Used for:
-
-* Product Lookup
-* Inventory Validation
-* Order Retrieval
-* Service-to-Service Communication
-* Internal Low-Latency Communication
-
-### Sample Queries
-
-#### Products
-
-```graphql
-query {
-    products {
-        products {
-            id
-            name
-            price
-        }
-    }
-}
-```
-
-#### Dashboard
-
-```graphql
-query {
-
-    dashboard(
-        search: "iphone"
-    ) {
-
-        analytics {
-            totalRevenue
-            totalOrders
-        }
-
-        products {
-            products {
-                name
-            }
-        }
-
-        searchResults {
-            products {
-                name
-            }
-        }
-
-        trendingSearches {
-            searchTerm
-            totalSearches
-        }
-    }
-}
-```
-
-### gRPC
-
-Implemented between:
-
-* Order Service
-* Product Service
-
-Used for:
-
-* Internal service communication
-* Fast product lookup
-* Protocol Buffer contracts
-* Startup Dependency Validation
-
-### RabbitMQ
-
-Used for:
-
-* Async Workflows
-* SAGA Communication
-* Analytics Aggregation
-* Search Indexing
-* Shared Messaging Infrastructure
-
-### WebSockets
-
-Implemented for:
-
-- Real-time notifications
-
-Used for:
-
-- Order notifications
-- Payment notifications
-- Live user updates
-
-## Testing & Verification
-
-- Automated System Verification
-- End-to-End Workflow Testing
-- Infrastructure Verification
-- RabbitMQ Verification
-- Redis Verification
-- Elasticsearch Verification
-- PostgreSQL Verification
-- Health Monitoring
-- Operational Visibility
-- Service Health Verification
-- Docker Health Check Verification
-- Graceful Shutdown Verification
-
----
-
-# Authentication & Authorization
-
-Implemented:
-
-* JWT Authentication
-* Access Tokens
-* Refresh Tokens
-* Refresh Token Persistence
-* Refresh Token Rotation
-* Secure Refresh Token Hashing (SHA-256)
-* Device Session Management
-* Logout All Devices
-* Role-Based Access Control (RBAC)
-* API Gateway Authentication
-* Secure Password Hashing
-* Helmet Security
-* CORS Protection
-* Rate Limiting
-
-## Authentication Flow
-
-The platform implements a production-inspired JWT authentication workflow.
-
-### Login
-
-```text
-User Login
-      │
-      ▼
-Generate Access Token
-      │
-      ▼
-Generate Refresh Token
-      │
-      ▼
-Hash Refresh Token (SHA-256)
-      │
-      ▼
-Store in PostgreSQL
-      │
-      ▼
-Return Tokens
-```
-
-### Refresh Token Rotation
-
-```text
-Client
-      │
-      ▼
-Refresh Token
-      │
-      ▼
-Verify JWT Signature
-      │
-      ▼
-Verify Stored Token Hash
-      │
-      ▼
-Delete Previous Refresh Token
-      │
-      ▼
-Generate New Refresh Token
-      │
-      ▼
-Store New Token Hash
-      │
-      ▼
-Return New Tokens
-```
-
-### Logout
-
-```text
-Logout
-      │
-      ▼
-Delete Stored Refresh Token
-      │
-      ▼
-Access Token Expires Naturally
-```
-
-### Logout All Devices
-
-```text
-Logout All Devices
-      │
-      ▼
-Delete All Refresh Tokens
-for the User
-      │
-      ▼
-All Sessions Revoked
-```
-
-### Supported Roles
-
-#### CUSTOMER
-
-Can:
-
-* Browse products
-* Search products
-* Manage cart
-* Create orders
-* View own orders
-* Make payments
-
-#### SELLER
-
-Can:
-
-* Create products
-* Update products
-* Manage inventory
-* Create categories
-
-#### ADMIN
-
-Can:
-
-* Manage all resources
-* View analytics dashboard
-* Manage inventory
-* Update order statuses
-* Access administrative operations
+| Technology | Purpose                         |
+| ---------- | ------------------------------- |
+| REST       | CRUD APIs, Client Communication |
+| GraphQL    | Aggregated Queries, Dashboard   |
+| gRPC       | Internal Service Communication  |
+| RabbitMQ   | Async Events, SAGA              |
+| WebSockets | Real-Time Notifications         |
 
 ---
 
@@ -433,37 +163,11 @@ Implemented production-oriented security practices:
 
 # Databases & Storage
 
-## PostgreSQL
-
-Database-per-service pattern:
-
-* User Database
-* Product Database
-* Order Database
-* Payment Database
-* Search Database
-* Analytics Database
-* Notification Database
-
-## Redis
-
-Used for:
-
-* Product caching
-* Cart storage
-* Versioned Cache Keys
-* Fast Data Retrieval
-* Read Optimization
-
-## Elasticsearch
-
-Used for:
-
-* Product search
-* Full-text search
-* Search suggestions
-* Autocomplete
-* Search optimization
+| Component     | Purpose              |
+| ------------- | -------------------- |
+| PostgreSQL    | Database-per-service |
+| Redis         | Cache, Cart Storage  |
+| Elasticsearch | Search, Autocomplete |
 
 ---
 
@@ -548,161 +252,20 @@ Generate New Cache Keys
 Old Cache Expires Automatically
 ```
 
-## Event-Driven Notifications
-
-Implemented using:
-
-- RabbitMQ
-- Notification Service
-- WebSockets
-
-Flow:
-
-Order Created
-↓
-RabbitMQ Event
-↓
-Notification Service
-↓
-PostgreSQL
-↓
-WebSocket Push
-↓
-User
-
 ---
 
 # Observability
 
 The platform includes a production-style observability stack to monitor the health, performance, and business activity of every microservice. Each service exposes Prometheus metrics through a dedicated `/metrics` endpoint, enabling centralized monitoring and visualization using Prometheus and Grafana.
 
-## Monitoring Stack
-
-- Prometheus
-- Grafana
-- PromQL
-- Custom Prometheus Metrics
-- Node.js Process Metrics
-
-## Metrics Endpoint
-
-Every service exposes:
-
-```http
-GET /metrics
-```
-
-Monitored Services:
-
-- API Gateway
-- User Service
-- Product Service
-- Cart Service
-- Order Service
-- Payment Service
-- Inventory Service
-- Search Service
-- Analytics Service
-- Notification Service
-
-## HTTP Metrics
-
-Implemented HTTP request instrumentation for every service.
-
-Collected metrics include:
-
-- Total HTTP Requests
-- Request Rate
-- Request Duration
-- Response Status Codes
-- Route-wise Request Count
-
-## Business Metrics
-
-Implemented custom business metrics to monitor core commerce workflows.
-
-### Order Service
-
-- Orders Created
-- Orders by Status
-- Order Processing Duration
-
-### Payment Service
-
-- Successful Payments
-- Failed Payments
-- Payments by Status
-- Payment Processing Duration
-
-### Inventory Service
-
-- Inventory Operations
-- Inventory Operation Duration
-
-### Search Service
-
-- Search Operations
-- Search Operation Duration
-
-## Infrastructure Metrics
-
-Automatically collected runtime metrics using Prometheus Node.js instrumentation.
-
-Includes:
-
-- CPU Usage
-- Memory Usage
-- Heap Usage
-- Event Loop Lag
-- Garbage Collection Duration
-- Active Handles
-- Active Requests
-- Process Uptime
-
-## Redis Metrics
-
-Custom metrics for cache performance.
-
-Tracked metrics:
-
-- Cache Hits
-- Cache Misses
-- Cache Writes
-
-Used to evaluate cache efficiency and optimize read performance.
-
-## RabbitMQ Metrics
-
-Custom messaging metrics for event-driven communication.
-
-Tracked metrics:
-
-- Published Events
-- Consumed Events
-
-Used across asynchronous workflows such as:
-
-- Order Processing
-- Inventory Reservation
-- Payment Processing
-- Analytics Aggregation
-- Notification Delivery
-
-## gRPC Metrics
-
-Instrumented internal service-to-service communication.
-
-Tracked metrics:
-
-- Total gRPC Requests
-- Failed gRPC Requests
-- gRPC Request Duration
-
-Current gRPC communication includes:
-
-- Order Service → Product Service
-- Order Service → Inventory Service
-- Payment Service → Order Service
+| Metric Category | Examples                              |
+| --------------- | ------------------------------------- |
+| HTTP            | Request Count, Duration, Status Codes |
+| Infrastructure  | CPU, Memory, Heap, Event Loop         |
+| Redis           | Hits, Misses, Writes                  |
+| RabbitMQ        | Published, Consumed Events            |
+| gRPC            | Requests, Failures, Latency           |
+| Health          | Liveness, Readiness                   |
 
 ## Grafana Dashboards
 
@@ -761,19 +324,6 @@ Implemented production-ready reliability mechanisms.
 - Retry with Exponential Backoff
 - Centralized Logging
 - Request ID Tracking
-
-## Production Monitoring Capabilities
-
-The observability stack provides visibility into:
-
-- Service Availability
-- API Performance
-- Business KPIs
-- Infrastructure Health
-- Cache Efficiency
-- Event-Driven Messaging
-- Internal gRPC Communication
-- Runtime Performance
 
 ---
 
@@ -907,45 +457,6 @@ Responsibilities:
 
 ---
 
-# Notification System
-
-The Notification Service consumes events from RabbitMQ and creates user notifications.
-
-Supported Notifications:
-
-- Order Created
-- Payment Success
-- Payment Failed
-
-Features:
-
-- Persistent Notification Storage
-- Read / Unread Tracking
-- Notification APIs
-- Real-Time Delivery via WebSockets
-
----
-
-# Analytics Dashboard
-
-The Analytics Service aggregates:
-
-- Total Revenue
-- Total Orders
-- Successful Payments
-- Failed Payments
-- Total Products
-
-Metrics are updated asynchronously using RabbitMQ consumers.
-
-Available APIs:
-
-- GET /analytics/dashboard
-
-Analytics is restricted to ADMIN users via RBAC.
-
----
-
 # CI/CD & Automation
 
 ## Continuous Integration
@@ -990,23 +501,6 @@ npm run build-all
 
 This builds the complete distributed platform from a single command.
 
-## Production Build Support
-
-Implemented:
-
-* tsc-alias
-
-to support TypeScript path alias resolution after compilation.
-
-Examples:
-
-```text
-@controllers/*
-@services/*
-@repositories/*
-@routes/*
-```
-
 ## Docker Validation Pipeline
 
 Implemented automated Docker validation workflows.
@@ -1025,6 +519,29 @@ Infrastructure validated:
 * Redis
 * RabbitMQ
 * Elasticsearch
+
+## Kubernetes Deployment
+
+The platform is fully deployed on a local Kubernetes cluster using Kind, following production-inspired deployment practices.
+
+### Kubernetes Features
+
+- Kind Cluster
+- Namespace Isolation
+- Deployments
+- StatefulSets
+- ClusterIP Services
+- Headless Services
+- ConfigMaps
+- Secrets
+- Kustomize
+- Startup, Readiness & Liveness Probes
+- Resource Requests & Limits
+- Persistent Volumes
+- Persistent Volume Claims
+- StorageClass
+- Rolling Updates
+- Internal DNS-based Service Discovery
 
 ## GitHub Actions
 
@@ -1118,26 +635,11 @@ npm run verify-system
 
 ## Exchanges
 
-### ORDER_EVENTS
-
-Events:
-
-* order.created
-* order.cancelled
-
-### PAYMENT_EVENTS
-
-Events:
-
-* payment.success
-* payment.failed
-
-### PRODUCT_EVENTS
-
-Events:
-
-* product.created
-* product.updated
+| Exchange       | Events                           |
+| -------------- | -------------------------------- |
+| ORDER_EVENTS   | order.created, order.cancelled   |
+| PAYMENT_EVENTS | payment.success, payment.failed  |
+| PRODUCT_EVENTS | product.created, product.updated |
 
 ---
 
@@ -1147,21 +649,18 @@ The platform includes a shared infrastructure package used across all services.
 
 Implemented Components:
 
-* Infrastructure Bootstrap Framework
-* Retry Framework
-* Shared Redis Cache
-* Shared RabbitMQ Messaging
-* Shared Health Framework
-* Shared Metrics Collection
-* Shared Logger
-* Shared Error Handling
-* Shared gRPC Utilities
-* Graceful Shutdown Framework
-* Shared Authentication Middleware
-* Shared RBAC Middleware
-* Shared Request ID Middleware
-* Shared Request Logging Middleware
-* Shared Rate Limiting Middleware
+| Shared Component | Purpose             |
+| ---------------- | ------------------- |
+| Bootstrap        | Initialization      |
+| Retry            | Retry Logic         |
+| Cache            | Redis Utilities     |
+| Messaging        | RabbitMQ Utilities  |
+| Health           | Health Checks       |
+| Metrics          | Prometheus          |
+| Logger           | Centralized Logging |
+| Authentication   | JWT Middleware      |
+| RBAC             | Authorization       |
+| Shutdown         | Graceful Shutdown   |
 
 These components ensure consistent initialization, monitoring, communication, and shutdown behavior across all microservices.
 
@@ -1169,60 +668,17 @@ These components ensure consistent initialization, monitoring, communication, an
 
 # Technology Stack
 
-## Backend
-
-* Node.js
-* TypeScript
-* Express.js
-- Prisma ORM
-- PostgreSQL
-
-## Databases
-
-* PostgreSQL
-* Redis
-* Elasticsearch
-
-## Messaging
-
-* RabbitMQ
-
-## APIs
-
-* REST
-* GraphQL
-* gRPC
-
-## Authentication
-
-* JWT
-* Refresh Tokens
-* RBAC
-* Refresh Token Rotation
-* SHA-256 Refresh Token Hashing
-* RBAC
-
-## Real-Time Communication
-
-- Socket.IO
-
-## Validation
-
-* Zod
-
-## Logging
-
-* Winston
-
-## DevOps
-
-* Docker
-* Docker Compose
-
-## Monitoring
-
-- Prometheus
-- Grafana
+| Category | Technologies |
+|----------|--------------|
+| Backend | Node.js, TypeScript, Express, Prisma |
+| Database | PostgreSQL, Redis, Elasticsearch |
+| Messaging | RabbitMQ |
+| APIs | REST, GraphQL, gRPC |
+| Authentication | JWT, RBAC |
+| DevOps | Docker, Docker Compose, Kubernetes (Kind), Kustomize |
+| Monitoring | Prometheus, Grafana |
+| Validation | Zod |
+| Logging | Winston |
 
 ## Infrastructure Features:
 
@@ -1233,74 +689,23 @@ These components ensure consistent initialization, monitoring, communication, an
 
 ---
 
-# Folder Structure
+# Running in Kubernetes
 
-```text
-Distributed-Commerce-Platform/
+## Kubernetes Automation Scripts
 
-├── api-gateway/
-├── graphql-gateway/
+The project includes PowerShell automation scripts to simplify the local Kubernetes development workflow.
 
-├── services/
-│   ├── user-service/
-│   ├── product-service/
-│   ├── cart-service/
-│   ├── order-service/
-│   ├── payment-service/
-│   ├── inventory-service/
-│   ├── search-service/
-│   ├── analytics-service/
-│   └── notification-service/
-
-├── shared/
-│   ├── bootstrap/
-│   ├── cache/
-│   ├── config/
-│   ├── constants/
-│   ├── enums/
-│   ├── errors/
-│   ├── grpc/
-│   ├── health/
-│   ├── messaging/
-│   ├── metrics/
-│   ├── middleware/
-│   ├── shutdown/
-|   └── utils/
-
-├── tests/
-│   ├── config/
-│   ├── verification/
-│   ├── workflows/
-│   └── verify-system.ts
-
-├── infrastructure/
-├── observability/
-└── scripts/
-```
+| Script              | Purpose             | Usage                                                    |
+| ------------------- | ------------------- | -------------------------------------------------------- |
+| create-cluster.ps1  | Create Kind Cluster | `.\scripts\create-cluster.ps1`                           |
+| load-images.ps1     | Load Images         | `.\scripts\load-images.ps1`                              |
+| deploy.ps1          | Deploy Platform     | `.\scripts\deploy.ps1`                                   |
+| rebuild-service.ps1 | Rebuild Service     | `.\scripts\rebuild-service.ps1 -Service product-service` |
+| delete.ps1          | Delete Platform     | `.\scripts\delete.ps1`                                   |
 
 ---
 
 # Running The Project
-
-## Environment Variables
-
-Each service provides a `.env.example` file.
-
-Before running the project, create the corresponding `.env` file.
-
-Linux/macOS
-
-```bash
-cp services/product-service/.env.example services/product-service/.env
-```
-
-Windows PowerShell
-
-```powershell
-Copy-Item services/product-service/.env.example services/product-service/.env
-```
-
-Repeat this for every service before starting the platform.
 
 ## Install Dependencies
 
@@ -1308,63 +713,11 @@ Repeat this for every service before starting the platform.
 npm install
 ```
 
-## Start Infrastructure
-
-```bash
-npm run infra:up
-```
-
-Starts:
-
-* PostgreSQL
-* Redis
-* RabbitMQ
-* Elasticsearch
-
-## Docker Commands
-
-Build Containers
-
-```bash
-docker compose build
-```
-
-Start Platform
+## Start Platform
 
 ```bash
 docker compose up --build
 ```
-
-Subsequent runs:
-
-```bash
-docker compose up
-```
-
-Stop Platform
-
-```bash
-docker compose down
-```
-
-Rebuild
-
-```bash
-docker compose up --build
-```
-
-## Start Development Environment
-
-```bash
-npm run dev
-```
-
-Starts:
-
-* API Gateway
-* GraphQL Gateway
-* All Microservices
-* Shared Package Watch Mode
 
 ## Verify Entire Platform
 

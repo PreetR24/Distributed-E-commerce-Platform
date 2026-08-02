@@ -521,3 +521,156 @@ The Search Service uses REST APIs for standard HTTP operations and gRPC for effi
 Redis is used for caching, RabbitMQ for processing asynchronous events, and Elasticsearch for indexing and searching product data. Together, they provide fast, scalable, and event-driven search functionality.
 
 ---
+
+## How do you verify that a Kubernetes Service is correctly routing traffic to a Pod?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl get endpoints <service-name> -n <namespace>
+```
+
+If one or more Pod IP addresses are listed, the Service is correctly routing traffic to the matching Pods.
+
+---
+
+## How do you verify that environment variables from ConfigMaps and Secrets are available inside a container?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl exec deployment/<deployment-name> -n <namespace> -- printenv
+```
+
+This displays all environment variables inside the container, allowing you to verify values loaded from ConfigMaps and Secrets.
+
+---
+
+## How do you verify communication between Kubernetes microservices?
+
+**Answer:**
+
+Check the application logs:
+
+```bash
+kubectl logs deployment/<deployment-name> -n <namespace>
+```
+
+The logs should confirm successful connections to dependent services, databases, caches, message brokers, or gRPC endpoints without connection errors.
+
+---
+
+## Does scaling a Deployment require updating its Service?
+
+**Answer:**
+
+No.
+
+A Kubernetes Service automatically discovers all matching Pods using label selectors. When a Deployment is scaled, the Service updates its endpoints automatically without requiring any changes.
+
+---
+
+## How do you verify that scaling a Deployment was successful?
+
+**Answer:**
+
+Check the Deployment:
+
+```bash
+kubectl get deployment <deployment-name> -n <namespace>
+```
+
+Then verify the Pods:
+
+```bash
+kubectl get pods -n <namespace>
+```
+
+Finally, confirm that the Service endpoints include all Pod IPs:
+
+```bash
+kubectl get endpoints <service-name> -n <namespace>
+```
+
+---
+
+## Explain how scaling works in Kubernetes.
+
+**Answer:**
+
+When a Deployment is scaled, it updates the desired replica count. The ReplicaSet creates or removes Pods to match that count. Once new Pods pass the Readiness Probe, Kubernetes automatically updates the Service's Endpoint/EndpointSlice. The Service itself does not change. kube-proxy then load balances traffic across all Ready Pods. If a Pod fails, the ReplicaSet creates a new one, and it starts receiving traffic only after becoming Ready.
+
+---
+
+## What is the first command you run when debugging a Kubernetes application?
+
+**Answer:**
+
+Check the Pods first:
+
+```bash
+kubectl get pods -n <namespace>
+```
+
+The Pod status usually indicates where to begin troubleshooting.
+
+---
+
+## How do you investigate why a Pod is failing?
+
+**Answer:**
+
+Describe the Pod:
+
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+
+Then check the container logs:
+
+```bash
+kubectl logs <pod-name> -n <namespace>
+```
+
+The `describe` output provides Kubernetes events, while the logs show application-level errors.
+
+---
+
+## What does `CrashLoopBackOff` mean?
+
+**Answer:**
+
+`CrashLoopBackOff` means the container starts, crashes, and Kubernetes repeatedly tries to restart it with an increasing delay between attempts.
+
+---
+
+## When would you use `kubectl logs --previous`?
+
+**Answer:**
+
+Use it when a container is restarting repeatedly. It shows the logs from the previous container instance, which often contain the original startup error.
+
+```bash
+kubectl logs <pod-name> --previous -n <namespace>
+```
+
+---
+
+## How do you verify that a Service is routing traffic to Pods?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl get endpoints <service-name> -n <namespace>
+```
+
+If one or more Pod IPs are listed, the Service is correctly routing traffic to the matching Pods.
+
+---
+

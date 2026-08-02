@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: product-service
+  namespace: dcp
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: product-service
+
+  template:
+    metadata:
+      labels:
+        app: product-service
+
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: product-service
+          image: distributed-commerce-platform-product-service:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 4002
+            - containerPort: 50052
+
+          envFrom:
+            - configMapRef:
+                name: shared-config
+
+            - secretRef:
+                name: shared-jwt-secret
+
+            - secretRef:
+                name: product-secret
+
+          env:
+            - name: PORT
+              value: "4002"
+
+            - name: SERVICE_NAME
+              value: "product-service"
+
+            - name: PRODUCT_GRPC_HOST
+              value: "0.0.0.0"
+
+            - name: PRODUCT_GRPC_PORT
+              value: "50052"
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+          startupProbe:
+            httpGet:
+              path: /api/v1/health/live
+              port: 4002
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/ready
+              port: 4002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health/live
+              port: 4002
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3

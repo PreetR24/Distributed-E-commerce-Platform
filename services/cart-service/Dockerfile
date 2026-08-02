@@ -1,10 +1,16 @@
 FROM node:22 AS builder
 WORKDIR /app
+
 COPY package*.json ./
-COPY shared/package*.json ./shared/
-COPY services/cart-service/package*.json ./services/cart-service/
-RUN --mount=type=cache,target=/root/.npm npm ci
-COPY . .
+COPY tsconfig*.json ./
+
+COPY shared ./shared/
+COPY services/cart-service ./services/cart-service
+
+RUN npm ci
+
+COPY shared ./shared
+
 RUN npm run build --workspace=shared
 RUN npm run build --workspace=cart-service
 
@@ -13,7 +19,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY services/cart-service/package*.json ./services/cart-service/
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
+RUN npm ci --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/services/cart-service/dist ./dist
 

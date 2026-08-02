@@ -8,7 +8,7 @@ COPY tsconfig*.json ./
 COPY shared/package*.json ./shared/
 COPY api-gateway/package*.json ./api-gateway/
 
-RUN --mount=type=cache,target=/root/.npm npm ci
+RUN npm ci
 
 COPY shared ./shared
 COPY api-gateway ./api-gateway
@@ -21,7 +21,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY api-gateway/package*.json ./api-gateway/
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
+RUN npm ci --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/api-gateway/dist ./dist
 EXPOSE 3000

@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: payment-service
+  namespace: dcp
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: payment-service
+
+  template:
+    metadata:
+      labels:
+        app: payment-service
+
+    spec:
+      enableServiceLinks: false
+
+      containers:
+        - name: payment-service
+          image: distributed-commerce-platform-payment-service:latest
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 4005
+
+          envFrom:
+            - configMapRef:
+                name: shared-config
+
+            - secretRef:
+                name: shared-jwt-secret
+
+            - secretRef:
+                name: payment-secret
+
+          env:
+            - name: PORT
+              value: "4005"
+
+            - name: SERVICE_NAME
+              value: "payment-service"
+
+            - name: ORDER_GRPC_URL
+              value: "order-service:50051"
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+          startupProbe:
+            httpGet:
+              path: /api/v1/health/live
+              port: 4005
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health/ready
+              port: 4005
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health/live
+              port: 4005
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -6,7 +6,7 @@ import {
 }
 from "@config/services";
 
-const PRODUCT_SERVICE_URL = SERVICES.PRODUCT;
+const PRODUCT_SERVICE_URL = `${SERVICES.PRODUCT}/api/v1`;
 
 export const getProducts =
 async (

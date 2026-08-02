@@ -1,10 +1,17 @@
 FROM node:22 AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
-COPY shared/package*.json ./shared/
-COPY services/user-service/package*.json ./services/user-service/
-RUN --mount=type=cache,target=/root/.npm npm ci
-COPY . .
+COPY tsconfig*.json ./
+
+COPY shared ./shared/
+COPY services/user-service ./services/user-service
+
+RUN npm ci
+
+COPY shared ./shared
+
 RUN npm run build --workspace=shared
 RUN npx prisma generate \
     --schema=services/user-service/prisma/schema.prisma
@@ -19,7 +26,7 @@ RUN apt-get update && \
 COPY package*.json ./
 COPY shared/package*.json ./shared/
 COPY services/user-service/package*.json ./services/user-service/
-RUN --mount=type=cache,target=/root/.npm npm ci --omit=dev
+RUN npm ci --omit=dev
 COPY --from=builder /app/shared/dist ./shared/dist
 COPY --from=builder /app/services/user-service/dist ./dist
 COPY --from=builder /app/services/user-service/generated ./generated

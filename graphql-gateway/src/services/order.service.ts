@@ -6,7 +6,7 @@ import {
 }
 from "@config/services";
 
-const ORDER_SERVICE_URL = SERVICES.ORDER;
+const ORDER_SERVICE_URL = `${SERVICES.ORDER}/api/v1`;
 
 export const getMyOrders =
 async (

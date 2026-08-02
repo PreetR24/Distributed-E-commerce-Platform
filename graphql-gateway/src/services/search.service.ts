@@ -6,7 +6,7 @@ import {
 }
 from "@config/services";
 
-const SEARCH_SERVICE_URL = SERVICES.SEARCH;
+const SEARCH_SERVICE_URL = `${SERVICES.SEARCH}/api/v1`;
 
 export const searchProducts =
 async (

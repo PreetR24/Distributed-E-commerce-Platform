@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: rabbitmq
+  namespace: dcp
+  labels:
+    app: rabbitmq
+    component: message-broker
+
+spec:
+  serviceName: rabbitmq-headless
+
+  replicas: 1
+
+  revisionHistoryLimit: 3
+
+  updateStrategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: rabbitmq
+
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+        component: message-broker
+
+    spec:
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: rabbitmq
+
+          image: rabbitmq:3-management
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: amqp
+              containerPort: 5672
+
+            - name: management
+              containerPort: 15672
+
+          envFrom:
+            - secretRef:
+                name: rabbitmq-secret
+
+          volumeMounts:
+            - name: rabbitmq-storage
+              mountPath: /var/lib/rabbitmq
+
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+
+            limits:
+              cpu: "1"
+              memory: 1Gi
+
+          startupProbe:
+            tcpSocket:
+              port: amqp
+            initialDelaySeconds: 25
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 30
+
+          readinessProbe:
+            tcpSocket:
+              port: 5672
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            tcpSocket:
+              port: 5672
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          terminationMessagePolicy: FallbackToLogsOnError
+
+  volumeClaimTemplates:
+    - metadata:
+        name: rabbitmq-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 5Gi

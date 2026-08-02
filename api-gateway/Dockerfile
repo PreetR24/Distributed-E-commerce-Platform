@@ -1,10 +1,18 @@
 FROM node:22 AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
+COPY tsconfig*.json ./
+
 COPY shared/package*.json ./shared/
 COPY api-gateway/package*.json ./api-gateway/
+
 RUN --mount=type=cache,target=/root/.npm npm ci
-COPY . .
+
+COPY shared ./shared
+COPY api-gateway ./api-gateway
+
 RUN npm run build --workspace=shared
 RUN npm run build --workspace=api-gateway
 

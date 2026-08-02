@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: redis
+  namespace: dcp
+  labels:
+    app: redis
+    component: cache
+
+spec:
+  serviceName: redis-headless
+
+  replicas: 1
+
+  revisionHistoryLimit: 3
+
+  updateStrategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: redis
+
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: cache
+
+    spec:
+      terminationGracePeriodSeconds: 30
+
+      containers:
+        - name: redis
+
+          image: redis:7
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: redis
+              containerPort: 6379
+
+          command:
+            - redis-server
+            - --appendonly
+            - "yes"
+
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+            limits:
+              cpu: 500m
+              memory: 512Mi
+
+          startupProbe:
+            tcpSocket:
+              port: redis
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 30
+
+          readinessProbe:
+            tcpSocket:
+              port: redis
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            tcpSocket:
+              port: redis
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          terminationMessagePolicy: FallbackToLogsOnError
+
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-storage
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 2Gi

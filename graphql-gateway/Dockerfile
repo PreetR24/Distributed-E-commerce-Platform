@@ -1,12 +1,20 @@
 FROM node:22 AS builder
 WORKDIR /app
+
 COPY package*.json ./
+COPY tsconfig*.json ./
+
 COPY shared/package*.json ./shared/
 COPY graphql-gateway/package*.json ./graphql-gateway/
+
 RUN npm ci
-COPY . .
+
+COPY shared ./shared
+COPY graphql-gateway ./graphql-gateway
+
 RUN npm run build --workspace=shared
 RUN npm run build --workspace=graphql-gateway
+
 
 FROM node:22-alpine AS runtime
 WORKDIR /app

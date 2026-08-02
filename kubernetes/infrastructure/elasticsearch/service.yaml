@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: elasticsearch
+  namespace: dcp
+  labels:
+    app: elasticsearch
+    component: search-engine
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: elasticsearch
+
+  ports:
+    - name: http
+      port: 9200
+      targetPort: http
+
+    - name: transport
+      port: 9300
+      targetPort: transport

@@ -67,7 +67,13 @@ app.use(requestIdMiddleware);
 
 app.use(requestLogger);
 
-app.use(apiRateLimiter);
+app.use((req, res, next) => {
+    if (req.path.startsWith("/api/v1/health")) {
+        return next();
+    }
+
+    return apiRateLimiter(req, res, next);
+});
 
 app.use(metricsMiddleware);
 

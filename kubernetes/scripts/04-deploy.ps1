@@ -52,6 +52,15 @@ kubectl apply -k .\gateway\api-gateway
 kubectl apply -k .\gateway\graphql-gateway
 
 Write-Host ""
+Write-Host "Resource Managements..."
+kubectl apply -f .\resource-management\limitrange
+kubectl apply -f .\resource-management\resourcequota
+
+Write-Host ""
+Write-Host "Ingress..."
+kubectl apply -k .\ingress
+
+Write-Host ""
 Write-Host "===================================="
 Write-Host "Deployment Completed Successfully"
 Write-Host "===================================="

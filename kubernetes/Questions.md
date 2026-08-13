@@ -674,3 +674,337 @@ If one or more Pod IPs are listed, the Service is correctly routing traffic to t
 
 ---
 
+## What is the role of a StorageClass in Kubernetes?
+
+**Answer:**
+
+A StorageClass defines how PersistentVolumes are provisioned. It specifies the storage provisioner and storage-related policies, allowing PersistentVolumeClaims to dynamically request storage without manually creating PersistentVolumes.
+
+---
+
+## How do you verify which StorageClass a PersistentVolumeClaim is using?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl get pvc -n <namespace>
+```
+
+or
+
+```bash
+kubectl describe pvc <pvc-name> -n <namespace>
+```
+
+The output shows the StorageClass associated with the PVC.
+
+---
+
+## What is the difference between a PersistentVolume (PV) and a PersistentVolumeClaim (PVC)?
+
+**Answer:**
+
+A **PersistentVolume (PV)** is the actual storage resource available in the cluster, while a **PersistentVolumeClaim (PVC)** is a request for storage made by a Pod. Kubernetes binds a PVC to a suitable PV.
+
+---
+
+## How do you verify that a PersistentVolume is correctly bound?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl get pv
+```
+
+A correctly configured PersistentVolume should have:
+
+- `STATUS` as `Bound`
+- A valid `CLAIM` pointing to the corresponding PersistentVolumeClaim.
+
+---
+
+## Why is `ReadWriteOnce (RWO)` commonly used with StatefulSets?
+
+**Answer:**
+
+`ReadWriteOnce (RWO)` allows a volume to be mounted as read-write by a single node. This is suitable for stateful applications such as PostgreSQL, Redis, RabbitMQ, and Elasticsearch, where each Pod owns its dedicated persistent storage.
+
+---
+
+## What does a PVC with `Pending` status indicate?
+
+**Answer:**
+
+A `Pending` PVC indicates that Kubernetes could not bind the claim to a suitable PersistentVolume. This can occur if no matching storage is available or if the StorageClass cannot provision a volume.
+
+---
+
+## Why do StatefulSets use volume mounts?
+
+**Answer:**
+
+Volume mounts attach PersistentVolumes to containers, allowing stateful applications to store data that persists even if the Pod is restarted or recreated.
+
+---
+
+## How do you verify that a PersistentVolume is mounted inside a container?
+
+**Answer:**
+
+Describe the Pod:
+
+```bash
+kubectl describe pod <pod-name> -n <namespace>
+```
+
+Then verify the mounted filesystem from inside the container:
+
+```bash
+kubectl exec -it <pod-name> -n <namespace> -- df -h
+```
+
+or inspect the mount directory:
+
+```bash
+kubectl exec -it <pod-name> -n <namespace> -- ls -la <mount-path>
+```
+
+---
+
+## Where is data stored in PostgreSQL, Redis, RabbitMQ, and Elasticsearch by default?
+
+**Answer:**
+
+- PostgreSQL: `/var/lib/postgresql/data`
+- Redis: `/data`
+- RabbitMQ: `/var/lib/rabbitmq`
+- Elasticsearch: `/usr/share/elasticsearch/data`
+
+---
+
+## Why does data remain after deleting a StatefulSet Pod?
+
+**Answer:**
+
+Deleting a StatefulSet Pod does not delete its PersistentVolumeClaim (PVC) or PersistentVolume (PV). When Kubernetes recreates the Pod, it reattaches the same PVC, allowing the application to continue using the existing data.
+
+---
+
+## How do you verify PostgreSQL data persistence in Kubernetes?
+
+**Answer:**
+
+Connect to PostgreSQL, verify the data or databases, delete the PostgreSQL Pod, wait for it to be recreated, and verify the same data again. If the data still exists, the PersistentVolume is working correctly.
+
+---
+
+## What is the purpose of testing data persistence after deleting a Pod?
+
+**Answer:**
+
+It verifies that application data is stored on a PersistentVolume rather than inside the container filesystem. This ensures that data survives Pod failures, restarts, and rescheduling.
+
+---
+
+## How do you verify that Kubernetes DNS is working?
+
+**Answer:**
+
+Run:
+
+```bash
+kubectl exec -it deployment/<deployment-name> -n <namespace> -- sh
+```
+
+Then verify DNS resolution:
+
+```bash
+nslookup <service-name>
+```
+
+If the Service name resolves successfully, Kubernetes DNS is working.
+
+---
+
+## What is the difference between a normal Service and a Headless Service in DNS resolution?
+
+**Answer:**
+
+A normal Service resolves to a **ClusterIP**, while a Headless Service resolves directly to the IP address(es) of the backing Pod(s), enabling direct Pod discovery.
+
+---
+
+## Why can we use `product-service` instead of `product-service.dcp.svc.cluster.local`?
+
+**Answer:**
+
+Kubernetes automatically configures DNS search domains for each Pod. Since all services are in the same namespace (`dcp`), the short Service name is automatically expanded to its full DNS name.
+
+---
+
+## What should a liveness probe check?
+
+**Answer:**
+
+A liveness probe should only verify that the application is running and responsive. It should not check external dependencies such as databases or message brokers, as temporary dependency failures could cause unnecessary container restarts.
+
+---
+
+## Why can the readiness probe check external dependencies?
+
+**Answer:**
+
+The readiness probe determines whether a Pod is ready to receive traffic. If a required dependency such as PostgreSQL or Redis is unavailable, Kubernetes temporarily removes the Pod from the Service endpoints without restarting it.
+
+---
+
+## Why should health endpoint logic be shared across all microservices?
+
+**Answer:**
+
+A shared health utility ensures consistent response formats, reduces duplicate code, simplifies maintenance, and keeps health behavior uniform across all services.
+
+---
+
+## Why is the readiness probe important during rolling updates?
+
+**Answer:**
+
+Kubernetes waits until the readiness probe succeeds before sending traffic to the new Pod. This helps achieve zero-downtime deployments by ensuring only healthy Pods receive requests.
+
+---
+
+## What is the purpose of a LimitRange in Kubernetes?
+
+**Answer:**
+
+A `LimitRange` defines default resource requests and limits for Pods in a namespace. If a Pod does not specify its own resources, Kubernetes automatically applies the defaults from the `LimitRange`.
+
+---
+
+## Does a LimitRange override resource requests and limits already defined in a Deployment?
+
+**Answer:**
+
+No.
+
+A `LimitRange` only applies default values when a Pod does not specify its own resource requests or limits. If the Deployment already defines them, those values are used instead.
+
+---
+
+## What is the difference between a LimitRange and a ResourceQuota?
+
+**Answer:**
+
+A **LimitRange** applies to individual Pods or containers by setting default or minimum/maximum resource requests and limits. A **ResourceQuota** applies to the entire namespace by limiting the total amount of resources (CPU, memory, Pods, Secrets, ConfigMaps, etc.) that all resources in the namespace can consume.
+
+---
+
+## What happens if a namespace exceeds its ResourceQuota?
+
+**Answer:**
+
+Kubernetes rejects the creation or update of the resource and returns a **Forbidden** error indicating that the namespace has exceeded its configured quota.
+
+---
+
+## Why are ResourceQuotas useful?
+
+**Answer:**
+
+ResourceQuotas prevent a namespace from consuming excessive cluster resources, ensuring fair resource sharing and protecting the cluster from accidental over-allocation.
+
+---
+
+## What is the difference between an Ingress and an Ingress Controller?
+
+**Answer:**
+
+An **Ingress** defines the routing rules for incoming HTTP/HTTPS traffic, while an **Ingress Controller** is the component that reads those rules and routes requests to the appropriate Kubernetes Services. Without an Ingress Controller, an Ingress resource has no effect.
+
+---
+
+## Why is an Ingress Controller needed if Services already exist?
+
+**Answer:**
+
+Services provide networking inside the Kubernetes cluster. An Ingress Controller exposes selected Services externally and acts as a single entry point, routing incoming traffic based on hostnames or URL paths.
+
+---
+
+## What is an IngressClass?
+
+**Answer:**
+
+An IngressClass tells Kubernetes which Ingress Controller should manage an Ingress resource. For the NGINX Ingress Controller, the IngressClass is typically named `nginx`.
+
+---
+
+## Why is `ingressClassName: nginx` specified in an Ingress resource?
+
+**Answer:**
+
+It tells Kubernetes that this Ingress should be managed by the NGINX Ingress Controller. Without a matching IngressClass, the controller will not process the Ingress resource.
+
+---
+
+## Why are API Gateway and GraphQL Gateway placed behind a single Ingress?
+
+**Answer:**
+
+Using a single Ingress provides one entry point into the cluster. It routes requests to different backend Services based on the request path or host, reducing the need to expose multiple external endpoints.
+
+---
+
+## What is Path-Based Routing in Kubernetes Ingress?
+
+**Answer:**
+
+Path-Based Routing forwards requests to different backend Services based on the URL path. For example, requests to `/graphql` can be routed to the GraphQL Gateway, while all other requests (`/`) are routed to the REST API Gateway.
+
+---
+
+## Why is the `/graphql` path defined before `/` in the Ingress?
+
+**Answer:**
+
+`/graphql` is a more specific path than `/`. Defining it first makes the routing intent clear and ensures requests starting with `/graphql` are directed to the GraphQL Gateway, while all other requests match the `/` path and go to the API Gateway.
+
+---
+
+## What is Host-Based Routing in Kubernetes Ingress?
+
+**Answer:**
+
+Host-Based Routing forwards requests based on the hostname in the HTTP request. For example, requests to `api.commerce.local` can be routed to the API Gateway, while requests to `graphql.commerce.local` can be routed to the GraphQL Gateway.
+
+---
+
+## When would you choose Host-Based Routing instead of Path-Based Routing?
+
+**Answer:**
+
+Host-Based Routing is useful when different applications or APIs need separate domains, such as `api.example.com` and `admin.example.com`. Path-Based Routing is preferred when multiple services are exposed under a single domain, such as `/api` and `/graphql`.
+
+---
+
+## What is the difference between Metrics Server and Prometheus?
+
+**Answer:**
+
+The Metrics Server provides CPU and memory metrics used by Kubernetes features such as `kubectl top` and the Horizontal Pod Autoscaler (HPA). Prometheus is a monitoring system that scrapes application and infrastructure metrics, stores historical data, and enables querying, dashboards, and alerting.
+
+---
+
+## Why can HPA work without Prometheus?
+
+**Answer:**
+
+The Horizontal Pod Autoscaler uses metrics from the Kubernetes Metrics Server. Prometheus is not required for HPA to scale Pods based on CPU or memory utilization.
+
+---
+

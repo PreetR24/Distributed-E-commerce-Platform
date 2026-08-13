@@ -19,7 +19,8 @@ import {
     registerShutdownSignals,
     registerShutdownTask,
     requestIdMiddleware,
-    requestLogger
+    requestLogger,
+    register
 } from "@shared/common";
 
 import { initialize } from "./initialize/initialize";
@@ -61,6 +62,8 @@ const bootstrapServer = async (): Promise<void> => {
             v1Routes
         );
 
+        app.use("/graphql/api/v1", v1Routes);
+
         app.use(
             "/graphql",
             cors(),
@@ -70,6 +73,20 @@ const bootstrapServer = async (): Promise<void> => {
                     token: req.headers.authorization ?? null
                 })
             })
+        );
+
+        app.get(
+            "/metrics",
+            async (_req, res) => {
+                res.set(
+                    "Content-Type",
+                    register.contentType
+                );
+
+                res.end(
+                    await register.metrics()
+                );
+            }
         );
 
         await initialize();

@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: grafana-dashboard-provider
+  namespace: monitoring
+
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+
+    providers:
+      - name: distributed-commerce
+        orgId: 1
+        folder: Distributed Commerce
+        type: file
+        disableDeletion: true
+        editable: true
+        updateIntervalSeconds: 30
+        allowUiUpdates: true
+
+        options:
+          path: /var/lib/grafana/dashboards
+          foldersFromFilesStructure: false

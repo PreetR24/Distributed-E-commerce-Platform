@@ -2,4 +2,5 @@ resources:
   - secret.yaml
   - headless-service.yaml
   - service.yaml
+  - management-service.yaml
   - statefulset.yaml

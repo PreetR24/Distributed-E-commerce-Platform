@@ -1008,3 +1008,40 @@ The Horizontal Pod Autoscaler uses metrics from the Kubernetes Metrics Server. P
 
 ---
 
+## What is a Prometheus alert rule?
+
+**Answer:**
+
+A Prometheus alert rule evaluates a PromQL expression and creates an alert when the expression remains true for the configured duration.
+
+---
+
+## Why is the `for` duration used in a Prometheus alert?
+
+**Answer:**
+
+The `for` duration prevents temporary metric spikes or short-lived failures from immediately triggering an alert. The condition must remain true for the specified duration before the alert becomes active.
+
+---
+
+## What does the Prometheus `up` metric represent?
+
+**Answer:**
+
+The `up` metric indicates whether Prometheus successfully scraped a target.
+
+```text
+up = 1 → target is reachable
+up = 0 → target scrape failed
+```
+
+---
+
+## What is the difference between Prometheus alerting and Alertmanager?
+
+**Answer:**
+
+Prometheus evaluates alert rules and determines when an alert should fire. Alertmanager handles alert routing, grouping, deduplication, silencing, and notifications such as email or Slack.
+
+---
+

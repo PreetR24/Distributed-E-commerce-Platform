@@ -1,3 +1,5 @@
+import amqp from 'amqplib';
+export declare const getChannel: () => amqp.Channel;
 export declare const connectRabbitMQ: () => Promise<void>;
 export declare const disconnectRabbitMQ: () => Promise<void>;
 export declare const publishEvent: (exchange: string, routingKey: string, message: unknown) => Promise<void>;

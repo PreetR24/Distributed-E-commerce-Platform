@@ -25,7 +25,7 @@ let channel:
     amqp.Channel | null =
     null;
 
-const getChannel =
+export const getChannel =
 (): amqp.Channel => {
 
     if (
@@ -255,15 +255,14 @@ async (
 
             }
 
-            const parsedMessage =
-
-                JSON.parse(
-
-                    message.content.toString()
-
-                );
-
             try {
+                const parsedMessage =
+
+                    JSON.parse(
+
+                        message.content.toString()
+
+                    );
 
                 await callback(
 

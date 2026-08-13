@@ -1,25 +1,45 @@
-import { getRabbitMQChannel }
+import {
+    connectRabbitMQ,
+    getChannel
+}
 from '../messaging/rabbitmq';
 
-import { logger }
+import {
+    logger
+}
 from './logger';
 
 interface ExchangeConfig {
+
     name: string;
-    type?: 'fanout' | 'direct' | 'topic';
+
+    type?:
+        'fanout'
+        | 'direct'
+        | 'topic';
+
     durable?: boolean;
+
 }
 
 interface QueueConfig {
+
     name: string;
+
     exchange: string;
+
     routingKey?: string;
+
     durable?: boolean;
+
 }
 
 interface RabbitMQSetup {
+
     exchanges?: ExchangeConfig[];
+
     queues?: QueueConfig[];
+
 }
 
 export const setupRabbitMQ =
@@ -27,35 +47,67 @@ async (
     config: RabbitMQSetup
 ): Promise<void> => {
 
-    const channel =
-        getRabbitMQChannel();
+    /*
+     * Make sure RabbitMQ connection
+     * and channel are initialized.
+     */
+    await connectRabbitMQ();
 
-    if ( config.exchanges ) {
+    const channel =
+        getChannel();
+
+    /*
+     * Setup exchanges
+     */
+    if (
+        config.exchanges
+    ) {
 
         for (
-            const exchange of config.exchanges
+
+            const exchange
+
+            of config.exchanges
+
         ) {
+
             await channel.assertExchange(
+
                 exchange.name,
+
                 exchange.type ??
                 'fanout',
+
                 {
+
                     durable:
                         exchange.durable ??
                         true
 
                 }
+
             );
 
             logger.info(
+
                 'Exchange Ready',
+
                 {
-                    exchange: exchange.name
+
+                    exchange:
+                        exchange.name
+
                 }
+
             );
+
         }
+
     }
 
+    /*
+     * Setup queues
+     */
     if (
         config.queues
     ) {

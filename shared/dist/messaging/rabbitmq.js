@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.consumeEvent = exports.publishEvent = exports.disconnectRabbitMQ = exports.connectRabbitMQ = void 0;
+exports.consumeEvent = exports.publishEvent = exports.disconnectRabbitMQ = exports.connectRabbitMQ = exports.getChannel = void 0;
 const amqplib_1 = __importDefault(require("amqplib"));
 const logger_1 = require("../utils/logger");
 const rabbitmq_metrics_1 = require("../metrics/rabbitmq.metrics");
@@ -15,6 +15,7 @@ const getChannel = () => {
     }
     return channel;
 };
+exports.getChannel = getChannel;
 const connectRabbitMQ = async () => {
     if (connection &&
         channel) {
@@ -43,7 +44,7 @@ const disconnectRabbitMQ = async () => {
 };
 exports.disconnectRabbitMQ = disconnectRabbitMQ;
 const publishEvent = async (exchange, routingKey, message) => {
-    const rabbitChannel = getChannel();
+    const rabbitChannel = (0, exports.getChannel)();
     await rabbitChannel.assertExchange(exchange, 'fanout', {
         durable: true
     });
@@ -57,7 +58,7 @@ const publishEvent = async (exchange, routingKey, message) => {
 };
 exports.publishEvent = publishEvent;
 const consumeEvent = async (exchange, queue, callback) => {
-    const rabbitChannel = getChannel();
+    const rabbitChannel = (0, exports.getChannel)();
     await rabbitChannel.assertExchange(exchange, 'fanout', {
         durable: true
     });
@@ -73,8 +74,8 @@ const consumeEvent = async (exchange, queue, callback) => {
         if (!message) {
             return;
         }
-        const parsedMessage = JSON.parse(message.content.toString());
         try {
+            const parsedMessage = JSON.parse(message.content.toString());
             await callback(parsedMessage);
             rabbitmq_metrics_1.consumedEventsCounter.inc();
             rabbitChannel.ack(message);

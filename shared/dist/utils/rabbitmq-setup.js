@@ -4,7 +4,15 @@ exports.setupRabbitMQ = void 0;
 const rabbitmq_1 = require("../messaging/rabbitmq");
 const logger_1 = require("./logger");
 const setupRabbitMQ = async (config) => {
-    const channel = (0, rabbitmq_1.getRabbitMQChannel)();
+    /*
+     * Make sure RabbitMQ connection
+     * and channel are initialized.
+     */
+    await (0, rabbitmq_1.connectRabbitMQ)();
+    const channel = (0, rabbitmq_1.getChannel)();
+    /*
+     * Setup exchanges
+     */
     if (config.exchanges) {
         for (const exchange of config.exchanges) {
             await channel.assertExchange(exchange.name, exchange.type ??
@@ -17,6 +25,9 @@ const setupRabbitMQ = async (config) => {
             });
         }
     }
+    /*
+     * Setup queues
+     */
     if (config.queues) {
         for (const queue of config.queues) {
             await channel.assertQueue(queue.name, {

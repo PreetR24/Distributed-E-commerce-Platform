@@ -7,7 +7,7 @@ from 'express';
 
 import {
 
-    createHealthController
+    healthController
 
 }
 from './health.controller';
@@ -21,33 +21,13 @@ export const createHealthRouter =
         Router();
 
     const controller =
-        createHealthController(
+        healthController(
             serviceName
         );
 
-    router.get(
-
-        '/',
-
-        controller.health
-
-    );
-
-    router.get(
-
-        '/live',
-
-        controller.live
-
-    );
-
-    router.get(
-
-        '/ready',
-
-        controller.ready
-
-    );
+    router.get('/', controller.health);
+    router.get('/live', controller.live);
+    router.get('/ready', controller.ready);
 
     return router;
 

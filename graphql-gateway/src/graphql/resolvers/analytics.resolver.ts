@@ -1,5 +1,5 @@
 import {
-    getAnalytics
+    getDashboardAnalytics
 }
 from '@services/analytics.service';
 
@@ -16,7 +16,7 @@ export const analyticsResolvers = {
         __: unknown,
         context: GraphQLContext
     ) => {
-        return getAnalytics(
+        return getDashboardAnalytics(
             context
         );
     }

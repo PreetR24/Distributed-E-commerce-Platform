@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+
+metadata:
+  name: dcp-app-rolebinding
+  namespace: dcp
+
+subjects:
+  - kind: ServiceAccount
+    name: dcp-app
+    namespace: dcp
+
+roleRef:
+  kind: Role
+  name: dcp-app-role
+  apiGroup: rbac.authorization.k8s.io

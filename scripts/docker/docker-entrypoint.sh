@@ -29,11 +29,6 @@ echo "Running Prisma Migrations..."
 npx prisma migrate deploy
 
 echo ""
-echo "Generating Prisma Client..."
-
-npx prisma generate
-
-echo ""
 echo "Starting Application..."
 echo ""
 

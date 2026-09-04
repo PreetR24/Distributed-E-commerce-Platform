@@ -18,9 +18,25 @@ spec:
         app: user-service
 
     spec:
+      serviceAccountName: dcp-app
       enableServiceLinks: false
+
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+
       containers:
         - name: user-service
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+
+            capabilities:
+              drop:
+                - ALL
+                
           image: distributed-commerce-platform-user-service:latest
           imagePullPolicy: IfNotPresent
 

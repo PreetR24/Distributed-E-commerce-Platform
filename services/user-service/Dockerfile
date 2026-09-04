@@ -35,6 +35,10 @@ COPY scripts/docker/docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN chmod +x docker-entrypoint.sh
 
+RUN chown -R 1000:1000 /app
+
+USER 1000:1000
+
 EXPOSE 4001
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

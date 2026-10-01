@@ -24,7 +24,16 @@ import {
     inventoryProxy,
     searchProxy,
     notificationsProxy,
-    analyticsProxy
+    analyticsProxy,
+    userRootProxy,
+    productRootProxy,
+    cartRootProxy,
+    inventoryRootProxy,
+    orderRootProxy,
+    paymentRootProxy,
+    notificationRootProxy,
+    analyticsRootProxy,
+    searchRootProxy
 } from '@proxy/services.proxy';
 
 import v1Routes from './v1';
@@ -139,6 +148,51 @@ app.use(
 app.use(
     '/api/v1/search',
     searchProxy
+);
+
+app.use(
+    '/service/users',
+    userRootProxy
+);
+
+app.use(
+    '/service/products',
+    productRootProxy
+);
+
+app.use(
+    '/service/cart',
+    cartRootProxy
+);
+
+app.use(
+    '/service/inventory',
+    inventoryRootProxy
+);
+
+app.use(
+    '/service/orders',
+    orderRootProxy
+);
+
+app.use(
+    '/service/payments',
+    paymentRootProxy
+);
+
+app.use(
+    '/service/search',
+    searchRootProxy
+);
+
+app.use(
+    '/service/analytics',
+    analyticsRootProxy
+);
+
+app.use(
+    '/service/notifications',
+    notificationRootProxy
 );
 
 app.use('/api/v1', v1Routes);

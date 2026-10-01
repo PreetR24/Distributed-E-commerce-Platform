@@ -1406,3 +1406,153 @@ Check the application logs and Pod status for filesystem permission errors. If t
 
 ---
 
+## What is a rolling update?
+
+**Answer:**
+
+A rolling update gradually replaces old Pods with new Pods without stopping the entire application.
+
+## What is the purpose of maxUnavailable?
+
+**Answer:**
+
+It defines how many desired Pods may be unavailable during an update.
+
+## What is the purpose of maxSurge?
+
+**Answer:**
+
+It defines how many additional Pods Kubernetes may create temporarily during an update.
+
+## Why is maxUnavailable: 0 useful?
+
+**Answer:**
+
+It prevents Kubernetes from intentionally reducing the number of available Pods during the rollout.
+
+## Why are readiness probes important during rolling updates?
+
+**Answer:**
+
+Kubernetes removes old Pods only after the new Pods become Ready, so readiness probes help prevent traffic from reaching unready applications.
+
+## Can old and new application versions run together?
+
+**Answer:**
+
+Yes. During a rolling update, old and new versions may temporarily run together. They must therefore remain API-, database-, and event-compatible.
+
+## What happens if the new Pod fails?
+
+**Answer:**
+
+The rollout pauses or fails, while the existing healthy Pods can continue serving traffic.
+
+## What is required for zero-downtime rolling updates?
+
+**Answer:**
+
+Multiple replicas, correct readiness probes, graceful shutdown, sufficient resources, and backward-compatible application changes.
+
+---
+
+## What is a rollback?
+
+**Answer:**
+
+A rollback restores a Deployment to a previous working revision.
+
+## Which command rolls back to the previous revision?
+
+**Answer:**
+
+kubectl rollout undo deployment/<deployment-name> -n <namespace>
+
+## How can you roll back to a specific revision?
+
+**Answer:**
+
+kubectl rollout undo deployment/<deployment-name> --to-revision=<revision-number> -n <namespace>
+
+## Does rollback delete the failed revision?
+
+**Answer:**
+
+No. The failed revision remains in Deployment history unless old history is cleaned up.
+
+## Does Kubernetes rollback database changes?
+
+**Answer:**
+
+No. Kubernetes rollback changes the application Deployment but does not reverse database migrations or data changes.
+
+## Why should services be rolled back carefully?
+
+**Answer:**
+
+Microservices may depend on compatible APIs, database schemas, and event formats. Rolling back one service can cause compatibility problems if other services remain on the newer version.
+
+## What should be verified after rollback?
+
+**Answer:**
+
+Verify rollout status, Pod readiness, Service endpoints, health endpoints, logs, and the affected business workflow.
+
+## What is the purpose of rollout pause and resume?
+
+**Answer:**
+
+They allow an operator to temporarily stop or continue a Deployment rollout while investigating or validating changes.
+
+---
+
+## What is zero-downtime deployment?
+
+**Answer:**
+
+Zero-downtime deployment means users can continue accessing the application while the old version is replaced by the new version.
+
+## Why are multiple replicas important?
+
+**Answer:**
+
+Multiple replicas allow some Pods to continue serving traffic while other Pods are being updated or restarted.
+
+## How does Kubernetes decide whether a new Pod can receive traffic?
+
+**Answer:**
+
+Kubernetes uses the readiness probe. Only Ready Pods are added as available Service endpoints.
+
+## What does maxUnavailable: 0 provide?
+
+**Answer:**
+
+It prevents the rolling update from intentionally reducing the number of available Pods below the desired count.
+
+## How can zero downtime be tested?
+
+**Answer:**
+
+Send continuous requests during a rollout and verify that the requests continue returning successful responses.
+
+## What can cause downtime during a rolling update?
+
+**Answer:**
+
+Common causes include one replica, incorrect readiness probes, failed startup, insufficient resources, incorrect Service selectors, and missing graceful shutdown handling.
+
+## Does maxUnavailable: 0 guarantee zero downtime?
+
+**Answer:**
+
+No. It helps maintain availability, but the application must also have correct probes, sufficient resources, graceful shutdown, and compatible versions.
+
+## What should be verified after the rollout?
+
+**Answer:**
+
+Verify Deployment status, Pod readiness, Service endpoints, health endpoints, application functionality, and logs.
+
+---
+

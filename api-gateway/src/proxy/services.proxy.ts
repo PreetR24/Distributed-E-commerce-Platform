@@ -126,3 +126,89 @@ export const notificationsProxy =
         SERVICES.NOTIFICATION,
         '/notifications'
     );
+
+/// Root level proxies for accessing root level routes in each services
+
+const createRootServiceProxy = (
+    target: string,
+    publicPrefix: string
+) =>
+    createProxyMiddleware({
+        target,
+        changeOrigin: true,
+
+        pathRewrite: (path) => {
+            return path.replace(publicPrefix, '');
+        },
+
+        on: {
+            proxyReq: fixRequestBody,
+
+            proxyRes: (_proxyRes, req) => {
+                console.log(
+                    `[ROOT PROXY] ${req.method} ${req.url}`
+                );
+            },
+
+            error: (err, req) => {
+                console.error(
+                    `[ROOT PROXY ERROR] ${req.method} ${req.url}`,
+                    err.message
+                );
+            }
+        }
+    });
+
+export const userRootProxy =
+    createRootServiceProxy(
+        SERVICES.USER,
+        '/service/users'
+    );
+
+export const productRootProxy =
+    createRootServiceProxy(
+        SERVICES.PRODUCT,
+        '/service/products'
+    );
+
+export const cartRootProxy =
+    createRootServiceProxy(
+        SERVICES.CART,
+        '/service/cart'
+    );
+
+export const inventoryRootProxy =
+    createRootServiceProxy(
+        SERVICES.INVENTORY,
+        '/service/inventory'
+    );
+
+export const orderRootProxy =
+    createRootServiceProxy(
+        SERVICES.ORDER,
+        '/service/orders'
+    );
+
+export const paymentRootProxy =
+    createRootServiceProxy(
+        SERVICES.PAYMENT,
+        '/service/payments'
+    );
+
+export const searchRootProxy =
+    createRootServiceProxy(
+        SERVICES.SEARCH,
+        '/service/search'
+    );
+
+export const analyticsRootProxy =
+    createRootServiceProxy(
+        SERVICES.ANALYTICS,
+        '/service/analytics'
+    );
+
+export const notificationRootProxy =
+    createRootServiceProxy(
+        SERVICES.NOTIFICATION,
+        '/service/notification'
+    );

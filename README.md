@@ -520,29 +520,6 @@ Infrastructure validated:
 * RabbitMQ
 * Elasticsearch
 
-## Kubernetes Deployment
-
-The platform is fully deployed on a local Kubernetes cluster using Kind, following production-inspired deployment practices.
-
-### Kubernetes Features
-
-- Kind Cluster
-- Namespace Isolation
-- Deployments
-- StatefulSets
-- ClusterIP Services
-- Headless Services
-- ConfigMaps
-- Secrets
-- Kustomize
-- Startup, Readiness & Liveness Probes
-- Resource Requests & Limits
-- Persistent Volumes
-- Persistent Volume Claims
-- StorageClass
-- Rolling Updates
-- Internal DNS-based Service Discovery
-
 ## GitHub Actions
 
 Implemented:
